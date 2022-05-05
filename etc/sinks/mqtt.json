@@ -241,8 +241,8 @@
     "category": "sink",
     "icon": "iconPath",
     "label": {
-      "en": "MQTT",
-      "zh": "MQTT"
+      "en_US": "MQTT output",
+      "zh_CN": "MQTT 输出"
     }
   }
 }

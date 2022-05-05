@@ -192,7 +192,7 @@
     }
   ],
   "node": {
-    "category": "source",
+    "category": "OfflineData",
     "icon": "iconPath",
     "label": {
       "en_US": "File",

@@ -1,0 +1,74 @@
+{
+	"about": {
+		"trial": false,
+		"author": {
+			"name": "EMQ",
+			"email": "contact@emqx.io",
+			"company": "EMQ Technologies Co., Ltd",
+			"website": "https://www.emqx.io"
+		},
+		"description": {
+			"en_US": "Example python plugin for peak vally calculation",
+			"zh_CN": "示例python插件用于峰谷值统计"
+		}
+	},
+	"functions": [
+		{
+			"name": "peakvallydet",
+			"example": "peakvallydet(data, thresh)",
+			"hint": {
+				"en_US": "Apply peak vally calculation",
+				"zh_CN": "峰谷值统计。"
+			},
+			"args": [
+				{
+					"name": "inputData",
+					"hidden": true,
+					"optional": false,
+					"control": "text",
+					"type": "string",
+					"hint": {
+						"en_US": "Input data",
+						"zh_CN": "用户输入数据"
+					},
+					"label": {
+						"en_US": "Input data",
+						"zh_CN": "用户输入数据"
+					},
+					"values": []
+				},
+				{
+					"name": "thresh",
+					"optional": false,
+					"control": "text",
+					"type": "int",
+					"hint": {
+						"en_US": "The value is 0-1, float, indicating that the peak and trough are judged by the percentage of the highest value.",
+						"zh_CN": "取值为0-1，float，表示以最值的百分比作为判断波峰波谷"
+					},
+					"label": {
+						"en_US": "Threshold percentage",
+						"zh_CN": "阈值百分比"
+					}
+				}
+			],
+			"outputs": [
+				{
+					"label": {
+						"en_US": "Output",
+						"zh_CN": "输出"
+					},
+					"value": "peakvallydet"
+				}
+			],
+			"node": {
+				"category": "CharacteristicsStatistics",
+				"icon": "iconPath",
+				"label": {
+					"en_US": "peakvallydet",
+					"zh_CN": "peakvallydet"
+				}
+			}
+		}
+	]
+}

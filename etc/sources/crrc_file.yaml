@@ -1,0 +1,9 @@
+#Global Zmq configurations
+default:
+  file: etc/data.txt
+  length: 100
+  samplerate: 100
+  interval: 1
+  hatId: 322
+  address: 1
+  channel: 1

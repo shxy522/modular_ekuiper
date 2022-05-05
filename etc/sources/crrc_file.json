@@ -1,0 +1,51 @@
+{
+	"about": {
+		"trial": true,
+		"author": {
+			"name": "EMQ",
+			"email": "contact@emqx.io",
+			"company": "EMQ Technologies Co., Ltd",
+			"website": "https://www.emqx.io"
+		},
+		"helpUrl": {
+			"en_US": "https://github.com/lf-edge/ekuiper/blob/master/docs/en_US/plugins/sinks/zmq.md",
+			"zh_CN": "https://github.com/lf-edge/ekuiper/blob/master/docs/zh_CN/plugins/sinks/zmq.md"
+		},
+		"description": {
+			"en_US": "This a demo 0MQ sink plugin, it cannot be used in production env.",
+			"zh_CN": "本插件为演示 ZMQ 数据发送插件，不能使用在生产环境中"
+		}
+	},
+	"properties": {
+		"default": [
+			{
+				"name": "file",
+				"default": "etc/data.txt",
+				"optional": false,
+				"control": "text",
+				"type": "string",
+				"hint": {
+					"en_US": "The path of the signal file",
+					"zh_CN": "信号文件的路径"
+				},
+				"label": {
+					"en_US": "Signal file",
+					"zh_CN": "信号文件地址"
+				}
+			},{
+				"name": "length",
+				"default": "100",
+				"optional": false,
+				"control": "text",
+				"type": "number",
+				"hint": {
+					"en_US": "The length of signals to read",
+					"zh_CN": "数据流长度"
+				},
+				"label": {
+					"en_US": "Signal length",
+					"zh_CN": "数据流长度"
+				}
+		}]
+	}
+}

@@ -1,0 +1,31 @@
+{
+  "version": "v1.0.0",
+  "language": "python",
+  "executable": "main.py",
+  "sources": [
+    "crrc_zmq",
+    "crrc_file"
+  ],
+  "sinks": [
+    "plot"
+  ],
+  "functions": [
+    "butterworth",
+    "chebyshev",
+    "datasmooth",
+    "fftpower",
+    "fftamp",
+    "peakvallydet",
+    "listaverage",
+    "listmin",
+    "listmax",
+    "listamp",
+    "listrms",
+    "listvariance",
+    "liststandarddeviation",
+    "cleandrop",
+    "cleannormal",
+    "cleansort",
+    "dimensionreduction"
+  ]
+}

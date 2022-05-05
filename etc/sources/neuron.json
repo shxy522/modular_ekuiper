@@ -47,7 +47,7 @@
     }
   ],
   "node": {
-    "category": "source",
+    "category": "EdgeServices",
     "icon": "iconPath",
     "label": {
       "en_US": "Neuron",

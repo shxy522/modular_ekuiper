@@ -32,7 +32,8 @@ type (
 		Libs       []string                `json:"libs"`
 		DataSource interface{}             `json:"dataSource,omitempty"`
 		ConfKeys   map[string][]*fileField `json:"properties"`
-		Node       interface{}             `json:"node"`
+		Node       *fileNode               `json:"node"`
+		Outputs  []interface{}           `json:"outputs"`
 	}
 	uiSource struct {
 		About      *about             `json:"about"`
@@ -42,6 +43,7 @@ type (
 		Node       interface{}        `json:"node"`
 		isScan     bool
 		isLookup   bool
+		Outputs  []interface{}      `json:"outputs"`
 	}
 )
 
@@ -56,6 +58,10 @@ func newUiSource(fi *fileSource, isScan bool, isLookup bool) (*uiSource, error) 
 	ui.Node = fi.Node
 	if fi.DataSource != nil {
 		ui.DataSource = fi.DataSource
+	}
+	ui.Outputs = make([]interface{}, len(fi.Outputs))
+	for k, field := range fi.Outputs {
+		ui.Outputs[k] = field
 	}
 	ui.ConfKeys = make(map[string][]field)
 	for k, fields := range fi.ConfKeys {

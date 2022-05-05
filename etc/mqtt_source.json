@@ -258,7 +258,7 @@
 		}
 	],
 	"node": {
-		"category": "source",
+		"category": "IdsProtocolBus",
 		"icon": "iconPath",
 		"label": {
 			"en_US": "MQTT",

@@ -1,0 +1,146 @@
+{
+	"about": {
+		"trial": false,
+		"author": {
+			"name": "EMQ",
+			"email": "contact@emqx.io",
+			"company": "EMQ Technologies Co., Ltd",
+			"website": "https://www.emqx.io"
+		},
+		"description": {
+			"en_US": "Example python plugin for butterworth filter",
+			"zh_CN": "示例python插件IRR滤波-巴特沃斯滤波"
+		}
+	},
+	"functions": [{
+		"name": "butterworth",
+		"example": "butterworth(data, sample_rate, filter_band, type, order)",
+		"hint": {
+			"en_US": "Apply butterworth filter",
+			"zh_CN": "巴特沃斯滤波。"
+		},
+		"aggregate": false,
+		"args": [
+			{
+				"name": "inputData",
+				"hidden": true,
+				"optional": false,
+				"control": "text",
+				"type": "string",
+				"hint": {
+					"en": "Input signal data",
+					"zh": "输入信号数据"
+				},
+				"label": {
+					"en": "Input data",
+					"zh": "输入数据"
+				},
+				"values": []
+			},
+			{
+				"name": "fs",
+				"optional": false,
+				"control": "text",
+				"type": "int",
+				"hint": {
+					"en": "Sample rate",
+					"zh": "采样率"
+				},
+				"label": {
+					"en": "Sample rate",
+					"zh": "采样率"
+				}
+			},
+			{
+				"name": "ftype",
+				"optional": false,
+				"control": "select",
+				"type": "int",
+				"hint": {
+					"en": "Filter type",
+					"zh": "滤波器类型"
+				},
+				"label": {
+					"en": "Filter type",
+					"zh": "滤波器类型"
+				},
+				"values": [
+					{
+						"value": 0,
+						"label": {
+							"en": "lowpass",
+							"zh": "低通"
+						}
+					},
+					{
+						"value": 1,
+						"label": {
+							"en": "highpass",
+							"zh": "高通"
+						}
+					},
+					{
+						"value": 3,
+						"label": {
+							"en": "bandpass",
+							"zh": "带通"
+						}
+					},
+					{
+						"value": 4,
+						"label": {
+							"en": "bandstop",
+							"zh": "带阻"
+						}
+					}
+				]
+			},
+			{
+				"name": "freqs",
+				"optional": false,
+				"control": "text",
+				"type": "any",
+				"hint": {
+					"en": "Filter band",
+					"zh": "滤波频率"
+				},
+				"label": {
+					"en": "Filter band",
+					"zh": "滤波频率"
+				}
+			},
+			{
+				"name": "order",
+				"optional": false,
+				"placeholder": 5,
+				"control": "select",
+				"type": "int",
+				"hint": {
+					"en": "Filter order",
+					"zh": "滤波器阶数"
+				},
+				"label": {
+					"en": "Filter order",
+					"zh": "滤波器阶数"
+				}
+			}
+		],
+		"outputs": [
+			{
+				"label": {
+					"en_US": "Output",
+					"zh_CN": "输出"
+				},
+				"value": "accumulateWordCount"
+			}
+		],
+		"node": {
+			"category": "Filtering",
+			"icon": "iconPath",
+			"label": {
+				"en_US": "butterworth",
+				"zh_CN": "butterworth"
+			}
+		}
+	}]
+}
