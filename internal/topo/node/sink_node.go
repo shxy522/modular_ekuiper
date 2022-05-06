@@ -337,7 +337,14 @@ func doCollect(ctx api.StreamContext, sink api.Sink, item interface{}, sendManag
 
 func doCollectMaps(ctx api.StreamContext, sink api.Sink, sconf *SinkConf, outs []map[string]interface{}, sendManager *sinkUtil.SendManager, stats metric.StatManager) error {
 	if !sconf.SendSingle {
-		return doCollectData(ctx, sink, outs, sendManager, stats)
+		e := doCollectData(ctx, sink, outs, sendManager, stats)
+		str, _, err := ctx.TransformOutput(outs)
+		if err != nil {
+			stats.SetOutData(err.Error())
+		} else {
+			stats.SetOutData(string(str))
+		}
+		return e
 	} else {
 		var err error
 		for _, d := range outs {
@@ -348,6 +355,12 @@ func doCollectMaps(ctx api.StreamContext, sink api.Sink, sconf *SinkConf, outs [
 			newErr := doCollectData(ctx, sink, d, sendManager, stats)
 			if newErr != nil {
 				err = newErr
+			}
+			str, _, err := ctx.TransformOutput(d)
+			if err != nil {
+				stats.SetOutData(err.Error())
+			} else {
+				stats.SetOutData(string(str))
 			}
 		}
 		return err

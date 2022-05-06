@@ -15,6 +15,7 @@
 package xsql
 
 import (
+	"encoding/json"
 	"strings"
 	"sync"
 
@@ -375,6 +376,14 @@ func (t *Tuple) ToMap() map[string]interface{} {
 		t.AffiliateRow.MergeMap(t.cachedMap)
 	}
 	return t.cachedMap
+}
+
+func (t *Tuple) String() string {
+	b, err := json.Marshal(t.ToMap())
+	if err != nil {
+		return err.Error()
+	}
+	return string(b)
 }
 
 func (t *Tuple) Meta(key, table string) (interface{}, bool) {
