@@ -1,0 +1,118 @@
+{
+  "nodeType": "function",
+  "about": {
+    "trial": false,
+    "installed": false,
+		"author": {
+      "name": "EMQ",
+      "email": "contact@emqx.io",
+      "company": "EMQ Technologies Co., Ltd",
+      "website": "https://www.emqx.io"
+    },
+		"helpUrl": null,
+		"description": {
+      "en_US": "Data dimensionality reduction processing",
+      "zh_CN": "数据降维处理"
+    }
+  },
+  "functions": [{
+    "name": "dimensionreduction",
+    "aggregate": false,
+    "example": "dimensionreduction(array, compression_ratio, method)",
+   "hint": {
+      "en_US": "Data dimensionality reduction processing",
+      "zh_CN": "数据降维处理"
+    },
+    "args": [{
+      "name": "inputData",
+      "hidden": true,
+      "optional": false,
+      "control": "text",
+      "type": "string",
+      "hint": {
+        "en_US": "Input data",
+        "zh_CN": "用户输入数据"
+      },
+      "label": {
+        "en_US": "Input data",
+        "zh_CN": "用户输入数据"
+      },
+      "values": []
+    },
+    {
+      "name": "compression_ratio",
+      "optional": false,
+      "control": "text",
+      "type": "int",
+      "hint": {
+        "en_US": "Compression ratio",
+        "zh_CN": "压缩比例"
+      },
+      "label": {
+        "en_US": "Compression ratio",
+        "zh_CN": "压缩比例"
+      }
+    },
+    {
+      "name": "dimensionreduction",
+      "optional": false,
+      "placeholder": 0,
+      "control": "select",
+      "type": "int",
+      "hint": {
+        "en_US": "Dimension reduction method",
+        "zh_CN": "降维方式"
+      },
+      "label": {
+        "en_US": "Dimension reduction method",
+        "zh_CN": "降维方式"
+      },
+      "values": [{
+        "value": 0,
+        "label": {
+          "en_US": "mean",
+          "zh_CN": "均值"
+        }
+      }, {
+        "value": 1,
+        "label": {
+          "en_US": "sum",
+          "zh_CN": "总和"
+        }
+      }, {
+        "value": 2,
+        "label": {
+          "en_US": "maximum",
+          "zh_CN": "最大"
+        }
+      }, {
+        "value": 3,
+        "label": {
+          "en_US": "minimum",
+          "zh_CN": "最小"
+        }
+      }, {
+        "value": 4,
+        "label": {
+          "en_US": "K-means",
+          "zh_CN": "K-均值"
+        }
+      }]
+    }],
+   "outputs": [{
+      "label": {
+        "en_US": "Output",
+        "zh_CN": "输出"
+      },
+      "value": "dimensionreduction"
+    }],
+    "node": {
+      "category": "SignalPreProcessing",
+      "icon": "",
+     "label": {
+        "en_US": "Data dimensionality reduction processing",
+        "zh_CN": "数据降维处理"
+      }
+    }
+  }]
+}

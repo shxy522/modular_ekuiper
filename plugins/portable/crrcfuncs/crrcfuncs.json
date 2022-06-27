@@ -1,0 +1,24 @@
+{
+  "version": "v1.0.0",
+  "language": "python",
+  "executable": "main.py",
+  "sources": [],
+  "sinks": [],
+  "functions": [
+    "chebyshev",
+    "datasmooth",
+    "fftpower",
+    "peakvallydet",
+    "listaverage",
+    "listmin",
+    "listmax",
+    "listamp",
+    "listrms",
+    "listvariance",
+    "liststandarddeviation",
+    "cleandrop",
+    "cleannormal",
+    "cleansort",
+    "dimensionreduction"
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "nodeType": "function",
+  "about": {
+    "trial": false,
+    "installed": false,
+		"author": {
+      "name": "EMQ",
+      "email": "contact@emqx.io",
+      "company": "EMQ Technologies Co., Ltd",
+      "website": "https://www.emqx.io"
+    },
+    "description": {
+      "en_US": "Sort function",
+      "zh_CN": "排序函数"
+    },
+		"helpUrl": null
+  },
+  "functions": [{
+    "name": "cleansort",
+    "example": "cleansort(array, range, sort_type)",
+    "aggregate": false,
+    "hint": {
+      "en_US": "Sort function",
+      "zh_CN": "排序函数"
+    },
+    "args": [{
+      "name": "inputData",
+      "hidden": true,
+      "optional": false,
+      "control": "text",
+      "type": "string",
+      "hint": {
+        "en_US": "Input data",
+        "zh_CN": "用户输入数据"
+      },
+      "label": {
+        "en_US": "Input data",
+        "zh_CN": "用户输入数据"
+      },
+      "values": []
+    },
+    {
+      "name": "min",
+      "optional": false,
+      "control": "text",
+      "type": "int",
+      "hint": {
+        "en_US": "Minimum value",
+        "zh_CN": "取值范围下限"
+      },
+      "label": {
+        "en_US": "Minimum value",
+        "zh_CN": "取值范围下限"
+      }
+    },
+    {
+      "name": "max",
+      "optional": false,
+      "control": "text",
+      "type": "int",
+      "hint": {
+        "en_US": "Maximum value",
+        "zh_CN": "取值范围上限"
+      },
+      "label": {
+        "en_US": "Maximum value",
+        "zh_CN": "取值范围上限"
+      }
+    },
+    {
+      "name": "sort_type",
+      "optional": false,
+      "placeholder": 0,
+      "control": "select",
+      "type": "int",
+      "hint": {
+        "en_US": "Sort type",
+        "zh_CN": "排序类型"
+      },
+      "label": {
+        "en_US": "Sort type",
+        "zh_CN": "排序类型"
+      },
+      "values": [{
+          "value": 0,
+          "label": {
+            "en_US": "Sort by ascending",
+            "zh_CN": "升序排列"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en_US": "Sort by descending",
+            "zh_CN": "降序排列"
+          }
+        }
+      ]
+    }],
+   "outputs": [{
+      "label": {
+        "en_US": "Output",
+        "zh_CN": "输出"
+      },
+      "value": "cleansort"
+    }],
+    "node": {
+      "category": "SignalPreProcessing",
+      "icon": "",
+     "label": {
+        "en_US": "Sort Function",
+        "zh_CN": "排序函数"
+      }
+    }
+  }]
+}

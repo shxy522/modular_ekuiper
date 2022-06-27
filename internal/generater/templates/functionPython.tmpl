@@ -1,0 +1,27 @@
+# coding=utf-8
+from typing import List, Any
+from ekuiper import Function, Context
+
+from {{ .imports }} import {{.functionName}}
+
+class {{.functionClassName}}(Function):
+
+    def __init__(self):
+        pass
+
+    def validate(self, args: List[Any]):
+        if len(args) != {{.parasLen}}:
+            return "require {{.parasLen}} parameters"
+        return ""
+
+    def exec(self, args: List[Any], ctx: Context):
+        # todo: type validation
+        return {{.functionCallName}}
+
+    def is_aggregate(self):
+        return {{.isAggr}}
+
+
+{{.functionWrapperName}} = {{.functionClassName}}()
+
+

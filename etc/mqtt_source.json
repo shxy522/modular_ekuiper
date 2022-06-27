@@ -30,21 +30,6 @@
 	},
 	"properties": {
 		"default": [{
-			"name": "connectionSelector",
-			"default": "",
-			"optional": true,
-			"control": "select",
-			"type": "string",
-			"values": [],
-			"hint": {
-				"en_US": "specify the source to reuse the connection defined in connection configuration.",
-				"zh_CN": "此数据源复用 connection 中定义的连接"
-			},
-			"label": {
-				"en_US": "Connection selector",
-				"zh_CN": "复用连接信息"
-			}
-		}, {
 			"name": "server",
 			"default": "tcp://127.0.0.1:1883",
 			"optional": true,

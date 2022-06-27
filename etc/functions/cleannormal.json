@@ -1,0 +1,98 @@
+{
+  "nodeType": "function",
+  "about": {
+    "trial": false,
+    "installed": false,
+		"author": {
+      "name": "EMQ",
+      "email": "contact@emqx.io",
+      "company": "EMQ Technologies Co., Ltd",
+      "website": "https://www.emqx.io"
+    },
+		"helpUrl": {
+			"en_US": "https://github.com/lf-edge/ekuiper/blob/master/docs/en_US/sqls/windows.md",
+			"zh_CN": "https://github.com/lf-edge/ekuiper/blob/master/docs/zh_CN/sqls/windows.md"
+		},
+		"description": {
+      "en_US": "normalization function",
+      "zh_CN": "归一化函数"
+    }
+  },
+  "functions": [{
+    "name": "cleannormal",
+    "aggregate": false,
+    "example": "cleannormal(data, regression_type)",
+    "hint": {
+      "en_US": "Normalization function",
+      "zh_CN": "归一化函数"
+    },
+    "args": [{
+      "name": "inputData",
+      "hidden": true,
+      "optional": false,
+      "control": "text",
+      "type": "string",
+      "hint": {
+        "en_US": "Input signal data",
+        "zh_CN": "输入信号数据"
+      },
+      "label": {
+        "en_US": "Input data",
+        "zh_CN": "输入数据"
+      },
+      "values": []
+    },
+    {
+      "name": "regression_type",
+      "optional": false,
+      "placeholder": 5,
+      "control": "select",
+      "type": "int",
+      "hint": {
+        "en_US": "regression type",
+        "zh_CN": "回归类型"
+      },
+      "label": {
+        "en_US": "regression type",
+        "zh_CN": "回归类型"
+      },
+      "values": [{
+          "value": 0,
+          "label": {
+            "en_US": "Maximum and minimum normalization",
+            "zh_CN": "最大最小值标准化"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en_US": "Z_Score normalization",
+            "zh_CN": "Z_Score标准化"
+          }
+        },
+        {
+          "value": 2,
+          "label": {
+            "en_US": "sigmoid",
+            "zh_CN": "sigmoid"
+          }
+        }
+      ]
+    }],
+    "outputs": [{
+      "label": {
+        "en_US": "Output",
+        "zh_CN": "输出"
+      },
+      "value": "cleannormal"
+    }],
+    "node": {
+      "category": "SignalPreProcessing",
+      "icon": "",
+      "label": {
+        "en_US": "Normalization Function",
+        "zh_CN": "归一化函数"
+      }
+    }
+  }]
+}

@@ -1,0 +1,168 @@
+{
+  "nodeType": "function",
+  "about": {
+    "trial": false,
+    "installed": false,
+		"author": {
+      "name": "EMQ",
+      "email": "contact@emqx.io",
+      "company": "EMQ Technologies Co., Ltd",
+      "website": "https://www.emqx.io"
+    },
+    "description": {
+        "en_US": "Spectrum analysis (power spectrum)",
+        "zh_CN": "频谱分析（功率谱）"
+      },
+		"helpUrl": null
+  },
+  "functions": [{
+    "name": "fftpower",
+    "example": "fftpower(signal, sample_rate, unit, method, type)",
+    "aggregate": false,
+    "hint": {
+      "en_US": "Spectrum analysis (power spectrum)",
+      "zh_CN": "频谱分析（功率谱）"
+    },
+   "args": [{
+      "name": "inputData",
+      "hidden": true,
+      "optional": false,
+      "control": "text",
+      "type": "string",
+      "hint": {
+        "en_US": "Input data",
+        "zh_CN": "用户输入数据"
+      },
+      "label": {
+        "en_US": "Input data",
+        "zh_CN": "用户输入数据"
+      },
+      "values": []
+    },
+    {
+      "name": "sample_rate",
+      "optional": false,
+      "control": "text",
+      "type": "int",
+      "hint": {
+        "en_US": "Sample rate",
+        "zh_CN": "采样频率"
+      },
+      "label": {
+        "en_US": "Sample rate",
+        "zh_CN": "采样频率"
+      }
+    },
+    {
+      "name": "unit",
+      "optional": false,
+      "placeholder": 0,
+      "control": "select",
+      "type": "int",
+      "hint": {
+        "en_US": "Unit",
+        "zh_CN": "单位"
+      },
+      "label": {
+        "en_US": "Unit",
+        "zh_CN": "单位"
+      },
+      "values": [{
+          "value": 0,
+          "label": {
+            "en_US": "W/Hz",
+            "zh_CN": "W/Hz"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en_US": "dB",
+            "zh_CN": "dB"
+          }
+        }
+      ]
+    },
+    {
+      "name": "method",
+      "optional": false,
+      "placeholder": 0,
+      "control": "select",
+      "type": "int",
+      "hint": {
+        "en_US": "method",
+        "zh_CN": "方法"
+      },
+      "label": {
+        "en_US": "method",
+        "zh_CN": "方法"
+      },
+      "values": [{
+          "value": 0,
+          "label": {
+            "en_US": "direct method",
+            "zh_CN": "直接法"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en_US": "indirect method",
+            "zh_CN": "间接法"
+          }
+        }
+      ]
+    },
+    {
+      "name": "type",
+      "optional": false,
+      "placeholder": 0,
+      "control": "select",
+      "type": "int",
+      "hint": {
+        "en_US": "Type",
+        "zh_CN": "谱类型"
+      },
+      "label": {
+        "en_US": "Type",
+        "zh_CN": "谱类型"
+      },
+      "values": [{
+          "value": 0,
+          "label": {
+            "en_US": "one-sided spectrum",
+            "zh_CN": "单边谱"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en_US": "bilateral spectrum",
+            "zh_CN": "双边谱"
+          }
+        }
+      ]
+    }],
+    "outputs": [{
+      "label": {
+        "en_US": "Frequency list",
+        "zh": "频率列表"
+      },
+      "value": "fftamp[0]"
+    }, {
+      "label": {
+        "en_US": "Power spectrum list",
+        "zh": "功率谱列表"
+      },
+      "value": "fftamp[1]"
+    }],
+    "node": {
+      "category": "SpectrumAnalysis",
+      "icon": "",
+      "label": {
+        "en_US": "Spectrum analysis (power spectrum)",
+        "zh_CN": "频谱分析（功率谱）"
+      }
+    }
+  }]
+}

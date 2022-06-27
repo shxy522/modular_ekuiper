@@ -1,0 +1,158 @@
+{
+  "nodeType": "function",
+  "about": {
+    "trial": false,
+    "installed": false,
+		"author": {
+      "name": "EMQ",
+      "email": "contact@emqx.io",
+      "company": "EMQ Technologies Co., Ltd",
+      "website": "https://www.emqx.io"
+    },
+    "description": {
+      "en_US": "chebyshev filter",
+      "zh_CN": "使用切比雪夫滤波"
+    },
+		"helpUrl": null
+  },
+  "functions": [{
+    "name": "chebyshev",
+    "example": "chebyshev(data, fs, ftype, freqs, order, rp)",
+    "aggregate": false,
+   "hint": {
+      "en_US": "Chebyshev filter design",
+      "zh_CN": "使用切比雪夫滤波"
+    },
+   "args": [{
+      "name": "inputData",
+      "hidden": true,
+      "optional": false,
+      "control": "text",
+      "type": "string",
+      "hint": {
+        "en_US": "Input signal data",
+        "zh_CN": "输入信号数据"
+      },
+      "label": {
+        "en_US": "Input data",
+        "zh_CN": "输入数据"
+      },
+      "values": []
+    },
+    {
+      "name": "fs",
+      "optional": false,
+      "control": "text",
+      "type": "int",
+      "hint": {
+        "en_US": "Sample rate",
+        "zh_CN": "采样率"
+      },
+      "label": {
+        "en_US": "Sample rate",
+        "zh_CN": "采样率"
+      }
+    },
+    {
+      "name": "ftype",
+      "optional": false,
+      "control": "select",
+      "type": "int",
+      "hint": {
+        "en_US": "Filter type",
+        "zh_CN": "滤波器类型"
+      },
+      "label": {
+        "en_US": "Filter type",
+        "zh_CN": "滤波器类型"
+      },
+      "values": [{
+          "value": 0,
+          "label": {
+            "en_US": "lowpass",
+            "zh_CN": "低通"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en_US": "highpass",
+            "zh_CN": "高通"
+          }
+        },
+        {
+          "value": 3,
+          "label": {
+            "en_US": "bandpass",
+            "zh_CN": "带通"
+          }
+        },
+        {
+          "value": 4,
+          "label": {
+            "en_US": "bandstop",
+            "zh_CN": "带阻"
+          }
+        }
+      ]
+    },
+    {
+      "name": "freqs",
+      "optional": false,
+      "control": "text",
+      "type": "any",
+      "hint": {
+        "en_US": "Filter band",
+        "zh_CN": "滤波频率"
+      },
+      "label": {
+        "en_US": "Filter band",
+        "zh_CN": "滤波频率"
+      }
+    },
+    {
+      "name": "order",
+      "optional": false,
+      "placeholder": 5,
+      "control": "select",
+      "type": "int",
+      "hint": {
+        "en_US": "Filter order",
+        "zh_CN": "滤波器阶数"
+      },
+      "label": {
+        "en_US": "Filter order",
+        "zh_CN": "滤波器阶数"
+      }
+    },
+    {
+      "name": "rp",
+      "optional": false,
+      "control": "text",
+      "type": "int",
+      "hint": {
+        "en_US": "Passband ripple",
+        "zh_CN": "增益"
+      },
+      "label": {
+        "en_US": "Passband ripple",
+        "zh_CN": "增益"
+      }
+    }],
+    "outputs": [{
+      "label": {
+        "en_US": "Output",
+        "zh_CN": "输出"
+      },
+      "value": "chebyshev"
+    }],
+    "node": {
+      "category": "Filtering",
+      "icon": "",
+     "label": {
+        "en_US": "Chebyshev Filter",
+        "zh_CN": "使用切比雪夫滤波"
+      }
+    }
+  }]
+}

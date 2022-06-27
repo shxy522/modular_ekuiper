@@ -71,8 +71,8 @@ type (
 		Node   *fileNode    `json:"node"`
 	}
 	language struct {
-		English string `json:"en"`
-		Chinese string `json:"zh"`
+		English string `json:"en_US"`
+		Chinese string `json:"zh_CN"`
 	}
 	about struct {
 		Trial       bool      `json:"trial"`
@@ -95,7 +95,7 @@ type (
 	}
 	node struct {
 		Category string    `json:"category"`
-		Icon     string    `json:"iconPath"`
+		Icon     string    `json:"icon"`
 		Label    *language `json:"label"`
 	}
 	uiSink struct {

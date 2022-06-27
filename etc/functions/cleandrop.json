@@ -1,0 +1,72 @@
+{
+  "nodeType": "function",
+  "about": {
+    "trial": false,
+    "installed": false,
+		"author": {
+      "name": "EMQ",
+      "email": "contact@emqx.io",
+      "company": "EMQ Technologies Co., Ltd",
+      "website": "https://www.emqx.io"
+    },
+    "description": {
+      "en_US": "Data downsampling",
+      "zh_CN": "数据降采样"
+    },
+		"helpUrl": null
+  },
+  "functions": [{
+    "name": "cleandrop",
+    "example": "cleandrop(data, compression_ratio)",
+    "aggregate": false,
+    "hint": {
+      "en_US": "Data downsampling",
+      "zh_CN": "数据降采样"
+    },
+    "args": [{
+      "name": "inputData",
+      "hidden": true,
+      "optional": false,
+      "control": "text",
+      "type": "string",
+      "hint": {
+        "en_US": "Input signal data",
+        "zh_CN": "输入信号数据"
+      },
+      "label": {
+        "en_US": "Input data",
+        "zh_CN": "输入数据"
+      },
+      "values": []
+    },
+    {
+      "name": "compression_ratio",
+      "optional": false,
+      "control": "text",
+      "type": "int",
+      "hint": {
+        "en_US": "Compression ratio",
+        "zh_CN": "压缩比例"
+      },
+      "label": {
+        "en_US": "Compression ratio",
+        "zh_CN": "压缩比例"
+      }
+    }],
+   "outputs": [{
+      "label": {
+        "en_US": "Output",
+        "zh_CN": "输出"
+      },
+      "value": "cleandrop"
+    }],
+    "node": {
+      "category": "SignalPreProcessing",
+      "icon": "",
+     "label": {
+        "en_US": "Data downsampling",
+        "zh_CN": "数据降采样"
+      }
+    }
+  }]
+}

@@ -1,0 +1,72 @@
+{
+  "nodeType": "function",
+  "about": {
+    "trial": false,
+    "installed": false,
+		"author": {
+      "name": "EMQ",
+      "email": "contact@emqx.io",
+      "company": "EMQ Technologies Co., Ltd",
+      "website": "https://www.emqx.io"
+    },
+   "description": {
+      "en_US": "Spoke value statistics",
+      "zh_CN": "辐值统计"
+    },
+		"helpUrl": null
+  },
+  "functions": [{
+    "name": "listamp",
+    "example": "listamp(data, param1)",
+    "aggregate": false,
+    "hint": {
+      "en_US": "Spoke value statistics",
+      "zh_CN": "辐值统计"
+    },
+   "args": [{
+      "name": "inputData",
+      "hidden": true,
+      "optional": false,
+      "control": "text",
+      "type": "string",
+      "hint": {
+        "en_US": "Input data",
+        "zh_CN": "用户输入数据"
+      },
+      "label": {
+        "en_US": "Input data",
+        "zh_CN": "用户输入数据"
+      },
+      "values": []
+    },
+    {
+      "name": "calCount",
+      "optional": false,
+      "control": "text",
+      "type": "int",
+      "hint": {
+        "en_US": "Average coefficient",
+        "zh_CN": "均分系数"
+      },
+      "label": {
+        "en_US": "Average coefficient",
+        "zh_CN": "均分系数"
+      }
+    }],
+   "outputs": [{
+      "label": {
+        "en_US": "Output",
+        "zh_CN": "输出"
+      },
+      "value": "listamp"
+    }],
+    "node": {
+      "category": "CharacteristicsStatistics",
+      "icon": "",
+      "label": {
+        "en_US": "Spoke value statistics",
+        "zh_CN": "辐值统计"
+      }
+    }
+  }]
+}

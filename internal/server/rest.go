@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -34,6 +35,7 @@ import (
 	"golang.org/x/text/language"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/generater"
 	"github.com/lf-edge/ekuiper/internal/meta"
 	"github.com/lf-edge/ekuiper/internal/pkg/httpx"
 	"github.com/lf-edge/ekuiper/internal/processor"
@@ -146,6 +148,8 @@ func createRestServer(ip string, port int, needToken bool) *http.Server {
 	r.HandleFunc("/data/export", configurationExportHandler).Methods(http.MethodGet, http.MethodPost)
 	r.HandleFunc("/data/import", configurationImportHandler).Methods(http.MethodPost)
 	r.HandleFunc("/data/import/status", configurationStatusHandler).Methods(http.MethodGet)
+	r.HandleFunc("/packager/python", SourceCodeHandler).Methods(http.MethodPost)
+	r.PathPrefix("/web/").Handler(http.StripPrefix("/web/", http.FileServer(http.Dir("web"))))
 	// Register extended routes
 	for k, v := range components {
 		logger.Infof("register rest endpoint for component %s", k)
@@ -166,6 +170,25 @@ func createRestServer(ip string, port int, needToken bool) *http.Server {
 	}
 	server.SetKeepAlivesEnabled(false)
 	return server
+}
+
+func SourceCodeHandler(w http.ResponseWriter, r *http.Request) {
+	all, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	switch r.Method {
+	case http.MethodPost:
+		dwnpath, err := generater.PackageSrcCode(all)
+		if err != nil {
+			handleError(w, err, "Invalid body: Error decoding file json", logger)
+			return
+		}
+		jsonResponse(dwnpath, w, logger)
+	}
 }
 
 type fileContent struct {

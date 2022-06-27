@@ -1,0 +1,18 @@
+{
+  "version": "{{.version}}",
+  "language": "python",
+  "executable": "main.py",
+  "sources": [
+  ],
+  "sinks": [
+  ],
+  "functions": [
+    {{ range $index, $value := .functions }}
+      {{if eq $index 0 -}}
+        "{{$value}}"
+      {{- else -}}
+        ,"{{$value}}"
+      {{ end }}
+    {{end }}
+  ]
+}

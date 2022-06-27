@@ -1,0 +1,105 @@
+{
+  "nodeType": "function",
+  "about": {
+    "trial": false,
+    "installed": false,
+		"author": {
+      "name": "EMQ",
+      "email": "contact@emqx.io",
+      "company": "EMQ Technologies Co., Ltd",
+      "website": "https://www.emqx.io"
+    },
+		"helpUrl": null,
+		"description": {
+      "en_US": "Polynomial Fitting Smoothing",
+      "zh_CN": "多项式拟合平滑法"
+    }
+  },
+
+  "functions": [{
+    "name": "datasmooth",
+    "example": "datasmooth(data, degree)",
+    "aggregate": false,
+    "hint": {
+      "en_US": "Polynomial Fitting Smoothing",
+      "zh_CN": "多项式拟合平滑法"
+    },
+    "args": [{
+      "name": "inputData",
+      "hidden": true,
+      "optional": false,
+      "control": "text",
+      "type": "string",
+      "hint": {
+        "en_US": "Input data",
+        "zh_CN": "用户输入数据"
+      },
+      "label": {
+        "en_US": "Input data",
+        "zh_CN": "用户输入数据"
+      },
+      "values": []
+      },
+      {
+        "name": "degree",
+        "optional": false,
+        "placeholder": 2,
+        "control": "select",
+        "type": "int",
+        "hint": {
+          "en_US": "Degree of the polynomial used for smoothing",
+          "zh_CN": "平滑程度"
+        },
+        "label": {
+          "en_US": "Degree of the polynomial used for smoothing",
+          "zh_CN": "平滑程度"
+        },
+        "values": [{
+          "value": 0,
+          "label": {
+            "en_US": "weak",
+            "zh_CN": "弱"
+          }
+        }, {
+          "value": 1,
+          "label": {
+            "en_US": "weaker",
+            "zh_CN": "较弱"
+          }
+        }, {
+          "value": 2,
+          "label": {
+            "en_US": "moderate",
+            "zh_CN": "适中"
+          }
+        }, {
+          "value": 3,
+          "label": {
+            "en_US": "stronger",
+            "zh_CN": "较强"
+          }
+        }, {
+          "value": 4,
+          "label": {
+            "en_US": "strong",
+            "zh_CN": "强"
+          }
+        }]
+      }],
+    "outputs": [{
+      "label": {
+        "en_US": "Output",
+        "zh_CN": "输出"
+      },
+      "value": "datasmooth"
+    }],
+    "node": {
+      "category": "SignalPreProcessing",
+      "icon": "",
+      "label": {
+        "en_US": "Polynomial Fitting Smoothing",
+        "zh_CN": "多项式拟合平滑法"
+      }
+    }
+  }]
+}

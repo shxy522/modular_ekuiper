@@ -1,0 +1,13 @@
+{
+  "version": "v1.0.0",
+  "language": "python",
+  "executable": "main.py",
+  "sources": [
+    "crrc_zmq",
+    "crrc_file"
+  ],
+  "sinks": [
+  ],
+  "functions": [
+  ]
+}
