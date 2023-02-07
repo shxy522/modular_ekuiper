@@ -80,6 +80,7 @@ type (
 		Name        string        `json:"name"`
 		Example     string        `json:"example"`
 		FilesPath   string        `json:"filesPath"`
+		SoPath      string        `json:"soPath"`
 		IsAggregate bool          `json:"aggregate"`
 		Hint        language      `json:"hint"`
 		Args        []interface{} `json:"args"`
@@ -116,6 +117,7 @@ type PythonCodePackage struct {
 	HostIP                 string
 	wrapperFileInstanceMap map[string]string
 	sourceFilesPath        []string
+	soFilesPath            []string
 	EtcDir                 string
 }
 
@@ -175,6 +177,22 @@ func (p *PythonCodePackage) clean() {
 
 func (p *PythonCodePackage) copySourcePythonFile() error {
 	for _, v := range p.sourceFilesPath {
+		baseName := filepath.Base(v)
+		fileContent, err := ioutil.ReadFile(v)
+		if err != nil {
+			return err
+		}
+		configFilePath := p.packageDir + "/" + baseName
+		err = ioutil.WriteFile(configFilePath, fileContent, fs.ModePerm)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (p *PythonCodePackage) copySoFile() error {
+	for _, v := range p.soFilesPath {
 		baseName := filepath.Base(v)
 		fileContent, err := ioutil.ReadFile(v)
 		if err != nil {
@@ -331,6 +349,11 @@ func (f *wrapperFunc) generateFunctionWrapper(p *PythonCodePackage) error {
 		PythonModules = strings.TrimSuffix(baseName, ".py")
 	}
 
+	baseName = filepath.Base(f.SoPath)
+	if strings.HasSuffix(baseName, ".so") {
+		p.soFilesPath = append(p.soFilesPath, f.SoPath)
+	}
+
 	//prepare the config used in template
 	wrapperFileName := f.Name + "_wrapper"
 	var args []string
@@ -415,6 +438,11 @@ func PackageSrcCode(data []byte) (string, error) {
 	}
 
 	err = pck.copySourcePythonFile()
+	if err != nil {
+		return "", err
+	}
+
+	err = pck.copySoFile()
 	if err != nil {
 		return "", err
 	}
