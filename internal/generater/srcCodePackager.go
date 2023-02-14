@@ -93,7 +93,7 @@ type (
 		About          about          `json:"about"`
 		Functions      []*wrapperFunc `json:"functions"`
 		Dependencies   []string       `json:"dependencies"`
-		VirtualEnvType string         `json:"virtual_env_type"`
+		VirtualEnvType string         `json:"virtualEnvType"`
 		Env            string         `json:"env"`
 	}
 )
@@ -312,10 +312,10 @@ func (p *PythonCodePackage) generateJsonConfigFile() error {
 	}
 
 	config := map[string]interface{}{
-		"functions":        funcInstances,
-		"version":          u.Version,
-		"virtual_env_type": u.VirtualEnvType,
-		"env":              u.Env,
+		"functions":      funcInstances,
+		"version":        u.Version,
+		"virtualEnvType": u.VirtualEnvType,
+		"env":            u.Env,
 	}
 
 	var tp *template.Template = nil

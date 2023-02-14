@@ -12,235 +12,28 @@
       "zh_CN": "示例python插件IRR滤波-巴特沃斯滤波"
     }
   },
-  "packageName": "mix",
-  "dependencies": ["numpy==1.22.4", "scipy==1.7.3"],
-  "virtual_env_type": "conda",
-  "env":"gopy",
+  "packageName": "paddle",
+  "dependencies": [],
+  "virtualEnvType": "conda",
+  "env":"paddle_env",
   "functions": [{
-    "name": "apply_butter_filter",
-    "example": "apply_butter_filter(data, sample_rate, filter_band, type, order)",
-    "filesPath": "./testdata/butterFilter.py",
+    "name": "paddle",
+    "example": "paddle()",
+    "filesPath": "/Users/admin/Downloads/docker/paddle_dir/test1.py",
     "aggregate": false,
     "hint": {
       "en_US": "Apply butterworth filter",
       "zh_CN": "巴特沃斯滤波。"
     },
     "args": [
-      {
-        "name": "inputData",
-        "hidden": true,
-        "optional": false,
-        "control": "text",
-        "type": "string",
-        "hint": {
-          "en_US": "Input signal data",
-          "zh_CN": "输入信号数据"
-        },
-        "label": {
-          "en_US": "Input data",
-          "zh_CN": "输入数据"
-        },
-        "values": []
-      },
-      {
-        "name": "fs",
-        "optional": false,
-        "control": "text",
-        "type": "int",
-        "hint": {
-          "en_US": "Sample rate",
-          "zh_CN": "采样率"
-        },
-        "label": {
-          "en_US": "Sample rate",
-          "zh_CN": "采样率"
-        }
-      },
-      {
-        "name": "ftype",
-        "optional": false,
-        "control": "select",
-        "type": "int",
-        "hint": {
-          "en_US": "Filter type",
-          "zh_CN": "滤波器类型"
-        },
-        "label": {
-          "en_US": "Filter type",
-          "zh_CN": "滤波器类型"
-        },
-        "values": [
-          {
-            "value": 0,
-            "label": {
-              "en_US": "lowpass",
-              "zh_CN": "低通"
-            }
-          },
-          {
-            "value": 1,
-            "label": {
-              "en_US": "highpass",
-              "zh_CN": "高通"
-            }
-          },
-          {
-            "value": 3,
-            "label": {
-              "en_US": "bandpass",
-              "zh_CN": "带通"
-            }
-          },
-          {
-            "value": 4,
-            "label": {
-              "en_US": "bandstop",
-              "zh_CN": "带阻"
-            }
-          }
-        ]
-      },
-      {
-        "name": "freqs",
-        "optional": false,
-        "control": "text",
-        "type": "any",
-        "hint": {
-          "en_US": "Filter band",
-          "zh_CN": "滤波频率"
-        },
-        "label": {
-          "en_US": "Filter band",
-          "zh_CN": "滤波频率"
-        }
-      },
-      {
-        "name": "order",
-        "optional": false,
-        "placeholder": 5,
-        "control": "select",
-        "type": "int",
-        "hint": {
-          "en_US": "Filter order",
-          "zh_CN": "滤波器阶数"
-        },
-        "label": {
-          "en_US": "Filter order",
-          "zh_CN": "滤波器阶数"
-        }
-      }
     ],
-    "outputs": [
-      {
-        "label": {
-          "en_US": "Output",
-          "zh_CN": "输出"
-        },
-        "value": "apply_butter_filter"
-      }
-    ],
+    "outputs": [],
     "node": {
       "category": "Filtering",
       "icon": "iconPath",
       "label": {
         "en_US": "butterworth",
         "zh_CN": "巴特沃斯滤波"
-      }
-    }
-  }, {
-    "name": "fftTrans",
-    "example": "fftTrans(signal, sample_rate, type)",
-    "filesPath": "./testdata/fftAmp.py",
-    "hint": {
-      "en_US": "Spectrum analysis (magnitude spectrum)",
-      "zh_CN": "频谱分析(幅值谱)"
-    },
-    "aggregate": false,
-    "args": [
-      {
-        "name": "inputData",
-        "hidden": true,
-        "optional": false,
-        "control": "text",
-        "type": "string",
-        "hint": {
-          "en_US": "Input data",
-          "zh_CN": "用户输入数据"
-        },
-        "label": {
-          "en_US": "Input data",
-          "zh_CN": "用户输入数据"
-        },
-        "values": []
-      },
-      {
-        "name": "sample_rate",
-        "optional": false,
-        "control": "text",
-        "type": "int",
-        "hint": {
-          "en_US": "Sample rate",
-          "zh_CN": "采样频率"
-        },
-        "label": {
-          "en_US": "Sample rate",
-          "zh_CN": "采样频率"
-        }
-      },
-      {
-        "name": "type",
-        "optional": false,
-        "placeholder": 0,
-        "control": "select",
-        "type": "int",
-        "hint": {
-          "en_US": "Type",
-          "zh_CN": "谱类型"
-        },
-        "label": {
-          "en_US": "Type",
-          "zh_CN": "谱类型"
-        },
-        "values": [
-          {
-            "value": 0,
-            "label": {
-              "en_US": "single-sided spectrum",
-              "zh_CN": "单边谱"
-            }
-          },
-          {
-            "value": 1,
-            "label": {
-              "en_US": "double-sided spectrum",
-              "zh_CN": "双边谱"
-            }
-          }
-        ]
-      }
-    ],
-    "outputs": [
-      {
-        "label": {
-          "en_US": "Frequency list",
-          "zh_CN": "频率列表"
-        },
-        "value": "fftTrans[0]"
-      },
-      {
-        "label": {
-          "en_US": "Amplitude list",
-          "zh_CN": "幅值列表"
-        },
-        "value": "fftTrans[1]"
-      }
-    ],
-    "node": {
-      "category": "SpectrumAnalysis",
-      "icon": "iconPath",
-      "label": {
-        "en_US": "fftpower",
-        "zh_CN": "频谱分析/功率谱密度分析"
       }
     }
   }]

@@ -2,7 +2,7 @@
   "version": "{{.version}}",
   "language": "python",
   "executable": "main.py",
-  "virtual_env_type": "{{.virtual_env_type}}",
+  "virtualEnvType": "{{.virtualEnvType}}",
   "env":"{{.env}}",
   "sources": [
   ],
