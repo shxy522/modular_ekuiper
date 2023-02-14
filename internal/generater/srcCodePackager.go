@@ -88,11 +88,13 @@ type (
 		Node        interface{}   `json:"node"`
 	}
 	wrapperFuncs struct {
-		Version      string         `json:"version"`
-		PkgName      string         `json:"packagename"`
-		About        about          `json:"about"`
-		Functions    []*wrapperFunc `json:"functions"`
-		Dependencies []string       `json:"dependencies"`
+		Version        string         `json:"version"`
+		PkgName        string         `json:"packagename"`
+		About          about          `json:"about"`
+		Functions      []*wrapperFunc `json:"functions"`
+		Dependencies   []string       `json:"dependencies"`
+		VirtualEnvType string         `json:"virtual_env_type"`
+		Env            string         `json:"env"`
 	}
 )
 
@@ -310,8 +312,10 @@ func (p *PythonCodePackage) generateJsonConfigFile() error {
 	}
 
 	config := map[string]interface{}{
-		"functions": funcInstances,
-		"version":   u.Version,
+		"functions":        funcInstances,
+		"version":          u.Version,
+		"virtual_env_type": u.VirtualEnvType,
+		"env":              u.Env,
 	}
 
 	var tp *template.Template = nil
