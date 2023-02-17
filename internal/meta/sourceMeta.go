@@ -33,7 +33,7 @@ type (
 		DataSource interface{}             `json:"dataSource,omitempty"`
 		ConfKeys   map[string][]*fileField `json:"properties"`
 		Node       *fileNode               `json:"node"`
-		Outputs  []interface{}           `json:"outputs"`
+		Outputs    []interface{}           `json:"outputs"`
 	}
 	uiSource struct {
 		About      *about             `json:"about"`
@@ -43,7 +43,7 @@ type (
 		Node       interface{}        `json:"node"`
 		isScan     bool
 		isLookup   bool
-		Outputs  []interface{}      `json:"outputs"`
+		Outputs    []interface{} `json:"outputs"`
 	}
 )
 

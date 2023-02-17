@@ -313,6 +313,10 @@ func registerMiscFunc() {
 		conf.Log.Infof("initializing decompress function")
 		return &decompressFunc{}
 	}
+	builtinStatfulFuncs["uploadoss"] = func() api.Function {
+		conf.Log.Infof("initializing uploadoss function")
+		return &ossUploaderFunc{}
+	}
 	builtins["isnull"] = builtinFunc{
 		fType: ast.FuncTypeScalar,
 		exec: func(ctx api.FunctionContext, args []interface{}) (interface{}, bool) {

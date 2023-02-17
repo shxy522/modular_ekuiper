@@ -15,13 +15,17 @@
 package function
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/lf-edge/ekuiper/internal/compressor"
+	"github.com/lf-edge/ekuiper/internal/ossuploader"
 	"github.com/lf-edge/ekuiper/pkg/api"
 	"github.com/lf-edge/ekuiper/pkg/ast"
 	"github.com/lf-edge/ekuiper/pkg/cast"
 	"github.com/lf-edge/ekuiper/pkg/message"
+	"strconv"
+	"time"
 )
 
 type compressFunc struct {
@@ -121,5 +125,76 @@ func (d *decompressFunc) Exec(args []interface{}, ctx api.FunctionContext) (inte
 }
 
 func (d *decompressFunc) IsAggregate() bool {
+	return false
+}
+
+type ossUploaderFunc struct {
+	uploader *ossuploader.AliyunOss
+}
+
+func (c *ossUploaderFunc) Validate(args []interface{}) error {
+	if len(args) != 5 {
+		return fmt.Errorf("The arguments should be at five .")
+	}
+	// for i, a := range args {
+	// 	if ast.IsNumericArg(a) || ast.IsTimeArg(a) || ast.IsBooleanArg(a) {
+	// 		return ProduceErrInfo(i, "string")
+	// 	}
+	// }
+	return nil
+}
+
+func (c *ossUploaderFunc) Exec(args []interface{}, ctx api.FunctionContext) (interface{}, bool) {
+
+	endpoint, ok := args[1].(string)
+	if !ok {
+		return fmt.Errorf("oss function is missing property endpoint"), false
+	}
+	accessKeyId, ok := args[2].(string)
+	if !ok {
+		return fmt.Errorf("oss function is missing property accessKeyId"), false
+	}
+	accessKeySecret, ok := args[3].(string)
+	if !ok {
+		return fmt.Errorf("oss function is missing property accessKeySecret"), false
+	}
+	bucketName, ok := args[4].(string)
+	if !ok {
+		return fmt.Errorf("oss function is missing property bucketName"), false
+	}
+
+	if c.uploader == nil {
+		c.uploader = ossuploader.GetUploader(endpoint, accessKeyId, accessKeySecret, bucketName)
+	}
+
+	//流程名模块名时间
+	tU := time.Now().Unix()
+	//流程名
+	var flowName string = ctx.GetRuleId()
+	//模块名
+	var modularName string = ctx.GetOpId()
+	//文件名为流程名模块名时间
+	var objectName string = flowName + "_" + modularName + "_" + strconv.FormatInt(tU, 10)
+	user := make(map[string]string)
+	//这里全部存储是因为aliyun不支持url下载
+	user["endpoint"] = endpoint
+	user["accessKeyId"] = accessKeyId
+	user["accessKeySecret"] = accessKeySecret
+	user["bucketName"] = bucketName
+	user["objectName"] = objectName
+	jsonStr, err := json.Marshal(user)
+	if err != nil {
+		return fmt.Errorf("The arguments should be at five ."), false
+	}
+	errOS := c.uploader.UploadString(objectName, args[0].(string))
+	if errOS != nil {
+		return fmt.Errorf("Input oss data error"), false
+	}
+
+	return string(jsonStr), true
+
+}
+
+func (c *ossUploaderFunc) IsAggregate() bool {
 	return false
 }
