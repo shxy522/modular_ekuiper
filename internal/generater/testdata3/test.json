@@ -1,0 +1,84 @@
+{
+  "version": "1.1",
+  "about": {
+    "author": {
+      "name": "EMQ",
+      "email": "contact@emqx.io",
+      "company": "EMQ Technologies Co., Ltd",
+      "website": "https://www.emqx.io"
+    },
+    "description": {
+      "en_US": "Example python plugin for butterworth filter",
+      "zh_CN": "示例python插件IRR滤波-巴特沃斯滤波"
+    }
+  },
+  "packageName": "ai",
+  "dependencies": ["numpy==1.22.4"],
+  "functions": [{
+    "name": "paddle",
+    "example": "paddle(data, sample_rate)",
+    "filesPath": "./testdata3/test1.py",
+    "otherFilePath": ["./testdata3/infer_cfg.yml", "./testdata3/model.pdiparams", "./testdata3/model.pdiparams.info","./testdata3/model.pdmodel","./testdata3/1.jpg"],
+    "hint": {
+      "en_US": "Spectrum analysis (magnitude spectrum)",
+      "zh_CN": "频谱分析(幅值谱)"
+    },
+    "aggregate": false,
+    "args": [
+      {
+        "name": "inputData",
+        "hidden": true,
+        "optional": false,
+        "control": "text",
+        "type": "string",
+        "hint": {
+          "en_US": "Input data",
+          "zh_CN": "用户输入数据"
+        },
+        "label": {
+          "en_US": "Input data",
+          "zh_CN": "用户输入数据"
+        },
+        "values": []
+      },
+      {
+        "name": "sample_frequency",
+        "optional": false,
+        "control": "text",
+        "type": "double",
+        "hint": {
+          "en_US": "Sample frequency",
+          "zh_CN": "采样频率"
+        },
+        "label": {
+          "en_US": "Sample frequency",
+          "zh_CN": "采样频率"
+        }
+      }
+    ],
+    "outputs": [
+      {
+        "label": {
+          "en_US": "Frequency list",
+          "zh_CN": "频率列表"
+        },
+        "value": "fftTrans[0]"
+      },
+      {
+        "label": {
+          "en_US": "Amplitude list",
+          "zh_CN": "幅值列表"
+        },
+        "value": "fftTrans[1]"
+      }
+    ],
+    "node": {
+      "category": "SpectrumAnalysis",
+      "icon": "iconPath",
+      "label": {
+        "en_US": "fftpower",
+        "zh_CN": "频谱分析/功率谱密度分析"
+      }
+    }
+  }]
+}

@@ -18,7 +18,7 @@
     "name": "fftPower",
     "example": "fftPower(data, sample_rate)",
     "filesPath": "./testdata2/fftpower.py",
-    "soPath": "./testdata2/lib_fftPower.so",
+    "otherFilePath": ["./testdata2/lib_fftPower.so"],
     "hint": {
       "en_US": "Spectrum analysis (magnitude spectrum)",
       "zh_CN": "频谱分析(幅值谱)"
