@@ -38,7 +38,7 @@ RUN apt-get update \
 
 WORKDIR /sdk/python
 RUN pip config set global.index-url https://mirrors.bfsu.edu.cn/pypi/web/simple
-RUN python3 setup.py sdist && python3 setup.py install
+RUN pip install ekuiper
 RUN sh install.sh
 
 WORKDIR /kuiper

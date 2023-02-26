@@ -16,10 +16,10 @@ package video
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"github.com/lf-edge/ekuiper/pkg/api"
 	"github.com/lf-edge/ekuiper/pkg/cast"
-	"github.com/lf-edge/ekuiper/pkg/message"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"os"
 	"time"
@@ -74,7 +74,7 @@ func (rps *VideoPullSource) initTimerPull(ctx api.StreamContext, consumer chan<-
 		case <-ticker.C:
 			buf := rps.readFrameAsJpeg(ctx)
 			result := make(map[string]interface{})
-			result[message.DefaultField] = buf.Bytes()
+			result["signal"] = base64.StdEncoding.EncodeToString(buf.Bytes())
 			meta := make(map[string]interface{})
 
 			select {
