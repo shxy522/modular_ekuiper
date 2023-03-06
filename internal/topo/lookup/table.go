@@ -1,4 +1,4 @@
-// Copyright 2022 EMQ Technologies Co., Ltd.
+// Copyright 2022-2023 EMQ Technologies Co., Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -68,7 +68,8 @@ func CreateInstance(name string, sourceType string, options *ast.Options) error 
 	defer lock.Unlock()
 	contextLogger := conf.Log.WithField("table", name)
 	ctx := kctx.WithValue(kctx.Background(), kctx.LoggerKey, contextLogger)
-	props := nodeConf.GetSourceConf(sourceType, options)
+	props := make(map[string]interface{})
+	nodeConf.GetSourceConf(sourceType, options, props)
 	ctx.GetLogger().Infof("open lookup table with props %v", conf.Printable(props))
 	// Create the lookup source according to the source options
 	ns, err := io.LookupSource(sourceType)

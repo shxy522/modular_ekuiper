@@ -39,11 +39,12 @@ func TestGetConf_Apply(t *testing.T) {
 			"accept": "application/json",
 		},
 	}
+	conf := make(map[string]interface{})
 	n := NewSourceNode("test", ast.TypeStream, nil, &ast.Options{
 		DATASOURCE: "/feed",
 		TYPE:       "httppull",
-	}, false)
-	conf := nodeConf.GetSourceConf(n.sourceType, n.options)
+	}, conf, false)
+	nodeConf.GetSourceConf(n.sourceType, n.options, conf)
 	if !reflect.DeepEqual(result, conf) {
 		t.Errorf("result mismatch:\n\nexp=%s\n\ngot=%s\n\n", result, conf)
 	}
@@ -65,12 +66,13 @@ func TestGetConfAndConvert_Apply(t *testing.T) {
 			"accept": "application/json",
 		},
 	}
+	conf := make(map[string]interface{})
 	n := NewSourceNode("test", ast.TypeStream, nil, &ast.Options{
 		DATASOURCE: "/feed",
 		TYPE:       "httppull",
 		CONF_KEY:   "application_conf",
-	}, false)
-	conf := nodeConf.GetSourceConf(n.sourceType, n.options)
+	}, conf, false)
+	nodeConf.GetSourceConf(n.sourceType, n.options, conf)
 	if !reflect.DeepEqual(result, conf) {
 		t.Errorf("result mismatch:\n\nexp=%s\n\ngot=%s\n\n", result, conf)
 		return

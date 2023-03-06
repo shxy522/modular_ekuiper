@@ -1,4 +1,4 @@
-// Copyright 2021-2022 EMQ Technologies Co., Ltd.
+// Copyright 2021-2023 EMQ Technologies Co., Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -54,7 +54,8 @@ func NewLookupNode(name string, fields []string, keys []string, joinType ast.Joi
 	if t == "" {
 		return nil, fmt.Errorf("source type is not specified")
 	}
-	props := nodeConf.GetSourceConf(t, srcOptions)
+	props := make(map[string]interface{})
+	nodeConf.GetSourceConf(t, srcOptions, props)
 	lookupConf := &LookupConf{}
 	if lc, ok := props["lookup"].(map[string]interface{}); ok {
 		err := cast.MapToStruct(lc, lookupConf)

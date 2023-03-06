@@ -42,7 +42,7 @@ type SourceNode struct {
 	preprocessOp UnOperation
 }
 
-func NewSourceNode(name string, st ast.StreamType, op UnOperation, options *ast.Options, sendError bool) *SourceNode {
+func NewSourceNode(name string, st ast.StreamType, op UnOperation, options *ast.Options, props map[string]interface{}, sendError bool) *SourceNode {
 	t := options.TYPE
 	if t == "" {
 		if st == ast.TypeStream {
@@ -62,6 +62,7 @@ func NewSourceNode(name string, st ast.StreamType, op UnOperation, options *ast.
 		},
 		preprocessOp: op,
 		options:      options,
+		props:        props,
 	}
 }
 
@@ -73,9 +74,8 @@ func (m *SourceNode) Open(ctx api.StreamContext, errCh chan<- error) {
 	logger.Infof("open source node %s with option %v", m.name, m.options)
 	go func() {
 		panicOrError := infra.SafeRun(func() error {
-			props := nodeConf.GetSourceConf(m.sourceType, m.options)
-			m.props = props
-			if c, ok := props["concurrency"]; ok {
+			nodeConf.GetSourceConf(m.sourceType, m.options, m.props)
+			if c, ok := m.props["concurrency"]; ok {
 				if t, err := cast.ToInt(c, cast.STRICT); err != nil || t <= 0 {
 					logger.Warnf("invalid type for concurrency property, should be positive integer but found %t", c)
 				} else {
@@ -83,7 +83,7 @@ func (m *SourceNode) Open(ctx api.StreamContext, errCh chan<- error) {
 				}
 			}
 			bl := 102400
-			if c, ok := props["bufferLength"]; ok {
+			if c, ok := m.props["bufferLength"]; ok {
 				if t, err := cast.ToInt(c, cast.STRICT); err != nil || t <= 0 {
 					logger.Warnf("invalid type for bufferLength property, should be positive integer but found %t", c)
 				} else {
@@ -92,9 +92,9 @@ func (m *SourceNode) Open(ctx api.StreamContext, errCh chan<- error) {
 			}
 			m.bufferLength = bl
 			if m.streamType == ast.TypeTable {
-				props["isTable"] = true
+				m.props["isTable"] = true
 			}
-			props["delimiter"] = m.options.DELIMITER
+			m.props["delimiter"] = m.options.DELIMITER
 			converter, err := converter.GetOrCreateConverter(m.options)
 			if err != nil {
 				msg := fmt.Sprintf("cannot get converter from format %s, schemaId %s: %v", m.options.FORMAT, m.options.SCHEMAID, err)

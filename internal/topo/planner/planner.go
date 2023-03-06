@@ -220,7 +220,7 @@ func transformSourceNode(t *DataSourcePlan, sources []*node.SourceNode, options 
 		}
 		var srcNode *node.SourceNode
 		if len(sources) == 0 {
-			sourceNode := node.NewSourceNode(string(t.name), t.streamStmt.StreamType, pp, t.streamStmt.Options, options.SendError)
+			sourceNode := node.NewSourceNode(string(t.name), t.streamStmt.StreamType, pp, t.streamStmt.Options, make(map[string]interface{}), options.SendError)
 			srcNode = sourceNode
 		} else {
 			srcNode = getMockSource(sources, string(t.name))
@@ -239,7 +239,7 @@ func transformSourceNode(t *DataSourcePlan, sources []*node.SourceNode, options 
 			srcNode = getMockSource(sources, string(t.name))
 		}
 		if srcNode == nil {
-			srcNode = node.NewSourceNode(string(t.name), t.streamStmt.StreamType, pp, t.streamStmt.Options, options.SendError)
+			srcNode = node.NewSourceNode(string(t.name), t.streamStmt.StreamType, pp, t.streamStmt.Options, make(map[string]interface{}), options.SendError)
 		}
 		return srcNode, nil
 	}

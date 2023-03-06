@@ -21,7 +21,7 @@ import (
 	"github.com/lf-edge/ekuiper/pkg/ast"
 )
 
-func GetSourceConf(sourceType string, options *ast.Options) map[string]interface{} {
+func GetSourceConf(sourceType string, options *ast.Options, nodeProps map[string]interface{}) {
 	confkey := options.CONF_KEY
 
 	yamlOps, err := conf.NewConfigOperatorFromSourceYaml(sourceType)
@@ -60,7 +60,11 @@ func GetSourceConf(sourceType string, options *ast.Options) map[string]interface
 	props["format"] = strings.ToLower(f)
 	props["key"] = options.KEY
 	conf.Log.Debugf("get conf for %s with conf key %s: %v", sourceType, confkey, printable(props))
-	return props
+	for k, v := range props {
+		if _, ok := nodeProps[k]; !ok {
+			nodeProps[k] = v
+		}
+	}
 }
 
 func printable(m map[string]interface{}) map[string]interface{} {
