@@ -21,6 +21,7 @@ import (
 	"github.com/lf-edge/ekuiper/internal/io/mqtt"
 	"github.com/lf-edge/ekuiper/internal/io/neuron"
 	"github.com/lf-edge/ekuiper/internal/io/sink"
+	"github.com/lf-edge/ekuiper/internal/io/video"
 	plugin2 "github.com/lf-edge/ekuiper/internal/plugin"
 	"github.com/lf-edge/ekuiper/pkg/api"
 )
@@ -39,6 +40,7 @@ var (
 		"file":     func() api.Source { return &file.FileSource{} },
 		"memory":   func() api.Source { return memory.GetSource() },
 		"neuron":   func() api.Source { return neuron.GetSource() },
+		"video":    func() api.Source { return &video.VideoPullSource{} },
 	}
 	sinks = map[string]NewSinkFunc{
 		"log":         sink.NewLogSink,
