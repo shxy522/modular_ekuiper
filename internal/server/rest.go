@@ -526,12 +526,25 @@ func getStatusRuleHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	vars := mux.Vars(r)
 	name := vars["name"]
+	nodeName := r.URL.Query().Get("node")
+	outField := r.URL.Query().Get("output_field")
+	var content string
+	var err error
 
-	content, err := getRuleStatus(name)
-	if err != nil {
-		handleError(w, err, "get rule status error", logger)
-		return
+	if nodeName == "" && outField == "" {
+		content, err = getRuleStatus(name)
+		if err != nil {
+			handleError(w, err, "get rule status error", logger)
+			return
+		}
+	} else {
+		content, err = getRuleStatusFor(name, nodeName, outField)
+		if err != nil {
+			handleError(w, err, "get rule status error", logger)
+			return
+		}
 	}
+
 	w.Header().Set(ContentType, ContentTypeJSON)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(content))

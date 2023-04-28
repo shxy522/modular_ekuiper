@@ -16,6 +16,7 @@ package topo
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"sync"
@@ -221,6 +222,63 @@ func (s *Topo) GetMetrics() (keys []string, values []interface{}) {
 				keys = append(keys, "sink_"+sn.GetName()+"_"+strconv.Itoa(ins)+"_"+metric.MetricNames[i])
 				values = append(values, v)
 			}
+		}
+	}
+	return
+}
+
+func (s *Topo) GetMetricsFor(nodeName string, outField string) (keys []string, values []interface{}) {
+	for _, sn := range s.sources {
+		if sn.GetName() == nodeName {
+			for ins, metrics := range sn.GetMetrics() {
+				for i, v := range metrics {
+					if metric.MetricNames[i] == "output_data" {
+						var allData map[string]interface{}
+						outByte := v.(string)
+						_ = json.Unmarshal([]byte(outByte), &allData)
+						keys = append(keys, "source_"+sn.GetName()+"_"+strconv.Itoa(ins)+"_"+metric.MetricNames[i])
+						result, _ := json.Marshal(allData[outField])
+						values = append(values, string(result))
+					}
+				}
+			}
+			return
+		}
+	}
+
+	for _, so := range s.ops {
+		if so.GetName() == nodeName {
+			for ins, metrics := range so.GetMetrics() {
+				for i, v := range metrics {
+					if metric.MetricNames[i] == "output_data" {
+						var allData map[string]interface{}
+						outByte := v.(string)
+						_ = json.Unmarshal([]byte(outByte), &allData)
+						keys = append(keys, "op_"+so.GetName()+"_"+strconv.Itoa(ins)+"_"+metric.MetricNames[i])
+						result, _ := json.Marshal(allData[outField])
+						values = append(values, string(result))
+					}
+				}
+			}
+			return
+		}
+	}
+
+	for _, sn := range s.sinks {
+		if sn.GetName() == nodeName {
+			for ins, metrics := range sn.GetMetrics() {
+				for i, v := range metrics {
+					if metric.MetricNames[i] == "output_data" {
+						var allData map[string]interface{}
+						outByte := v.(string)
+						_ = json.Unmarshal([]byte(outByte), &allData)
+						keys = append(keys, "sink_"+sn.GetName()+"_"+strconv.Itoa(ins)+"_"+metric.MetricNames[i])
+						result, _ := json.Marshal(allData[outField])
+						values = append(values, string(result))
+					}
+				}
+			}
+			return
 		}
 	}
 	return

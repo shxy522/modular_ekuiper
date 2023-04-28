@@ -254,6 +254,41 @@ func getRuleStatus(name string) (string, error) {
 	}
 }
 
+func getRuleStatusFor(ruleName, nodeName, fieldName string) (string, error) {
+	if rs, ok := registry.Load(ruleName); ok {
+		result, err := rs.GetState()
+		if err != nil {
+			return "", err
+		}
+		if result == "Running" {
+			keys, values := (*rs.Topology).GetMetricsFor(nodeName, fieldName)
+			metrics := "{"
+			metrics += `"status": "running",`
+			for i, key := range keys {
+				value := values[i]
+				switch value.(type) {
+				case string:
+					metrics += fmt.Sprintf("\"%s\":%q,", key, value)
+				default:
+					metrics += fmt.Sprintf("\"%s\":%v,", key, value)
+				}
+			}
+			metrics = metrics[:len(metrics)-1] + "}"
+			dst := &bytes.Buffer{}
+			if err = json.Indent(dst, []byte(metrics), "", "  "); err != nil {
+				result = metrics
+			} else {
+				result = dst.String()
+			}
+		} else {
+			result = fmt.Sprintf(`{"status": "stopped", "message": "%s"}`, result)
+		}
+		return result, nil
+	} else {
+		return "", errorx.NewWithCode(errorx.NOT_FOUND, fmt.Sprintf("Rule %s is not found", ruleName))
+	}
+}
+
 func getAllRulesWithStatus() ([]map[string]interface{}, error) {
 	ruleIds, err := ruleProcessor.GetAllRules()
 	if err != nil {
