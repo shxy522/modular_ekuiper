@@ -17,11 +17,11 @@
   },
   "functions": [{
     "name": "chebyshev",
-    "example": "chebyshev(data, fs, ftype, freqs, order, rp)",
+    "example": "chebyshev(signal, sample_rate, ftype, filter_band, order, rp)",
     "aggregate": false,
    "hint": {
       "en_US": "Chebyshev filter design",
-      "zh_CN": "使用切比雪夫滤波"
+      "zh_CN": "切比雪夫滤波"
     },
    "args": [{
       "name": "inputData",
@@ -40,7 +40,7 @@
       "values": []
     },
     {
-      "name": "fs",
+      "name": "sample_rate",
       "optional": false,
       "control": "text",
       "type": "int",
@@ -97,7 +97,7 @@
       ]
     },
     {
-      "name": "freqs",
+      "name": "filter_band",
       "optional": false,
       "control": "text",
       "type": "any",

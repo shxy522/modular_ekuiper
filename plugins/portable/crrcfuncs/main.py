@@ -15,16 +15,17 @@
 from ekuiper import plugin, PluginConfig
 
 from chebyshev import chebyshevIns
+from butterworth import butterworthIns
 from dataPreprocess import cleanDropIns, cleanNormalIns, cleanSortIns, dimensionReductionIns
 from dataSmooth import datasmoothIns
-from fftPower import fftpowerIns
-from peakVallyCal import peakVallydetIns
+from fftpower import fftpowerIns
+from peakvallydet import peakVallydetIns
 from statistic import listAverageIns, listMaxIns, listMinIns, listAmpIns, listRmsIns, \
     listVarianceIns, listStandardDeviationIns
 
 if __name__ == '__main__':
     c = PluginConfig("crrcfuncs", {}, {},
-                     {"chebyshev": lambda: chebyshevIns,
+                     {"chebyshev": lambda: chebyshevIns, "butterworth": lambda: butterworthIns,
                       "datasmooth": lambda: datasmoothIns, "fftpower": lambda: fftpowerIns,
                       "peakvallydet": lambda: peakVallydetIns,
                       "listaverage": lambda: listAverageIns, "listmin": lambda: listMinIns,

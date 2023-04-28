@@ -1,0 +1,150 @@
+{
+  "nodeType": "function",
+  "about": {
+    "trial": false,
+    "installed": false,
+		"author": {
+      "name": "EMQ",
+      "email": "contact@emqx.io",
+      "company": "EMQ Technologies Co., Ltd",
+      "website": "https://www.emqx.io"
+    },
+    "description": {
+      "en_US": "butterworth filter",
+      "zh_CN": "巴特沃斯滤波"
+    },
+		"helpUrl": null
+  },
+  "functions": [{
+      "name": "butterworth",
+      "example": "butterworth(data, sample_rate, filter_band, ftype, order)",
+      "aggregate": false,
+      "hint": {
+        "en_US": "Apply butterworth filter",
+        "zh_CN": "巴特沃斯滤波。"
+      },
+      "args": [
+        {
+          "name": "inputData",
+          "hidden": true,
+          "optional": false,
+          "control": "text",
+          "type": "string",
+          "hint": {
+            "en_US": "Input signal data",
+            "zh_CN": "输入信号数据"
+          },
+          "label": {
+            "en_US": "Input data",
+            "zh_CN": "输入数据"
+          },
+          "values": []
+        },
+        {
+          "name": "sample_rate",
+          "optional": false,
+          "control": "text",
+          "type": "int",
+          "hint": {
+            "en_US": "Sample rate",
+            "zh_CN": "采样率"
+          },
+          "label": {
+            "en_US": "Sample rate",
+            "zh_CN": "采样率"
+          }
+        },
+        {
+          "name": "filter_band",
+          "optional": false,
+          "control": "text",
+          "type": "any",
+          "hint": {
+            "en_US": "Filter band",
+            "zh_CN": "滤波频率"
+          },
+          "label": {
+            "en_US": "Filter band",
+            "zh_CN": "滤波频率"
+          }
+        },
+        {
+          "name": "ftype",
+          "optional": false,
+          "control": "select",
+          "type": "int",
+          "hint": {
+            "en_US": "Filter type",
+            "zh_CN": "滤波器类型"
+          },
+          "label": {
+            "en_US": "Filter type",
+            "zh_CN": "滤波器类型"
+          },
+          "values": [
+            {
+              "value": 0,
+              "label": {
+                "en_US": "lowpass",
+                "zh_CN": "低通"
+              }
+            },
+            {
+              "value": 1,
+              "label": {
+                "en_US": "highpass",
+                "zh_CN": "高通"
+              }
+            },
+            {
+              "value": 3,
+              "label": {
+                "en_US": "bandpass",
+                "zh_CN": "带通"
+              }
+            },
+            {
+              "value": 4,
+              "label": {
+                "en_US": "bandstop",
+                "zh_CN": "带阻"
+              }
+            }
+          ]
+        },
+        {
+          "name": "order",
+          "optional": false,
+          "placeholder": 5,
+          "control": "select",
+          "type": "int",
+          "hint": {
+            "en_US": "Filter order",
+            "zh_CN": "滤波器阶数"
+          },
+          "label": {
+            "en_US": "Filter order",
+            "zh_CN": "滤波器阶数"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": {
+            "en_US": "Output",
+            "zh_CN": "输出"
+          },
+          "value": "apply_butter_filter"
+        }
+      ],
+      "node": {
+        "category": "Filtering",
+        "icon": "iconPath",
+        "label": {
+          "en_US": "butterworth",
+          "zh_CN": "巴特沃斯滤波"
+        }
+      }
+    }
+  ]
+}

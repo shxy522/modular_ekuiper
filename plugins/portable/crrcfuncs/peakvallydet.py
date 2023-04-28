@@ -18,21 +18,21 @@ class PeakVallydet(Function):
 
     def exec(self, args: List[Any], ctx: Context):
         # todo: type validation
-        return peakVallydet(args[0], args[1])
+        return peakvallydet(args[0], args[1])
 
     def is_aggregate(self):
         return False
 
 
-def peakVallydet(data, pthresh):
+def peakvallydet(signal, pthresh):
     """
     峰谷值检测
-    :param data:用户输入数据
+    :param signal:用户输入数据
     :param thresh:阈值百分比，取值为0-1，float，表示以最值的百分比作为判断波峰波谷
     :return:返回每个波峰波谷的差值
     """
-    maxValue = max(data)
-    minValue = min(data)
+    maxValue = max(signal)
+    minValue = min(signal)
     thresh = maxValue - pthresh * maxValue
     treshVally = minValue + pthresh * abs(minValue)
     maxthresh = []
@@ -41,8 +41,8 @@ def peakVallydet(data, pthresh):
     valleys = []
     peak_valleys_value = []
 
-    t = array(range(len(data)))
-    v = [*zip(t, data)]
+    t = array(range(len(signal)))
+    v = [*zip(t, signal)]
     for x, y in v:
         if y > thresh:
             maxthresh.append((x, y))
@@ -63,8 +63,9 @@ def peakVallydet(data, pthresh):
         except Exception:
             pass
     for p, k in zip(peaks, valleys):
-        peak_valleys_value.append(p-k)
+        peak_valleys_value.append(p - k)
     return peak_valleys_value
+
 
 # t = array(range(100))
 # series = 6.3 * sin(t) + 4.7 * cos(2 * t) - 3.5 * sin(1.2 * t)

@@ -6,6 +6,7 @@
   "sinks": [],
   "functions": [
     "chebyshev",
+    "butterworth",
     "datasmooth",
     "fftpower",
     "peakvallydet",
