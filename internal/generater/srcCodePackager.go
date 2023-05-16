@@ -19,6 +19,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/pkg/httpx"
+	"io"
 	"io/fs"
 	"io/ioutil"
 	"os"
@@ -180,7 +182,11 @@ func (p *PythonCodePackage) clean() {
 func (p *PythonCodePackage) copySourcePythonFile() error {
 	for _, v := range p.sourceFilesPath {
 		baseName := filepath.Base(v)
-		fileContent, err := ioutil.ReadFile(v)
+		file, err := httpx.ReadFile(v)
+		if err != nil {
+			return err
+		}
+		fileContent, err := io.ReadAll(file)
 		if err != nil {
 			return err
 		}
@@ -214,7 +220,11 @@ func (p *PythonCodePackage) copySourcePythonFile() error {
 func (p *PythonCodePackage) copyOtherFile() error {
 	for _, v := range p.otherFilesPath {
 		baseName := filepath.Base(v)
-		fileContent, err := ioutil.ReadFile(v)
+		file, err := httpx.ReadFile(v)
+		if err != nil {
+			return err
+		}
+		fileContent, err := io.ReadAll(file)
 		if err != nil {
 			return err
 		}

@@ -1,0 +1,98 @@
+{
+    "version": "1.0",
+    "about": {
+        "author": {
+            "name": "xxy",
+            "email": "xxy@crrc.tech",
+            "company": "CRRC ACADEMY",
+            "website": ""
+        },
+        "description": {
+            "en_US": "",
+            "zh_CN": "",
+            "en": null,
+            "zh": null
+        }
+    },
+    "packageName": "sgoSmooth_lib_crrc",
+    "dependencies": [],
+    "virtualEnvType": null,
+    "env": null,
+    "functions": [
+        {
+            "name": "sgoSmooth_lib_crrc",
+            "example": "",
+            "filesPath": "https://crrc-oss.oss-cn-beijing.aliyuncs.com/module_library/module/sgoSmooth_lib_crrc/sgoSmooth_lib_crrc.py",
+            "otherFilePath": [
+                "https://crrc-oss.oss-cn-beijing.aliyuncs.com/module_library/module/sgoSmooth_lib_crrc/libsgosmooth.so"
+            ],
+            "aggregate": false,
+            "hint": {
+                "en_US": "sgoSmooth_lib_crrc",
+                "zh_CN": "平滑处理-商城",
+                "en": "sgoSmooth_lib_crrc",
+                "zh": "平滑处理-商城"
+            },
+            "args": [
+                {
+                    "name": "inputData",
+                    "exist": false,
+                    "hidden": true,
+                    "optional": false,
+                    "placeholder": null,
+                    "connection_related": false,
+                    "control": "text",
+                    "type": "list",
+                    "hint": {
+                        "en_US": "inputData",
+                        "zh_CN": "输入",
+                        "en": "inputData",
+                        "zh": "输入"
+                    },
+                    "label": {
+                        "en_US": "inputData",
+                        "zh_CN": "输入",
+                        "en": "inputData",
+                        "zh": "输入"
+                    },
+                    "values": null
+                },
+                {
+                    "name": "order",
+                    "exist": false,
+                    "hidden": false,
+                    "optional": false,
+                    "placeholder": null,
+                    "connection_related": false,
+                    "control": "text",
+                    "type": "int",
+                    "hint": {
+                        "en_US": "order",
+                        "zh_CN": "阶数",
+                        "en": "order",
+                        "zh": "阶数"
+                    },
+                    "label": {
+                        "en_US": "order",
+                        "zh_CN": "阶数",
+                        "en": "order",
+                        "zh": "阶数"
+                    },
+                    "values": null
+                }
+            ],
+            "inputs": [],
+            "outputs": [],
+            "node": {
+                "icon": "",
+                "label": {
+                    "en_US": "sgoSmooth_lib_crrc",
+                    "en": "sgoSmooth_lib_crrc",
+                    "zh_CN": "平滑处理-商城",
+                    "zh": "平滑处理-商城"
+                },
+                "category": ""
+            }
+        }
+    ]
+}
