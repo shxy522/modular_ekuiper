@@ -64,7 +64,9 @@ func TestGetSourceConf(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetSourceConf(tt.args.sourceType, tt.args.options); !reflect.DeepEqual(got, tt.want) {
+			got := make(map[string]interface{})
+			GetSourceConf(tt.args.sourceType, tt.args.options, got)
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSourceConf() = %v, want %v", got, tt.want)
 			}
 		})

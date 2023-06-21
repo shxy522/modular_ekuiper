@@ -20,7 +20,7 @@ COPY . /go/kuiper
 WORKDIR /go/kuiper
 
 ENV GOPROXY https://goproxy.cn
-RUN make build_with_edgex_and_script
+RUN make build_without_edgex
 
 FROM python:3.8.12-slim-bullseye
 

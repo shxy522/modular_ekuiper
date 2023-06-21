@@ -3311,7 +3311,7 @@ func TestTransformSourceNode(t *testing.T) {
 			},
 			node: node.NewSourceNode("test", ast.TypeStream, nil, &ast.Options{
 				TYPE: "file",
-			}, false),
+			}, make(map[string]interface{}), false),
 		},
 	}
 	for _, tc := range testCases {

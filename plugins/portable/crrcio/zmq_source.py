@@ -35,12 +35,35 @@ class Zmq(Source):
         self.running = True
         self.s = None
         self.server = "tcp://127.0.0.1:5000"
+        self.address = 0
+        self.channels = []
+        self.channelDatas = []
         self.topic = ""
 
     def configure(self, datasource: str, conf: dict):
         logging.info("configuring with datasource {} and conf {}".format(datasource, conf))
         if "server" in conf:
             self.server = conf["server"]
+        if "channels" not in conf:
+            logging.error("not found channels in configuration".format(datasource, conf))
+        if "address" not in conf:
+            logging.error("not found address in configuration".format(datasource, conf))
+        if "address" in conf:
+            self.address = conf["address"]
+        if "channels" in conf:
+            self.channels = conf["channels"]
+        for chanId in self.channels:
+            self.channelDatas.append({
+                "taskid": 0,
+                "HATID": 0,
+                "ADDRESS": self.address,
+                "CHANNEL": chanId,
+                "samplerate": 0,
+                "timestamp": 0,
+                "length": 0,
+                "signal": [0, 0]
+            })
+
         self.topic = datasource
 
     # noinspection PyTypeChecker
@@ -62,17 +85,38 @@ class Zmq(Source):
             #       format(org[0], org[1], org[2], org[3], org[4]))
             # print("data={}".format(org[5:]))
             count += 1
+
+            # chan = org[4]
+            # for chanData in self.channelDatas:
+            #     if chanData["CHANNEL"] == chan:
+            #         chanData["taskid"] = org[1]
+            #         chanData["HATID"] = org[2]
+            #         chanData["ADDRESS"] = org[3]
+            #         chanData["CHANNEL"] = org[4]
+            #         chanData["samplerate"] = org[5]
+            #         chanData["timestamp"] = org[6]
+            #         chanData["length"] = org[7]
+            #         chanData["signal"] = org[8:]
+
+            chan = org["CHANNEL"]
+            addr = org["ADDRESS"]
+            for chanData in self.channelDatas:
+                if chanData["ADDRESS"] == addr and chanData["CHANNEL"] == chan:
+                    chanData["taskid"] = org["taskid"]
+                    chanData["HATID"] = org["HATID"]
+                    chanData["ADDRESS"] = org["ADDRESS"]
+                    chanData["CHANNEL"] = org["CHANNEL"]
+                    chanData["samplerate"] = org["samplerate"]
+                    chanData["timestamp"] = org["timestamp"]
+                    chanData["length"] = org["length"]
+                    chanData["signal"] = org["signal"]
             m = {
                 "count": count,
-                "taskid":org[1],
-                "HATID": org[2],
-                "ADDRESS": org[3],
-                "CHANNEL": org[4],
-                "samplerate": org[5],
-                "timestap": org[6],
-                "length": org[7],
-                "signal": org[8:]
+                "data": self.channelDatas
             }
+
+            print("data={}".format(m))
+
             ctx.emit(m, None)
         print("closed")
 
@@ -86,7 +130,26 @@ class Zmq(Source):
         :param data: 二进制格式数据
         :return: 解包后的数据
         """
+        # data_len = int((len(data) - 26) / 4)
+        # s = struct.Struct('>HIH2BIdI' + str(data_len) + 'f')
+        # org = s.unpack(data)
+
         data_len = int((len(data) - 26) / 4)
-        s = struct.Struct('>HIH2BIdI' + str(data_len) + 'f')
-        org = s.unpack(data)
-        return org
+        s1 = struct.Struct('>HIH2BIdI')
+        org = s1.unpack(data[:26])
+        m = {
+            "taskid": org[1],
+            "HATID": org[2],
+            "ADDRESS": org[3],
+            "CHANNEL": org[4],
+            "samplerate": org[5],
+            # "timestamp": org[3],
+            "length": org[7],
+        }
+        t = struct.unpack("d", data[14:22])
+        m["timestamp"] = t[0]
+        dataStruct = struct.Struct(str(data_len) + 'f')
+        dataUnpack = dataStruct.unpack(data[26:])
+        m["signal"] = dataUnpack
+
+        return m
