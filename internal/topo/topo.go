@@ -233,12 +233,9 @@ func (s *Topo) GetMetricsFor(nodeName string, outField string) (keys []string, v
 			for ins, metrics := range sn.GetMetrics() {
 				for i, v := range metrics {
 					if metric.MetricNames[i] == "output_data" {
-						var allData map[string]interface{}
-						outByte := v.(string)
-						_ = json.Unmarshal([]byte(outByte), &allData)
+						outStr := v.(string)
 						keys = append(keys, "source_"+sn.GetName()+"_"+strconv.Itoa(ins)+"_"+metric.MetricNames[i])
-						result, _ := json.Marshal(allData[outField])
-						values = append(values, string(result))
+						values = append(values, outStr)
 					}
 				}
 			}
