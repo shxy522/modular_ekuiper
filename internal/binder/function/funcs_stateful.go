@@ -17,6 +17,8 @@ package function
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"time"
 
 	"github.com/lf-edge/ekuiper/internal/compressor"
 	"github.com/lf-edge/ekuiper/internal/ossuploader"
@@ -24,8 +26,6 @@ import (
 	"github.com/lf-edge/ekuiper/pkg/ast"
 	"github.com/lf-edge/ekuiper/pkg/cast"
 	"github.com/lf-edge/ekuiper/pkg/message"
-	"strconv"
-	"time"
 )
 
 type compressFunc struct {
@@ -145,7 +145,6 @@ func (c *ossUploaderFunc) Validate(args []interface{}) error {
 }
 
 func (c *ossUploaderFunc) Exec(args []interface{}, ctx api.FunctionContext) (interface{}, bool) {
-
 	endpoint, ok := args[1].(string)
 	if !ok {
 		return fmt.Errorf("oss function is missing property endpoint"), false
@@ -167,16 +166,16 @@ func (c *ossUploaderFunc) Exec(args []interface{}, ctx api.FunctionContext) (int
 		c.uploader = ossuploader.GetUploader(endpoint, accessKeyId, accessKeySecret, bucketName)
 	}
 
-	//流程名模块名时间
+	// 流程名模块名时间
 	tU := time.Now().Unix()
-	//流程名
+	// flowName 流程名
 	var flowName string = ctx.GetRuleId()
-	//模块名
+	// modularName 模块名
 	var modularName string = ctx.GetOpId()
-	//文件名为流程名模块名时间
+	// objectName 文件名为流程名模块名时间
 	var objectName string = flowName + "_" + modularName + "_" + strconv.FormatInt(tU, 10)
 	user := make(map[string]string)
-	//这里全部存储是因为aliyun不支持url下载
+	// 这里全部存储是因为aliyun不支持url下载
 	user["endpoint"] = endpoint
 	user["accessKeyId"] = accessKeyId
 	user["accessKeySecret"] = accessKeySecret
@@ -192,7 +191,6 @@ func (c *ossUploaderFunc) Exec(args []interface{}, ctx api.FunctionContext) (int
 	}
 
 	return string(jsonStr), true
-
 }
 
 func (c *ossUploaderFunc) IsAggregate() bool {

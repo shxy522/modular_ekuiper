@@ -94,7 +94,7 @@ func Zip(zipPath string, paths ...string) error {
 	return nil
 }
 
-//获取ip
+// ExternalIP 获取ip
 func ExternalIP() (net.IP, error) {
 	ifaces, err := net.Interfaces()
 	if err != nil {
@@ -122,7 +122,7 @@ func ExternalIP() (net.IP, error) {
 	return nil, errors.New("connected to the network?")
 }
 
-//获取ip
+// 获取ip
 func getIpFromAddr(addr net.Addr) net.IP {
 	var ip net.IP
 	switch v := addr.(type) {

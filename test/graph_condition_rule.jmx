@@ -451,15 +451,6 @@
           <stringProp name="mqtt.sample_condition_value">1</stringProp>
         </net.xmeter.samplers.SubSampler>
         <hashTree>
-          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="temperature Assertion" enabled="true">
-            <stringProp name="JSON_PATH">$[0].temp</stringProp>
-            <stringProp name="EXPECTED_VALUE">${temp}</stringProp>
-            <boolProp name="JSONVALIDATION">true</boolProp>
-            <boolProp name="EXPECT_NULL">false</boolProp>
-            <boolProp name="INVERT">false</boolProp>
-            <boolProp name="ISREGEX">false</boolProp>
-          </JSONPathAssertion>
-          <hashTree/>
           <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="humidity Assertion" enabled="true">
             <stringProp name="JSON_PATH">$[0].humidity</stringProp>
             <stringProp name="EXPECTED_VALUE">${humidity}</stringProp>

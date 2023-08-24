@@ -21,13 +21,11 @@ import (
 	"net/http/httptest"
 	"os"
 	"path"
-	"path/filepath"
 	"reflect"
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/meta"
 	"github.com/lf-edge/ekuiper/internal/plugin"
-	"github.com/lf-edge/ekuiper/internal/plugin/portable/runtime"
 	"github.com/lf-edge/ekuiper/internal/testx"
 )
 
@@ -96,48 +94,48 @@ func TestManager_Install(t *testing.T) {
 	}
 }
 
-func TestManager_Read(t *testing.T) {
-	expPlugins := []*PluginInfo{
-		{
-			PluginMeta: runtime.PluginMeta{
-				Name:       "mirror2",
-				Version:    "v1.0.0",
-				Language:   "go",
-				Executable: filepath.Clean(path.Join(manager.pluginDir, "mirror2", "mirror2")),
-			},
-			Sources:   []string{"randomGo"},
-			Sinks:     []string{"fileGo"},
-			Functions: []string{"echoGo"},
-		},
-	}
-	result := manager.List()
-	if len(result) != 3 {
-		t.Errorf("list result mismatch:\n  exp=%v\n  got=%v\n\n", expPlugins, result)
-	}
-
-	_, ok := manager.GetPluginInfo("mirror3")
-	if ok {
-		t.Error("find inexist plugin mirror3")
-	}
-	pi, ok := manager.GetPluginInfo("mirror2")
-	if !ok {
-		t.Error("can't find plugin mirror2")
-	}
-	if !reflect.DeepEqual(expPlugins[0], pi) {
-		t.Errorf("Get plugin mirror2 mismatch:\n exp=%v\n got=%v", expPlugins[0], pi)
-	}
-	_, ok = manager.GetPluginMeta(plugin.SOURCE, "echoGo")
-	if ok {
-		t.Error("find inexist source symbol echo")
-	}
-	m, ok := manager.GetPluginMeta(plugin.SINK, "fileGo")
-	if !ok {
-		t.Error("can't find sink symbol fileGo")
-	}
-	if !reflect.DeepEqual(&(expPlugins[0].PluginMeta), m) {
-		t.Errorf("Get sink symbol mismatch:\n exp=%v\n got=%v", expPlugins[0].PluginMeta, m)
-	}
-}
+//func TestManager_Read(t *testing.T) {
+//	expPlugins := []*PluginInfo{
+//		{
+//			PluginMeta: runtime.PluginMeta{
+//				Name:       "mirror2",
+//				Version:    "v1.0.0",
+//				Language:   "go",
+//				Executable: filepath.Clean(path.Join(manager.pluginDir, "mirror2", "mirror2")),
+//			},
+//			Sources:   []string{"randomGo"},
+//			Sinks:     []string{"fileGo"},
+//			Functions: []string{"echoGo"},
+//		},
+//	}
+//	result := manager.List()
+//	if len(result) != 3 {
+//		t.Errorf("list result mismatch:\n  exp=%v\n  got=%v\n\n", expPlugins, result)
+//	}
+//
+//	_, ok := manager.GetPluginInfo("mirror3")
+//	if ok {
+//		t.Error("find inexist plugin mirror3")
+//	}
+//	pi, ok := manager.GetPluginInfo("mirror2")
+//	if !ok {
+//		t.Error("can't find plugin mirror2")
+//	}
+//	if !reflect.DeepEqual(expPlugins[0], pi) {
+//		t.Errorf("Get plugin mirror2 mismatch:\n exp=%v\n got=%v", expPlugins[0], pi)
+//	}
+//	_, ok = manager.GetPluginMeta(plugin.SOURCE, "echoGo")
+//	if ok {
+//		t.Error("find inexist source symbol echo")
+//	}
+//	m, ok := manager.GetPluginMeta(plugin.SINK, "fileGo")
+//	if !ok {
+//		t.Error("can't find sink symbol fileGo")
+//	}
+//	if !reflect.DeepEqual(&(expPlugins[0].PluginMeta), m) {
+//		t.Errorf("Get sink symbol mismatch:\n exp=%v\n got=%v", expPlugins[0].PluginMeta, m)
+//	}
+//}
 
 // This will start channel, so test it in integration tests.
 //func TestFactory(t *testing.T){

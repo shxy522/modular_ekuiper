@@ -106,5 +106,5 @@ func (sm *PrometheusStatManager) Clean(ruleId string) {
 // SetOutData
 // TODO to implement
 func (sm *PrometheusStatManager) SetOutData(data string) {
-	panic("not implemented")
+	conf.Log.Warn("PrometheusStatManager set out data not implemented")
 }

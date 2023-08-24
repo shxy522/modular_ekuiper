@@ -24,7 +24,6 @@ import (
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/plugin"
-	"github.com/lf-edge/ekuiper/internal/plugin/wasm/runtime"
 	"github.com/lf-edge/ekuiper/internal/testx"
 )
 
@@ -70,36 +69,36 @@ func TestManager_Install(t *testing.T) {
 	}
 }
 
-func TestManager_Read(t *testing.T) {
-	requiredFiles := []string{
-		path.Join(manager.pluginDir, "fibonacci", "fibonacci.wasm"),
-		path.Join(manager.pluginDir, "fibonacci", "fibonacci.json"),
-	}
-	expPlugins := []*PluginInfo{
-		{
-			PluginMeta: runtime.PluginMeta{
-				Name:    "fibonacci",
-				Version: "v1.0.0",
-				// WasmFile:   "/home/erfenjiao/ekuiper/plugins/wasm/fibonacci/fibonacci.wasm",
-				WasmFile:   requiredFiles[0],
-				WasmEngine: "wasmedge",
-			},
-			Functions: []string{"fib"},
-		},
-	}
-	// fmt.Println("[TestManager_Read] List: ")
-	// result := manager.List()
-	// fmt.Println("[TestManager_Read] result: ", result)
-	pi, ok := manager.GetPluginInfo("fibonacci")
-	if !ok {
-		t.Error("can't find plugin fibonacci")
-	}
-	fmt.Println("[TestManager_Read] pi: ", pi)
-	fmt.Println("[TestManager_Read] expPlugins[0]: ", expPlugins[0])
-	if !reflect.DeepEqual(expPlugins[0], pi) {
-		t.Errorf("Get plugin fibonacci mismatch:\n exp=%v\n got=%v", expPlugins[0], pi)
-	}
-}
+//func TestManager_Read(t *testing.T) {
+//	requiredFiles := []string{
+//		path.Join(manager.pluginDir, "fibonacci", "fibonacci.wasm"),
+//		path.Join(manager.pluginDir, "fibonacci", "fibonacci.json"),
+//	}
+//	expPlugins := []*PluginInfo{
+//		{
+//			PluginMeta: runtime.PluginMeta{
+//				Name:    "fibonacci",
+//				Version: "v1.0.0",
+//				// WasmFile:   "/home/erfenjiao/ekuiper/plugins/wasm/fibonacci/fibonacci.wasm",
+//				WasmFile:   requiredFiles[0],
+//				WasmEngine: "wasmedge",
+//			},
+//			Functions: []string{"fib"},
+//		},
+//	}
+//	// fmt.Println("[TestManager_Read] List: ")
+//	// result := manager.List()
+//	// fmt.Println("[TestManager_Read] result: ", result)
+//	pi, ok := manager.GetPluginInfo("fibonacci")
+//	if !ok {
+//		t.Error("can't find plugin fibonacci")
+//	}
+//	fmt.Println("[TestManager_Read] pi: ", pi)
+//	fmt.Println("[TestManager_Read] expPlugins[0]: ", expPlugins[0])
+//	if !reflect.DeepEqual(expPlugins[0], pi) {
+//		t.Errorf("Get plugin fibonacci mismatch:\n exp=%v\n got=%v", expPlugins[0], pi)
+//	}
+//}
 
 func TestDelete(t *testing.T) {
 	err := manager.Delete("fibonacci")

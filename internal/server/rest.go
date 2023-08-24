@@ -20,7 +20,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -173,7 +172,7 @@ func createRestServer(ip string, port int, needToken bool) *http.Server {
 }
 
 func SourceCodeHandler(w http.ResponseWriter, r *http.Request) {
-	all, err := ioutil.ReadAll(r.Body)
+	all, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

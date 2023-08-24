@@ -18,17 +18,17 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/lf-edge/ekuiper/internal/conf"
-	"github.com/lf-edge/ekuiper/internal/pkg/httpx"
 	"io"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"text/template"
+
+	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/pkg/httpx"
 )
 
 type (
@@ -167,7 +167,7 @@ func (p *PythonCodePackage) generateFunctionConfigFile() error {
 			return err
 		}
 
-		err = ioutil.WriteFile(configFilePath, data, fs.ModePerm)
+		err = os.WriteFile(configFilePath, data, fs.ModePerm)
 		if err != nil {
 			return err
 		}
@@ -209,7 +209,7 @@ func (p *PythonCodePackage) copySourcePythonFile() error {
 		}
 
 		configFilePath := p.packageDir + "/" + baseName
-		err = ioutil.WriteFile(configFilePath, output.Bytes(), fs.ModePerm)
+		err = os.WriteFile(configFilePath, output.Bytes(), fs.ModePerm)
 		if err != nil {
 			return err
 		}
@@ -229,7 +229,7 @@ func (p *PythonCodePackage) copyOtherFile() error {
 			return err
 		}
 		configFilePath := p.packageDir + "/" + baseName
-		err = ioutil.WriteFile(configFilePath, fileContent, fs.ModePerm)
+		err = os.WriteFile(configFilePath, fileContent, fs.ModePerm)
 		if err != nil {
 			return err
 		}
@@ -238,13 +238,13 @@ func (p *PythonCodePackage) copyOtherFile() error {
 }
 
 func (p *PythonCodePackage) generateInstallFile() error {
-	//load the template
-	fileContent, err := ioutil.ReadFile(path.Join(p.EtcDir, "templates/function/install.sh"))
+	// load the template
+	fileContent, err := os.ReadFile(path.Join(p.EtcDir, "templates/function/install.sh"))
 	if err != nil {
 		return err
 	}
 	configFilePath := p.packageDir + "/install.sh"
-	err = ioutil.WriteFile(configFilePath, fileContent, fs.ModePerm)
+	err = os.WriteFile(configFilePath, fileContent, fs.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -252,8 +252,8 @@ func (p *PythonCodePackage) generateInstallFile() error {
 }
 
 func (p *PythonCodePackage) generateRequirementFile() error {
-	//load the template
-	fileContent, err := ioutil.ReadFile(path.Join(p.EtcDir, "templates/function/requirements.tmpl"))
+	// load the template
+	fileContent, err := os.ReadFile(path.Join(p.EtcDir, "templates/function/requirements.tmpl"))
 	if err != nil {
 		return err
 	}
@@ -276,7 +276,7 @@ func (p *PythonCodePackage) generateRequirementFile() error {
 	}
 
 	configFilePath := p.packageDir + "/requirements.txt"
-	err = ioutil.WriteFile(configFilePath, output.Bytes(), fs.ModePerm)
+	err = os.WriteFile(configFilePath, output.Bytes(), fs.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -284,8 +284,8 @@ func (p *PythonCodePackage) generateRequirementFile() error {
 }
 
 func (p *PythonCodePackage) generateMainFile() error {
-	//load the template
-	fileContent, err := ioutil.ReadFile(path.Join(p.EtcDir, "templates/function/main.tmpl"))
+	// load the template
+	fileContent, err := os.ReadFile(path.Join(p.EtcDir, "templates/function/main.tmpl"))
 	if err != nil {
 		return err
 	}
@@ -309,7 +309,7 @@ func (p *PythonCodePackage) generateMainFile() error {
 	}
 
 	configFilePath := p.packageDir + "/main.py"
-	err = ioutil.WriteFile(configFilePath, output.Bytes(), fs.ModePerm)
+	err = os.WriteFile(configFilePath, output.Bytes(), fs.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -327,8 +327,8 @@ func (p *PythonCodePackage) generateZipFile() (string, error) {
 }
 
 func (p *PythonCodePackage) generateJsonConfigFile() error {
-	//load the template
-	fileContent, err := ioutil.ReadFile(path.Join(p.EtcDir, "templates/function/configPython.json"))
+	// load the template
+	fileContent, err := os.ReadFile(path.Join(p.EtcDir, "templates/function/configPython.json"))
 	if err != nil {
 		return err
 	}
@@ -359,7 +359,7 @@ func (p *PythonCodePackage) generateJsonConfigFile() error {
 	}
 
 	configFilePath := p.packageDir + "/" + u.PkgName + ".json"
-	err = ioutil.WriteFile(configFilePath, output.Bytes(), fs.ModePerm)
+	err = os.WriteFile(configFilePath, output.Bytes(), fs.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -367,8 +367,8 @@ func (p *PythonCodePackage) generateJsonConfigFile() error {
 }
 
 func (f *wrapperFunc) generateFunctionWrapper(p *PythonCodePackage) error {
-	//load the template
-	fileContent, err := ioutil.ReadFile(path.Join(p.EtcDir, "templates/function/functionPython.tmpl"))
+	// load the template
+	fileContent, err := os.ReadFile(path.Join(p.EtcDir, "templates/function/functionPython.tmpl"))
 	if err != nil {
 		return err
 	}
@@ -385,7 +385,7 @@ func (f *wrapperFunc) generateFunctionWrapper(p *PythonCodePackage) error {
 		p.otherFilesPath = append(p.otherFilesPath, file)
 	}
 
-	//prepare the config used in template
+	// prepare the config used in template
 	wrapperFileName := f.Name + "_wrapper"
 	var args []string
 	for k := 0; k < len(f.Args); k++ {
@@ -424,7 +424,7 @@ func (f *wrapperFunc) generateFunctionWrapper(p *PythonCodePackage) error {
 	p.wrapperFileInstanceMap[wrapperFileName] = wrapperFileName
 
 	wrapperPythonPath := p.packageDir + "/" + wrapperFileName + ".py"
-	err = ioutil.WriteFile(wrapperPythonPath, output.Bytes(), fs.ModePerm)
+	err = os.WriteFile(wrapperPythonPath, output.Bytes(), fs.ModePerm)
 	if err != nil {
 		return err
 	}

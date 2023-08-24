@@ -3,8 +3,9 @@ package ossuploader
 import (
 	"bytes"
 	"fmt"
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"strings"
+
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 )
 
 func newAliyunOss(endpoint, accessKeyId, accessKeySecret, bucketName string) *AliyunOss {
@@ -29,6 +30,7 @@ type AliyunOss struct {
 func handleError(err error) {
 	fmt.Println("Error:", err)
 }
+
 func login(oss2 *AliyunOss) (*oss.Client, error) {
 	return oss.New(oss2.endpoint, oss2.accessKeyId, oss2.accessKeySecret)
 }
@@ -92,6 +94,7 @@ func (ossClient *AliyunOss) UploadString(objectName string, uplaodStr string) er
 	}
 	return nil
 }
+
 func (ossClient *AliyunOss) uploadByte(objectName string, item []byte) {
 	client, err := login(ossClient)
 	if err != nil {
@@ -104,7 +107,7 @@ func (ossClient *AliyunOss) uploadByte(objectName string, item []byte) {
 	}
 	// 指定Object存储类型为低频访问。
 	// 上传byte
-	err = bucket.PutObject(objectName, bytes.NewReader([]byte(item)))
+	err = bucket.PutObject(objectName, bytes.NewReader(item))
 	if err != nil {
 		handleError(err)
 	}
@@ -146,6 +149,7 @@ func (ossClient *AliyunOss) deleteFile(objectName string) {
 		handleError(err)
 	}
 }
+
 func (ossClient *AliyunOss) listFile() {
 	client, err := login(ossClient)
 	if err != nil {
