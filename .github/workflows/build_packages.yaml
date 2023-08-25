@@ -79,4 +79,4 @@ jobs:
       with:
         repo: ekuiper
         path: "_packages/kuiper-*"
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.CI_GIT_TOKEN }}
