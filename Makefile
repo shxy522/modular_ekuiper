@@ -4,7 +4,7 @@ PACKAGES_PATH ?= _packages
 VERSION := $(shell git describe --tags --always)
 ARCH := $(shell go env GOARCH)
 OS := $(shell go env GOOS)
-PACKAGE_NAME := kuiper-$(VERSION)-$(OS)-$(ARCH)
+PACKAGE_NAME := kuiper-crrc-$(VERSION)-$(OS)-$(ARCH)
 GO              := GO111MODULE=on go
 
 TARGET ?= lfedge/ekuiper
@@ -13,10 +13,6 @@ export KUIPER_SOURCE := $(shell pwd)
 
 .PHONY: build
 build: build_without_edgex
-
-.PHONY:pkg
-pkg: pkg_without_edgex
-	@if [ "$$(uname -s)" = "Linux" ]; then make -C deploy/packages; fi
 
 .PHONY: build_prepare
 build_prepare:
@@ -103,39 +99,10 @@ build_with_wasm: build_prepare
 	@mv ./kuiper ./kuiperd $(BUILD_PATH)/$(PACKAGE_NAME)/bin
 	@echo "Build successfully"
 
-
 .PHONY: docker
 docker:
-	docker buildx build --no-cache --platform=linux/amd64 -t $(TARGET):$(VERSION) -f deploy/docker/Dockerfile . --load
-	docker buildx build --no-cache --platform=linux/amd64 -t $(TARGET):$(VERSION)-slim -f deploy/docker/Dockerfile-slim . --load
-	docker buildx build --no-cache --platform=linux/amd64 -t $(TARGET):$(VERSION)-dev -f deploy/docker/Dockerfile-dev . --load
-
-PLUGINS := sinks/influx \
-	sinks/influx2 \
-	sinks/zmq \
-	sinks/kafka \
-	sinks/image \
-	sinks/sql   \
-	sources/random \
-	sources/zmq \
-	sources/sql \
-	sources/video \
-	sinks/tdengine \
-	functions/accumulateWordCount \
-	functions/countPlusOne \
-	functions/image \
-	functions/geohash \
-	functions/echo \
-	functions/labelImage \
-	functions/tfLite
-
-.PHONY: plugins $(PLUGINS)
-plugins: $(PLUGINS)
-
-$(PLUGINS): PLUGIN_TYPE = $(word 1, $(subst /, , $@))
-$(PLUGINS): PLUGIN_NAME = $(word 2, $(subst /, , $@))
-$(PLUGINS):
-	@$(CURDIR)/build-plugins.sh $(PLUGIN_TYPE) $(PLUGIN_NAME)
+	@docker build -t $(PACKAGE_NAME):latest -f deploy/docker/Dockerfile-slim-python .
+	@docker save -o $(PACKAGES_PATH)/$(PACKAGE_NAME)-docker.tar $(PACKAGE_NAME):latest
 
 .PHONY: clean
 clean:
