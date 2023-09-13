@@ -39,9 +39,11 @@ class File(Source):
         self.address = 1
         self.channel = 1
         self.interval = 1
+        self.channelDatas = []
 
     def configure(self, datasource: str, conf: dict):
-        logging.info("configuring with datasource {} and conf {}".format(datasource, conf))
+        logging.info(
+            "configuring with datasource {} and conf {}".format(datasource, conf))
         if 'file' in conf:
             self.file = conf["file"]
         if 'length' in conf:
@@ -56,6 +58,16 @@ class File(Source):
             self.channel = conf['channel']
         if 'interval' in conf:
             self.interval = conf['interval']
+        self.channelDatas.append({
+            "taskid": 0,
+            "HATID": 0,
+            "ADDRESS": self.address,
+            "CHANNEL": 0,
+            "samplerate": 0,
+            "timestamp": 0,
+            "length": 0,
+            "signal": [0, 0]
+        })
 
     # noinspection PyTypeChecker
     def open(self, ctx: Context):
@@ -80,15 +92,12 @@ class File(Source):
             except Exception as e:
                 print("stop reading for ex:", e)
                 break
+
+            for chanData in self.channelDatas:
+                chanData["signal"] = signal
             m = {
                 "count": count,
-                "HATID": self.hatId,
-                "ADDRESS": self.address,
-                "CHANNEL": self.address,
-                "samplerate": self.samplerate,
-                "timestap": time.time(),
-                "length": self.length,
-                "signal": signal
+                "data": self.channelDatas
             }
             ctx.emit(m, None)
             count = count + 1

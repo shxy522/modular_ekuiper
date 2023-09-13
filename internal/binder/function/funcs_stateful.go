@@ -189,7 +189,6 @@ func (c *ossUploaderFunc) Exec(args []interface{}, ctx api.FunctionContext) (int
 	if errOS != nil {
 		return fmt.Errorf("Input oss data error"), false
 	}
-
 	return string(jsonStr), true
 }
 

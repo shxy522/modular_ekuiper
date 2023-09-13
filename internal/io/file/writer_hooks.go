@@ -45,7 +45,7 @@ func (l *linesWriterHooks) Header() []byte {
 }
 
 func (l *linesWriterHooks) Line() []byte {
-	return []byte("\n")
+	return []byte(",")
 }
 
 func (l *linesWriterHooks) Footer() []byte {

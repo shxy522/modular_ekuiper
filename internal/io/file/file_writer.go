@@ -73,6 +73,7 @@ func createFileWriter(ctx api.StreamContext, fn string, ft FileType, headers str
 		fws.Hook = jsonHooks
 	case CSV_TYPE:
 		fws.Hook = &csvWriterHooks{header: []byte(headers)}
+		// fws.Hook = &csvWriterHooks{header: []byte(nil)}
 	case LINES_TYPE:
 		fws.Hook = linesHooks
 	}

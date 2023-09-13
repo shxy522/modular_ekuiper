@@ -115,7 +115,7 @@ class Zmq(Source):
                 "data": self.channelDatas
             }
 
-            print("data={}".format(m))
+            # print("data={}".format(m))
 
             ctx.emit(m, None)
         print("closed")

@@ -15,33 +15,39 @@
 package file
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/topo/transform"
 	"github.com/lf-edge/ekuiper/pkg/api"
 	"github.com/lf-edge/ekuiper/pkg/cast"
 	"github.com/lf-edge/ekuiper/pkg/message"
 )
 
 type sinkConf struct {
-	Interval           *int     `json:"interval"` // deprecated, will remove in the next release
-	RollingInterval    int64    `json:"rollingInterval"`
-	RollingCount       int      `json:"rollingCount"`
-	RollingNamePattern string   `json:"rollingNamePattern"` // where to add the timestamp to the file name
-	CheckInterval      *int64   `json:"checkInterval"`      // Once interval removed, this will be NOT nullable
-	Path               string   `json:"path"`               // support dynamic property, when rolling, make sure the path is updated
-	FileType           FileType `json:"fileType"`
-	HasHeader          bool     `json:"hasHeader"`
-	Delimiter          string   `json:"delimiter"`
-	Format             string   `json:"format"` // only use for validation; transformation is done in sink_node
-	Compression        string   `json:"compression"`
-	Fields             []string `json:"fields"` // only use for extracting header for csv; transformation is done in sink_node
+	RollingInterval    int64  `json:"rollingInterval"`
+	RollingCount       int    `json:"rollingCount"`
+	RollingNamePattern string `json:"rollingNamePattern"` // where to add the timestamp to the file name
+	CheckInterval      *int64 `json:"checkInterval"`      // Once interval removed, this will be NOT nullable
+	Path               string `json:"path"`               // support dynamic property, when rolling, make sure the path is updated
+	InputChannel       string `json:"inputChannel"`
+	InputType          int    `json:"inputType"`
+
+	FileType    FileType `json:"fileType"`
+	HasHeader   bool     `json:"hasHeader"`
+	Delimiter   string   `json:"delimiter"`
+	Format      string   `json:"format"` // only use for validation; transformation is done in sink_node
+	Compression string   `json:"compression"`
+	Fields      []string `json:"fields"` // only use for extracting header for csv; transformation is done in sink_node
 }
 
 type fileSink struct {
@@ -60,17 +66,7 @@ func (m *fileSink) Configure(props map[string]interface{}) error {
 	if err := cast.MapToStruct(props, c); err != nil {
 		return err
 	}
-	if c.Interval != nil {
-		if *c.Interval < 0 {
-			return fmt.Errorf("interval must be positive")
-		} else if c.CheckInterval == nil {
-			conf.Log.Warnf("interval is deprecated, use checkInterval instead. automatically set checkInterval to %d", c.Interval)
-			t := int64(*c.Interval)
-			c.CheckInterval = &t
-		} else {
-			conf.Log.Warnf("interval is deprecated and ignored, use checkInterval instead.")
-		}
-	} else if c.CheckInterval == nil { // set checkInterval default value if both interval and checkInerval are not set
+	if c.CheckInterval == nil { // set checkInterval default value if both interval and checkInerval are not set
 		t := (5 * time.Minute).Milliseconds()
 		c.CheckInterval = &t
 	}
@@ -80,7 +76,9 @@ func (m *fileSink) Configure(props map[string]interface{}) error {
 	if c.RollingCount < 0 {
 		return fmt.Errorf("rollingCount must be positive")
 	}
-
+	if c.InputType != 2 && c.InputType != 1 {
+		c.InputType = 1
+	}
 	if *c.CheckInterval < 0 {
 		return fmt.Errorf("checkInterval must be positive")
 	}
@@ -97,6 +95,7 @@ func (m *fileSink) Configure(props map[string]interface{}) error {
 		return fmt.Errorf("fileType must be one of json, csv or lines")
 	}
 	if c.FileType == CSV_TYPE {
+		// c.HasHeader=true
 		if c.Format != message.FormatDelimited {
 			return fmt.Errorf("format must be delimited when fileType is csv")
 		}
@@ -109,7 +108,9 @@ func (m *fileSink) Configure(props map[string]interface{}) error {
 	if _, ok := compressionTypes[c.Compression]; !ok && c.Compression != "" {
 		return fmt.Errorf("compression must be one of gzip, zstd")
 	}
-
+	if c.Compression == "gzip" {
+		c.Path += ".gz"
+	}
 	m.c = c
 	m.fws = make(map[string]*fileWriter)
 	return nil
@@ -130,7 +131,7 @@ func (m *fileSink) Open(ctx api.StreamContext) error {
 						if now.Sub(v.Start) > time.Duration(m.c.RollingInterval)*time.Millisecond {
 							ctx.GetLogger().Debugf("rolling file %s", k)
 							err := v.Close(ctx)
-							// TODO how to inform this error to the rule
+							// TODO: how to inform this error to the rule
 							if err != nil {
 								ctx.GetLogger().Errorf("file sink fails to close file %s with error %s.", k, err)
 							}
@@ -151,7 +152,10 @@ func (m *fileSink) Open(ctx api.StreamContext) error {
 }
 
 func (m *fileSink) Collect(ctx api.StreamContext, item interface{}) error {
-	ctx.GetLogger().Debugf("file sink receive %s", item)
+	if _, ok := item.([]interface{}); ok {
+		item = item.([]interface{})[0].(map[string]interface{})
+	}
+	ctx.GetLogger().Debugf("file sink received")
 	fn, err := ctx.ParseTemplate(m.c.Path, item)
 	if err != nil {
 		return err
@@ -160,7 +164,12 @@ func (m *fileSink) Collect(ctx api.StreamContext, item interface{}) error {
 	if err != nil {
 		return err
 	}
-	if v, _, err := ctx.TransformOutput(item); err == nil {
+	channel, err := strconv.Atoi(m.c.InputChannel)
+	if err != nil {
+		channel = 0
+	}
+	// channel := m.c.InputChannel
+	if v, _, err := transform.TransItem(item, "", m.c.Fields); err == nil {
 		ctx.GetLogger().Debugf("file sink transform data %s", v)
 		m.mux.Lock()
 		defer m.mux.Unlock()
@@ -172,10 +181,103 @@ func (m *fileSink) Collect(ctx api.StreamContext, item interface{}) error {
 		} else {
 			fw.Written = true
 		}
-		_, e := fw.Writer.Write(v)
+		key_v := ""
+		var byte_v []byte
+		var value_v interface{}
+		map_v := v.(map[string]interface{})
+		for key, value := range map_v {
+			key_v = key
+			value_v = value
+			break
+		}
+		// }
+		if m.c.InputType == 1 {
+			list_data_v := value_v.([]interface{})
+			channel_num := channel
+			for _, value := range list_data_v {
+				item := value.(map[string]interface{})
+				if item["CHANNEL"] == float64(channel_num) {
+					if m.c.FileType == "json" {
+						jsonBytes, err := json.Marshal(value)
+						if err != nil {
+							return err
+						}
+						byte_v = jsonBytes
+						byte_v = []byte("{\"" + key_v + "\"" + ":" + string(byte_v) + "}")
+					} else if m.c.FileType == "lines" {
+						// list_signal := item["signal"].([]interface{})
+						jsonBytes, err := json.Marshal(item["signal"])
+						if err != nil {
+							return err
+						}
+						byte_v = jsonBytes
+						byte_v = bytes.ReplaceAll(byte_v, []byte(" "), []byte(","))
+						byte_v = bytes.ReplaceAll(byte_v, []byte("["), []byte(""))
+						byte_v = bytes.ReplaceAll(byte_v, []byte("]"), []byte(""))
+					} else {
+						var buffer bytes.Buffer
+						list_signal := item["signal"].([]interface{})
+						timestamp := item["timestamp"].(float64)
+						samplerate := item["samplerate"].(float64)
+						list_length := len(list_signal)
+						for i := 0; i < list_length; i++ {
+							time_count := timestamp - (1/samplerate)*float64(list_length-i-1)
+							intPart := int64(time_count)
+							fracPart := int64((time_count - float64(intPart)) * 1e9) // 将小数部分转换为纳秒
+
+							// 将整数部分转换为时间对象
+							timeObj := time.Unix(intPart, fracPart)
+
+							timeStr := timeObj.Format("15:04:05.000")
+							line := fmt.Sprintf("%s,%f\n", timeStr, list_signal[i])
+							if i == list_length-1 {
+								line = fmt.Sprintf("%s,%f", timeStr, list_signal[i])
+							}
+							buffer.WriteString(line)
+						}
+						byte_v = buffer.Bytes()
+					}
+
+					break
+				}
+			}
+		}
+		if m.c.InputType == 2 {
+			list_v := value_v.([]interface{})
+			if _, ok := list_v[0].([]interface{}); ok {
+				channel_num := channel
+				list_value := list_v[channel_num]
+				jsonBytes, err := json.Marshal(list_value)
+				if err != nil {
+					return err
+				}
+				byte_v = jsonBytes
+			} else {
+				jsonBytes, err := json.Marshal(list_v)
+				if err != nil {
+					return err
+				}
+				byte_v = jsonBytes
+			}
+			if m.c.FileType == "csv" {
+				byte_v = bytes.ReplaceAll(byte_v, []byte(" "), []byte("\n"))
+				byte_v = bytes.ReplaceAll(byte_v, []byte(","), []byte("\n"))
+				byte_v = bytes.ReplaceAll(byte_v, []byte("["), []byte(""))
+				byte_v = bytes.ReplaceAll(byte_v, []byte("]"), []byte(""))
+			} else if m.c.FileType == "lines" {
+				byte_v = bytes.ReplaceAll(byte_v, []byte(" "), []byte(","))
+				byte_v = bytes.ReplaceAll(byte_v, []byte("["), []byte(""))
+				byte_v = bytes.ReplaceAll(byte_v, []byte("]"), []byte(""))
+			} else if m.c.FileType == "json" {
+				byte_v = []byte("{\"" + key_v + "\"" + ":" + string(byte_v) + "}")
+			}
+		}
+
+		_, e := fw.Writer.Write(byte_v)
 		if e != nil {
 			return e
 		}
+
 		if m.c.RollingCount > 0 {
 			fw.Count++
 			if fw.Count >= m.c.RollingCount {
@@ -203,6 +305,7 @@ func (m *fileSink) Close(ctx api.StreamContext) error {
 			errs = append(errs, e)
 		}
 	}
+
 	return errors.Join(errs...)
 }
 
@@ -250,10 +353,14 @@ func (m *fileSink) GetFws(ctx api.StreamContext, fn string, item interface{}) (*
 			fileName := filepath.Base(fn)
 			switch m.c.RollingNamePattern {
 			case "prefix":
-				newFile = fmt.Sprintf("%d-%s", conf.GetNowInMilli(), fileName)
+				time := conf.GetNow()
+				timeStr := time.Format("2006-01-02-15-04-05-000")
+				newFile = fmt.Sprintf("%s_%s", timeStr, fileName)
 			case "suffix":
 				ext := filepath.Ext(fn)
-				newFile = fmt.Sprintf("%s-%d%s", strings.TrimSuffix(fileName, ext), conf.GetNowInMilli(), ext)
+				time := conf.GetNow()
+				timeStr := time.Format("2006-01-02-15-04-05-000")
+				newFile = fmt.Sprintf("%s_%s%s", strings.TrimSuffix(fileName, ext), timeStr, ext)
 			default:
 				newFile = fileName
 			}
