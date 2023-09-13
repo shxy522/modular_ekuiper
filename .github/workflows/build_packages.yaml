@@ -24,10 +24,8 @@ jobs:
         golang:
           - 1.20.2
         arch:
-          - linux/amd64
-          - linux/arm64
-        os:
-          - debian
+          - amd64
+          - arm64
 
     steps:
     - uses: actions/checkout@v3
@@ -36,19 +34,21 @@ jobs:
     - uses: docker/setup-qemu-action@v2
     - uses: docker/setup-buildx-action@v2
     - name: build binary packages
-      if: matrix.os == 'debian'
       run: |
         docker run -i --rm \
         -v $(pwd):/ekuiper \
         --workdir /ekuiper \
         --env KUIPER_SOURCE='/ekuiper' \
-        --platform ${{ matrix.arch }} \
-        ghcr.io/lf-edge/ekuiper/base:${{ matrix.golang }}-${{ matrix.os }} \
+        --platform linux/${{ matrix.arch }} \
+        ghcr.io/lf-edge/ekuiper/base:${{ matrix.golang }}-debian \
         bash -euc "git config --global --add safe.directory /ekuiper && make pkg_without_edgex && make pkg_core"
     - name: build docker images
-      if: matrix.os == 'debian'
       run: |
-        make docker
+        export TAG=$(git describe --tags --always)
+        export PKG=kuiper-nio-${TAG}-linux-${{ matrix.arch }}
+        sudo docker buildx build --platform linux/${{ matrix.arch }} -t emqx/ekuiper:${TAG} -f deploy/docker/Dockerfile-slim-python .
+        sudo docker save -o _packages/${PKG}-docker.tar emqx/ekuiper:${TAG}
+        sudo chmod 644 _packages/*
     - name: create sha file
       run: |
         cd _packages && for var in $(ls); do sudo bash -c "echo $(sha256sum $var | awk '{print $1}') > $var.sha256"; done && cd -
