@@ -45,7 +45,7 @@ jobs:
     - name: build docker images
       run: |
         export TAG=$(git describe --tags --always)
-        export PKG=kuiper-nio-${TAG}-linux-${{ matrix.arch }}
+        export PKG=kuiper-crrc-${TAG}-linux-${{ matrix.arch }}
         sudo docker buildx build --platform linux/${{ matrix.arch }} -t emqx/ekuiper:${TAG} -f deploy/docker/Dockerfile-slim-python .
         sudo docker save -o _packages/${PKG}-docker.tar emqx/ekuiper:${TAG}
         sudo chmod 644 _packages/*
