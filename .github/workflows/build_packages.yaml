@@ -11,9 +11,6 @@ on:
       - completed
     branches:
       - master
-  release:
-    types:
-      - published
 
 jobs:
   build:
@@ -74,9 +71,29 @@ jobs:
         cd _packages && for var in $( ls |grep -v sha256); do
           echo "$(cat $var.sha256) $var" | sha256sum -c || exit 1
         done
-    - uses: Rory-Z/upload-release-asset@v1
-      if: github.event_name == 'release'
+    - id: prerelease
+      run: |
+        if echo "${{ github.ref_name }}" |egrep -q "^[0-9].[0-9].[0-9]$"; then
+          echo "::set-output name=prerelease::false"
+        else
+          echo "::set-output name=prerelease::true"
+        fi
+    - uses: softprops/action-gh-release@v1
+      if: github.ref_type == 'tag'
       with:
-        repo: ekuiper
-        path: "_packages/kuiper-*"
-        token: ${{ secrets.CI_GIT_TOKEN }}
+        ## When you use the repository's GITHUB_TOKEN to perform tasks,
+        ## events triggered by the GITHUB_TOKEN, with the exception of workflow_dispatch and repository_dispatch,
+        ## will not create a new workflow run.
+        ## This prevents you from accidentally creating recursive workflow runs.
+        ## More info: https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow
+        token: ${{ github.token }}
+        prerelease: ${{ steps.prerelease.outputs.prerelease }}
+        generate_release_notes: true
+        name: modular_ekuiper ${{ github.ref_name }} Released
+        body: |
+          modular_ekuiper ${{ github.ref_name }} has been released.
+        files: |
+          _packages/kuiper-*
+    - uses: geekyeggo/delete-artifact@v2
+        with:
+          name: packages

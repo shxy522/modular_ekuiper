@@ -13,9 +13,6 @@ on:
   pull_request:
     paths-ignore:
       - "docs/**"
-  release:
-    types:
-      - published
 
 jobs:
   run_unit_tests:
