@@ -95,5 +95,5 @@ jobs:
         files: |
           _packages/kuiper-*
     - uses: geekyeggo/delete-artifact@v2
-        with:
-          name: packages
+      with:
+        name: packages
