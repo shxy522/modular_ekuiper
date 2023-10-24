@@ -19,7 +19,7 @@ jobs:
       - id: arch
         run: |
           if ${{ github.ref_type == 'tag' }}; then
-            echo "arch=[\"amd64\", \"arm64\", \"arm/v7\"]" >> $GITHUB_OUTPUT
+            echo "arch=[\"amd64\", \"arm64\"]" >> $GITHUB_OUTPUT
           else
             echo "arch=[\"amd64\"]" >> $GITHUB_OUTPUT
           fi
