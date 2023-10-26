@@ -28,8 +28,6 @@ COPY --from=builder /go/kuiper/_build/kuiper-* /kuiper/
 COPY ./deploy/docker/docker-entrypoint.sh /usr/bin/docker-entrypoint.sh
 COPY ./sdk/python /sdk/python
 
-RUN  sed -i s@/deb.debian.org/@/mirrors.bfsu.edu.cn/@g /etc/apt/sources.list
-RUN  sed -i s@/security.debian.org/@/mirrors.bfsu.edu.cn/@g /etc/apt/sources.list
 RUN  apt-get clean
 RUN apt-get update \
     && apt-get install -y pkg-config libczmq-dev wget cmake libffi-dev git gnutls-bin ffmpeg\
@@ -37,7 +35,6 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /sdk/python
-RUN pip config set global.index-url https://mirrors.bfsu.edu.cn/pypi/web/simple
 RUN pip install ekuiper
 RUN sh install.sh
 
