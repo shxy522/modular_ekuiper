@@ -27,7 +27,8 @@ import logging
 import time
 
 from ekuiper import Source, Context
-
+import csv
+import chardet
 
 class File(Source):
     def __init__(self):
@@ -40,6 +41,8 @@ class File(Source):
         self.channel = 1
         self.interval = 1
         self.channelDatas = []
+        self.fileType="txt",
+        self.encoding="utf-8"
 
     def configure(self, datasource: str, conf: dict):
         logging.info(
@@ -58,6 +61,8 @@ class File(Source):
             self.channel = conf['channel']
         if 'interval' in conf:
             self.interval = conf['interval']
+        if "fileType" in conf:
+            self.fileType = conf["fileType"]
         self.channelDatas.append({
             "taskid": 0,
             "HATID": 0,
@@ -68,11 +73,16 @@ class File(Source):
             "length": 0,
             "signal": [0, 0]
         })
+        with open(self.file, 'rb') as f:
+            result = chardet.detect(f.read())
+            if result['encoding'] != None:
+                self.encoding = result['encoding']
 
     # noinspection PyTypeChecker
     def open(self, ctx: Context):
         print("opening file source", self.file)
-        f = open(self.file)
+        f = open(self.file, encoding=self.encoding)
+        reader = csv.reader(f)
         print("start reading file for length", self.length)
         count = 0
         while self.running:
@@ -80,16 +90,35 @@ class File(Source):
                 i = 0
                 signal = []
                 while i < self.length:
-                    line = f.readline()
-                    if len(line) == 0:
-                        raise Exception("end of file")
-                    line = line.strip('\n')
-                    try:
-                        signal.append(float(line))
-                    except Exception:
-                        print("err reading", i, "line:", line)
-                    i = i + 1
+                    if self.fileType == "txt":
+                        line = f.readline()
+                        if len(line) == 0:
+                            raise Exception("end of file")
+                        line = line.strip('\n')
+                        try:
+                            signal.append(float(line))
+                        except Exception:
+                            print("err reading", i, "line:", line)
+                        i = i + 1
+                    elif self.fileType == "csv":
+                        try :
+                            row1=next(reader)
+                        except Exception:
+                            raise Exception("end of file")
+                        try:
+                            signal.append(float(row1[0]))
+                        except Exception:
+                            print("err reading", i, "line:", row1)
+                        i = i + 1
             except Exception as e:
+                for chanData in self.channelDatas:
+                    chanData["signal"] = signal
+                m = {
+                    "count": count,
+                    "data": self.channelDatas
+                }
+                # print(m)
+                ctx.emit(m, None)
                 print("stop reading for ex:", e)
                 break
 
@@ -99,6 +128,7 @@ class File(Source):
                 "count": count,
                 "data": self.channelDatas
             }
+            # print(m)
             ctx.emit(m, None)
             count = count + 1
             time.sleep(self.interval)
