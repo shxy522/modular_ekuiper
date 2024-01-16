@@ -354,12 +354,14 @@ func (m *fileSink) GetFws(ctx api.StreamContext, fn string, item interface{}) (*
 			switch m.c.RollingNamePattern {
 			case "prefix":
 				time := conf.GetNow()
-				timeStr := time.Format("2006-01-02-15-04-05-000")
+				timeStr := time.Format("2006-01-02-15-04-05.000")
+				timeStr = strings.Replace(timeStr, ".", "-", -1)
 				newFile = fmt.Sprintf("%s_%s", timeStr, fileName)
 			case "suffix":
 				ext := filepath.Ext(fn)
 				time := conf.GetNow()
-				timeStr := time.Format("2006-01-02-15-04-05-000")
+				timeStr := time.Format("2006-01-02-15-04-05.000")
+				timeStr = strings.Replace(timeStr, ".", "-", -1)
 				newFile = fmt.Sprintf("%s_%s%s", strings.TrimSuffix(fileName, ext), timeStr, ext)
 			default:
 				newFile = fileName
