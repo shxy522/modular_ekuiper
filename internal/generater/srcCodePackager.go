@@ -88,6 +88,7 @@ type (
 		Args          []interface{} `json:"args"`
 		Outputs       []interface{} `json:"outputs"`
 		Node          interface{}   `json:"node"`
+		HasInitModel  bool          `json:"initModel"`
 	}
 	wrapperFuncs struct {
 		Version        string         `json:"version"`
@@ -237,14 +238,27 @@ func (p *PythonCodePackage) copyOtherFile() error {
 	return nil
 }
 
-func (p *PythonCodePackage) generateInstallFile() error {
+func (p *PythonCodePackage) generateInstallFile(env, subDir string) error {
 	// load the template
-	fileContent, err := os.ReadFile(path.Join(p.EtcDir, "templates/function/install.sh"))
+	fileContent, err := os.ReadFile(path.Join(p.EtcDir, subDir))
 	if err != nil {
 		return err
 	}
+	config := map[string]interface{}{
+		"env": env,
+	}
+	tp, err := template.New("installScript").Parse(string(fileContent))
+	if err != nil {
+		return err
+	}
+	var output bytes.Buffer
+	err = tp.Execute(&output, config)
+	if err != nil {
+		return err
+	}
+
 	configFilePath := p.packageDir + "/install.sh"
-	err = os.WriteFile(configFilePath, fileContent, fs.ModePerm)
+	err = os.WriteFile(configFilePath, output.Bytes(), fs.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -366,9 +380,9 @@ func (p *PythonCodePackage) generateJsonConfigFile() error {
 	return nil
 }
 
-func (f *wrapperFunc) generateFunctionWrapper(p *PythonCodePackage) error {
+func (f *wrapperFunc) generateFunctionWrapper(p *PythonCodePackage, subPath string) error {
 	// load the template
-	fileContent, err := os.ReadFile(path.Join(p.EtcDir, "templates/function/functionPython.tmpl"))
+	fileContent, err := os.ReadFile(path.Join(p.EtcDir, subPath))
 	if err != nil {
 		return err
 	}
@@ -407,6 +421,7 @@ func (f *wrapperFunc) generateFunctionWrapper(p *PythonCodePackage) error {
 		"functionWrapperName": wrapperFileName,
 		"parasLen":            len(f.Args),
 		"isAggr":              aggStr,
+		"initModel":           f.HasInitModel,
 	}
 
 	var tp *template.Template = nil
@@ -457,7 +472,7 @@ func PackageSrcCode(data []byte) (string, error) {
 	defer pck.clean()
 
 	for _, f := range pck.funcMeta.Functions {
-		err := f.generateFunctionWrapper(pck)
+		err := f.generateFunctionWrapper(pck, "templates/function/functionPython.tmpl")
 		if err != nil {
 			return "", err
 		}
@@ -493,7 +508,7 @@ func PackageSrcCode(data []byte) (string, error) {
 		return "", err
 	}
 
-	err = pck.generateInstallFile()
+	err = pck.generateInstallFile(fcs.Env, "templates/function/install.tmpl")
 	if err != nil {
 		return "", err
 	}
