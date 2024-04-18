@@ -1,5 +1,12 @@
 package generater
 
+import (
+	"os"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+)
+
 //func TestGenerate(t *testing.T) {
 //	conf.InitConf()
 //	file, err := ioutil.ReadFile("testdata/test.json")
@@ -336,3 +343,68 @@ package generater
 //	pck.clean()
 //
 //}
+
+func TestInstallScript(t *testing.T) {
+	p := &PythonCodePackage{}
+	p.EtcDir = "."
+	p.packageDir = "."
+	require.NoError(t, p.generateInstallFile("active", "templates/install.tmpl"))
+	c, err := os.ReadFile("./install.sh")
+	require.NoError(t, err)
+	result := `#!/bin/sh
+
+cur=$(dirname "$0")
+echo "Base path $cur"
+conda install --name active --yes --file $cur/requirements.txt
+echo "Done"`
+	require.Equal(t, result, string(c))
+	os.Remove("./install.sh")
+}
+
+func TestFunctionWrapper(t *testing.T) {
+	w := &wrapperFunc{}
+	p := &PythonCodePackage{}
+	p.EtcDir = "."
+	p.packageDir = "."
+	p.wrapperFileInstanceMap = make(map[string]string)
+	w.Name = "apply_butter_filter"
+	w.HasInitModel = true
+	w.FilesPath = "testdata/butterFilter.py"
+	w.Args = []interface{}{
+		1, 2, 3, 4, 5,
+	}
+	require.NoError(t, w.generateFunctionWrapper(p, "templates/functionPython.tmpl"))
+	result := `# coding=utf-8
+from typing import List, Any
+from ekuiper import Function, Context
+
+from butterFilter import apply_butter_filter
+from butterFilter import init_model
+
+class APPLY_BUTTER_FILTER(Function):
+
+    def __init__(self):
+        init_model()
+
+    def validate(self, args: List[Any]):
+        if len(args) != 5:
+            return "require 5 parameters"
+        return ""
+
+    def exec(self, args: List[Any], ctx: Context):
+        # todo: type validation
+        return apply_butter_filter(args[0], args[1], args[2], args[3], args[4])
+
+    def is_aggregate(self):
+        return False
+
+
+apply_butter_filter_wrapper = APPLY_BUTTER_FILTER()
+
+
+`
+	c, err := os.ReadFile("./apply_butter_filter_wrapper.py")
+	require.NoError(t, err)
+	require.Equal(t, result, string(c))
+	os.Remove("./apply_butter_filter_wrapper.py")
+}
