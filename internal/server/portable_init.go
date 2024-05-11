@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -58,7 +59,28 @@ func portablesHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		content := portableManager.List()
-		jsonResponse(content, w, logger)
+		k := r.URL.Query().Get("kind")
+		nc := make([]*portable.PluginInfo, 0)
+		for _, c := range content {
+			switch strings.ToLower(k) {
+			case "source":
+				if len(c.Sources) > 0 {
+					nc = append(nc, c)
+				}
+			case "sink":
+				if len(c.Sinks) > 0 {
+					nc = append(nc, c)
+				}
+			case "function":
+				if len(c.Functions) > 0 {
+					nc = append(nc, c)
+				}
+			default:
+				nc = append(nc, c)
+				jsonResponse(content, w, logger)
+			}
+		}
+		jsonResponse(nc, w, logger)
 	case http.MethodPost:
 		sd := plugin.NewPluginByType(plugin.PORTABLE)
 		err := json.NewDecoder(r.Body).Decode(sd)
