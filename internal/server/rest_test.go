@@ -214,7 +214,7 @@ func (suite *RestTestSuite) Test_rulesManageHandler() {
 	suite.r.ServeHTTP(w1, req1)
 
 	// create rule with trigger false
-	ruleJson := `{"id": "rule1","triggered": false,"sql": "select * from alert","actions": [{"log": {}}]}`
+	ruleJson := `{"id": "rule1331","triggered": false,"sql": "select * from alert","actions": [{"log": {}}]}`
 
 	buf2 := bytes.NewBuffer([]byte(ruleJson))
 	req2, _ := http.NewRequest(http.MethodPost, "http://localhost:8080/rules", buf2)
@@ -229,42 +229,42 @@ func (suite *RestTestSuite) Test_rulesManageHandler() {
 	_, _ = io.ReadAll(w3.Result().Body)
 
 	// update rule, will set rule to triggered
-	ruleJson = `{"id": "rule1","triggered": false,"sql": "select * from alert","actions": [{"nop": {}}]}`
+	ruleJson = `{"id": "rule1331","triggered": false,"sql": "select * from alert","actions": [{"nop": {}}]}`
 
 	buf2 = bytes.NewBuffer([]byte(ruleJson))
-	req1, _ = http.NewRequest(http.MethodPut, "http://localhost:8080/rules/rule1", buf2)
+	req1, _ = http.NewRequest(http.MethodPut, "http://localhost:8080/rules/rule1331", buf2)
 	w1 = httptest.NewRecorder()
 	suite.r.ServeHTTP(w1, req1)
 
 	assert.Equal(suite.T(), http.StatusOK, w1.Code)
 
 	// update wron rule
-	ruleJson = `{"id": "rule1","sql": "select * from alert1","actions": [{"nop": {}}]}`
+	ruleJson = `{"id": "rule1331","sql": "select * from alert1","actions": [{"nop": {}}]}`
 
 	buf2 = bytes.NewBuffer([]byte(ruleJson))
-	req1, _ = http.NewRequest(http.MethodPut, "http://localhost:8080/rules/rule1", buf2)
+	req1, _ = http.NewRequest(http.MethodPut, "http://localhost:8080/rules/rule1331", buf2)
 	w1 = httptest.NewRecorder()
 	suite.r.ServeHTTP(w1, req1)
 
 	assert.Equal(suite.T(), http.StatusBadRequest, w1.Code)
 
 	// get rule
-	req1, _ = http.NewRequest(http.MethodGet, "http://localhost:8080/rules/rule1", bytes.NewBufferString("any"))
+	req1, _ = http.NewRequest(http.MethodGet, "http://localhost:8080/rules/rule1331", bytes.NewBufferString("any"))
 	w1 = httptest.NewRecorder()
 	suite.r.ServeHTTP(w1, req1)
 
 	returnVal, _ := io.ReadAll(w1.Result().Body)
-	expect := `{"id": "rule1","triggered": false,"sql": "select * from alert","actions": [{"nop": {}}]}`
+	expect := `{"id": "rule1331","triggered": false,"sql": "select * from alert","actions": [{"nop": {}}]}`
 	assert.Equal(suite.T(), expect, string(returnVal))
 
 	// get rule status
-	req1, _ = http.NewRequest(http.MethodGet, "http://localhost:8080/rules/rule1/status", bytes.NewBufferString("any"))
+	req1, _ = http.NewRequest(http.MethodGet, "http://localhost:8080/rules/rule1331/status", bytes.NewBufferString("any"))
 	w1 = httptest.NewRecorder()
 	suite.r.ServeHTTP(w1, req1)
 	returnVal, _ = io.ReadAll(w1.Result().Body) //nolint
 
 	// get rule topo
-	req1, _ = http.NewRequest(http.MethodGet, "http://localhost:8080/rules/rule1/topo", bytes.NewBufferString("any"))
+	req1, _ = http.NewRequest(http.MethodGet, "http://localhost:8080/rules/rule1331/topo", bytes.NewBufferString("any"))
 	w1 = httptest.NewRecorder()
 	suite.r.ServeHTTP(w1, req1)
 	returnVal, _ = io.ReadAll(w1.Result().Body)
@@ -273,34 +273,34 @@ func (suite *RestTestSuite) Test_rulesManageHandler() {
 	assert.Equal(suite.T(), expect, string(returnVal))
 
 	// start rule
-	req1, _ = http.NewRequest(http.MethodPost, "http://localhost:8080/rules/rule1/start", bytes.NewBufferString("any"))
+	req1, _ = http.NewRequest(http.MethodPost, "http://localhost:8080/rules/rule1331/start", bytes.NewBufferString("any"))
 	w1 = httptest.NewRecorder()
 	suite.r.ServeHTTP(w1, req1)
 	returnVal, _ = io.ReadAll(w1.Result().Body)
 
-	expect = `Rule rule1 was started`
+	expect = `Rule rule1331 was started`
 	assert.Equal(suite.T(), expect, string(returnVal))
 
 	// stop rule
-	req1, _ = http.NewRequest(http.MethodPost, "http://localhost:8080/rules/rule1/stop", bytes.NewBufferString("any"))
+	req1, _ = http.NewRequest(http.MethodPost, "http://localhost:8080/rules/rule1331/stop", bytes.NewBufferString("any"))
 	w1 = httptest.NewRecorder()
 	suite.r.ServeHTTP(w1, req1)
 	returnVal, _ = io.ReadAll(w1.Result().Body)
 
-	expect = `Rule rule1 was stopped.`
+	expect = `Rule rule1331 was stopped.`
 	assert.Equal(suite.T(), expect, string(returnVal))
 
 	// restart rule
-	req1, _ = http.NewRequest(http.MethodPost, "http://localhost:8080/rules/rule1/restart", bytes.NewBufferString("any"))
+	req1, _ = http.NewRequest(http.MethodPost, "http://localhost:8080/rules/rule1331/restart", bytes.NewBufferString("any"))
 	w1 = httptest.NewRecorder()
 	suite.r.ServeHTTP(w1, req1)
 	returnVal, _ = io.ReadAll(w1.Result().Body)
 
-	expect = `Rule rule1 was restarted`
+	expect = `Rule rule1331 was restarted`
 	assert.Equal(suite.T(), expect, string(returnVal))
 
 	// delete rule
-	req1, _ = http.NewRequest(http.MethodDelete, "http://localhost:8080/rules/rule1", bytes.NewBufferString("any"))
+	req1, _ = http.NewRequest(http.MethodDelete, "http://localhost:8080/rules/rule1331", bytes.NewBufferString("any"))
 	w1 = httptest.NewRecorder()
 	suite.r.ServeHTTP(w1, req1)
 

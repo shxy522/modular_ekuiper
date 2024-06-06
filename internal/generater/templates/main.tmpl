@@ -15,18 +15,38 @@
 
 from ekuiper import plugin, PluginConfig
 
-{{ range $index, $value := .imports -}}
+{{ range $index, $value := .functionImports -}}
+    from {{ $index }} import {{ $value }}
+{{end}}
+
+{{ range $index, $value := .sourceImports -}}
+    from {{ $index }} import {{ $value }}
+{{end}}
+
+{{ range $index, $value := .sinkImports -}}
     from {{ $index }} import {{ $value }}
 {{end}}
 
 if __name__ == '__main__':
     funcDict = {
-    {{ range $index, $value := .imports }}
+    {{ range $index, $value := .functionImports }}
         "{{$value}}": lambda: {{$value}},
     {{end}}
     }
 
-    c = PluginConfig("{{.packageName}}", {}, {}, funcDict)
+    sourceDict = {
+    {{ range $index, $value := .sourceImports }}
+        "{{$index}}": lambda: {{$value}}(),
+    {{end}}
+    }
+
+    sinkDict = {
+    {{ range $index, $value := .sinkImports }}
+        "{{$index}}": lambda: {{$value}}(),
+    {{end}}
+    }
+
+    c = PluginConfig("{{.packageName}}", sourceDict, sinkDict, funcDict)
 
     plugin.start(c)
 

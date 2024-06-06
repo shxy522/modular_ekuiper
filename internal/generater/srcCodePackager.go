@@ -27,6 +27,8 @@ import (
 	"strings"
 	"text/template"
 
+	"gopkg.in/yaml.v3"
+
 	"github.com/lf-edge/ekuiper/internal/conf"
 	"github.com/lf-edge/ekuiper/internal/pkg/httpx"
 )
@@ -73,9 +75,34 @@ type (
 		Outputs     []interface{} `json:"outputs"`
 		Node        interface{}   `json:"node"`
 	}
-	fileFuncMeta struct {
+
+	fileMeta struct {
 		About     about      `json:"about"`
 		Functions []FileFunc `json:"functions"`
+	}
+
+	sourceMeta struct {
+		About about       `json:"about"`
+		Node  interface{} `json:"node"`
+	}
+
+	sinkMeta struct {
+		About about       `json:"about"`
+		Node  interface{} `json:"node"`
+	}
+
+	wrapperSink struct {
+		Name      string      `json:"name"`
+		FilesPath string      `json:"filesPath"`
+		ClassName string      `json:"className"`
+		Node      interface{} `json:"node"`
+	}
+
+	wrapperSource struct {
+		Name      string      `json:"name"`
+		FilesPath string      `json:"filesPath"`
+		ClassName string      `json:"className"`
+		Node      interface{} `json:"node"`
 	}
 
 	wrapperFunc struct {
@@ -90,14 +117,16 @@ type (
 		Node          interface{}   `json:"node"`
 		HasInitModel  bool          `json:"initModel"`
 	}
-	wrapperFuncs struct {
-		Version        string         `json:"version"`
-		PkgName        string         `json:"packagename"`
-		About          about          `json:"about"`
-		Functions      []*wrapperFunc `json:"functions"`
-		Dependencies   []string       `json:"dependencies"`
-		VirtualEnvType string         `json:"virtualEnvType"`
-		Env            string         `json:"env"`
+	wrapperMeta struct {
+		Version        string           `json:"version"`
+		PkgName        string           `json:"packagename"`
+		About          about            `json:"about"`
+		Functions      []*wrapperFunc   `json:"functions"`
+		Sources        []*wrapperSource `json:"sources"`
+		Sinks          []*wrapperSink   `json:"sinks"`
+		Dependencies   []string         `json:"dependencies"`
+		VirtualEnvType string           `json:"virtualEnvType"`
+		Env            string           `json:"env"`
 	}
 )
 
@@ -114,25 +143,45 @@ func NewFileFunc(w *wrapperFunc) FileFunc {
 }
 
 type PythonCodePackage struct {
-	funcMeta               *wrapperFuncs
-	packageDir             string
-	zipDir                 string
-	functionsDir           string
-	pkgname                string
-	HostIP                 string
-	wrapperFileInstanceMap map[string]string
-	sourceFilesPath        []string
-	otherFilesPath         []string
-	EtcDir                 string
+	meta           *wrapperMeta
+	packageDir     string
+	zipDir         string
+	pkgname        string
+	HostIP         string
+	EtcDir         string
+	otherFilesPath []string
+
+	sourceFilesPath []string
+	functions       functionsWrapper
+	sources         sourcesWrapper
+	sinks           sinksWrapper
 }
 
-func newPythonCodePackage(u *wrapperFuncs) (*PythonCodePackage, error) {
+type functionsWrapper struct {
+	functionsDir           string
+	wrapperFileInstanceMap map[string]string
+}
+
+type sourcesWrapper struct {
+	sourcesDir        string
+	sourceInstanceMap map[string]string
+}
+
+type sinksWrapper struct {
+	sinksDir        string
+	sinkInstanceMap map[string]string
+}
+
+func newPythonCodePackage(u *wrapperMeta) (*PythonCodePackage, error) {
 	p := &PythonCodePackage{
-		funcMeta:     u,
-		packageDir:   "",
-		zipDir:       "",
-		functionsDir: "",
-		pkgname:      "",
+		meta:       u,
+		packageDir: "",
+		zipDir:     "",
+		pkgname:    "",
+
+		functions: functionsWrapper{},
+		sinks:     sinksWrapper{},
+		sources:   sourcesWrapper{},
 	}
 
 	etcDir, err := conf.GetConfLoc()
@@ -146,28 +195,83 @@ func newPythonCodePackage(u *wrapperFuncs) (*PythonCodePackage, error) {
 	p.pkgname = u.PkgName
 	p.packageDir = u.PkgName
 
-	p.functionsDir = path.Join(p.packageDir, "functions")
-	_ = os.MkdirAll(p.functionsDir, fs.ModePerm)
+	p.functions.functionsDir = path.Join(p.packageDir, "functions")
+	_ = os.MkdirAll(p.functions.functionsDir, fs.ModePerm)
+	p.sinks.sinksDir = path.Join(p.packageDir, "sinks")
+	_ = os.MkdirAll(p.sinks.sinksDir, fs.ModePerm)
+	p.sources.sourcesDir = path.Join(p.packageDir, "sources")
+	_ = os.MkdirAll(p.sources.sourcesDir, fs.ModePerm)
+
 	p.zipDir = "web/common/static"
 	_ = os.MkdirAll(p.zipDir, fs.ModePerm)
-	p.wrapperFileInstanceMap = make(map[string]string)
+	p.functions.wrapperFileInstanceMap = make(map[string]string)
+	p.sources.sourceInstanceMap = make(map[string]string)
+	p.sinks.sinkInstanceMap = make(map[string]string)
 	return p, nil
 }
 
 func (p *PythonCodePackage) generateFunctionConfigFile() error {
-	for _, f := range p.funcMeta.Functions {
-		funcConfig := fileFuncMeta{
-			About:     p.funcMeta.About,
+	for _, f := range p.meta.Functions {
+		funcConfig := fileMeta{
+			About:     p.meta.About,
 			Functions: []FileFunc{NewFileFunc(f)},
 		}
 
-		configFilePath := p.functionsDir + "/" + f.Name + ".json"
+		configFilePath := p.functions.functionsDir + "/" + f.Name + ".json"
 
 		data, err := json.Marshal(funcConfig)
 		if err != nil {
 			return err
 		}
 
+		err = os.WriteFile(configFilePath, data, fs.ModePerm)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (p *PythonCodePackage) genSourcesConfigFile() error {
+	for _, f := range p.meta.Sources {
+		srcConfig := sourceMeta{
+			About: p.meta.About,
+			Node:  f.Node,
+		}
+		configFilePath := p.sources.sourcesDir + "/" + f.Name + ".json"
+		data, err := json.Marshal(srcConfig)
+		if err != nil {
+			return err
+		}
+		err = os.WriteFile(configFilePath, data, fs.ModePerm)
+		if err != nil {
+			return err
+		}
+
+		yamlFilePath := p.sources.sourcesDir + "/" + f.Name + ".yaml"
+		data, err = yaml.Marshal(map[string]interface{}{"default": nil})
+		if err != nil {
+			return err
+		}
+		err = os.WriteFile(yamlFilePath, data, fs.ModePerm)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (p *PythonCodePackage) genSinksConfigFile() error {
+	for _, f := range p.meta.Sinks {
+		funcConfig := sinkMeta{
+			About: p.meta.About,
+			Node:  f.Node,
+		}
+		configFilePath := p.sinks.sinksDir + "/" + f.Name + ".json"
+		data, err := json.Marshal(funcConfig)
+		if err != nil {
+			return err
+		}
 		err = os.WriteFile(configFilePath, data, fs.ModePerm)
 		if err != nil {
 			return err
@@ -271,7 +375,7 @@ func (p *PythonCodePackage) generateRequirementFile() error {
 	if err != nil {
 		return err
 	}
-	u := p.funcMeta
+	u := p.meta
 
 	config := map[string]interface{}{
 		"dependencies": u.Dependencies,
@@ -303,11 +407,13 @@ func (p *PythonCodePackage) generateMainFile() error {
 	if err != nil {
 		return err
 	}
-	u := p.funcMeta
+	u := p.meta
 
 	config := map[string]interface{}{
-		"imports":     p.wrapperFileInstanceMap,
-		"packageName": u.PkgName,
+		"functionImports": p.functions.wrapperFileInstanceMap,
+		"sourceImports":   p.sources.sourceInstanceMap,
+		"sinkImports":     p.sinks.sinkInstanceMap,
+		"packageName":     u.PkgName,
 	}
 
 	var tp *template.Template = nil
@@ -346,15 +452,27 @@ func (p *PythonCodePackage) generateJsonConfigFile() error {
 	if err != nil {
 		return err
 	}
-	u := p.funcMeta
+	u := p.meta
 
 	var funcInstances []string
-	for _, v := range p.wrapperFileInstanceMap {
+	for _, v := range p.functions.wrapperFileInstanceMap {
 		funcInstances = append(funcInstances, v)
+	}
+
+	var sourceInstances []string
+	for key := range p.sources.sourceInstanceMap {
+		sourceInstances = append(sourceInstances, key)
+	}
+
+	var sinkInstances []string
+	for key := range p.sinks.sinkInstanceMap {
+		sinkInstances = append(sinkInstances, key)
 	}
 
 	config := map[string]interface{}{
 		"functions":      funcInstances,
+		"sources":        sourceInstances,
+		"sinks":          sinkInstances,
 		"version":        u.Version,
 		"virtualEnvType": u.VirtualEnvType,
 		"env":            u.Env,
@@ -436,7 +554,7 @@ func (f *wrapperFunc) generateFunctionWrapper(p *PythonCodePackage, subPath stri
 		return err
 	}
 
-	p.wrapperFileInstanceMap[wrapperFileName] = wrapperFileName
+	p.functions.wrapperFileInstanceMap[wrapperFileName] = wrapperFileName
 
 	wrapperPythonPath := p.packageDir + "/" + wrapperFileName + ".py"
 	err = os.WriteFile(wrapperPythonPath, output.Bytes(), fs.ModePerm)
@@ -450,11 +568,25 @@ func (f *wrapperFunc) generateFunctionWrapper(p *PythonCodePackage, subPath stri
 	return nil
 }
 
+func (f *wrapperSource) generateSource(p *PythonCodePackage) error {
+	p.sourceFilesPath = append(p.sourceFilesPath, f.FilesPath)
+	p.sources.sourceInstanceMap[f.Name] = f.ClassName
+	return nil
+}
+
+func (f *wrapperSink) generateSink(p *PythonCodePackage) error {
+	p.sourceFilesPath = append(p.sourceFilesPath, f.FilesPath)
+	p.sinks.sinkInstanceMap[f.Name] = f.ClassName
+	return nil
+}
+
 func PackageSrcCode(data []byte) (string, error) {
-	fcs := &wrapperFuncs{
+	fcs := &wrapperMeta{
 		Version:      "",
 		PkgName:      "",
 		About:        about{},
+		Sources:      nil,
+		Sinks:        nil,
 		Functions:    nil,
 		Dependencies: nil,
 	}
@@ -471,15 +603,15 @@ func PackageSrcCode(data []byte) (string, error) {
 
 	defer pck.clean()
 
-	for _, f := range pck.funcMeta.Functions {
-		err := f.generateFunctionWrapper(pck, "templates/function/functionPython.tmpl")
-		if err != nil {
-			return "", err
-		}
+	if err := generateFunctions(pck); err != nil {
+		return "", err
 	}
 
-	err = pck.generateFunctionConfigFile()
-	if err != nil {
+	if err := generateSources(pck); err != nil {
+		return "", err
+	}
+
+	if err := generateSinks(pck); err != nil {
 		return "", err
 	}
 
@@ -514,4 +646,33 @@ func PackageSrcCode(data []byte) (string, error) {
 	}
 
 	return pck.generateZipFile()
+}
+
+func generateFunctions(pck *PythonCodePackage) error {
+	for _, f := range pck.meta.Functions {
+		err := f.generateFunctionWrapper(pck, "templates/function/functionPython.tmpl")
+		if err != nil {
+
+			return err
+		}
+	}
+	return pck.generateFunctionConfigFile()
+}
+
+func generateSources(pck *PythonCodePackage) error {
+	for _, f := range pck.meta.Sources {
+		if err := f.generateSource(pck); err != nil {
+			return err
+		}
+	}
+	return pck.genSourcesConfigFile()
+}
+
+func generateSinks(pck *PythonCodePackage) error {
+	for _, f := range pck.meta.Sinks {
+		if err := f.generateSink(pck); err != nil {
+			return err
+		}
+	}
+	return pck.genSinksConfigFile()
 }

@@ -2,11 +2,25 @@
   "version": "{{.version}}",
   "language": "python",
   "executable": "main.py",
-  "virtual_env_type": "{{.virtual_env_type}}",
+  "virtualEnvType": "{{.virtualEnvType}}",
   "env":"{{.env}}",
   "sources": [
+    {{ range $index, $value := .sources }}
+      {{if eq $index 0 -}}
+        "{{$value}}"
+      {{- else -}}
+        ,"{{$value}}"
+      {{ end }}
+    {{end }}
   ],
   "sinks": [
+    {{ range $index, $value := .sinks }}
+      {{if eq $index 0 -}}
+        "{{$value}}"
+      {{- else -}}
+        ,"{{$value}}"
+      {{ end }}
+    {{end }}
   ],
   "functions": [
     {{ range $index, $value := .functions }}

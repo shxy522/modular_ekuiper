@@ -5,8 +5,22 @@
   "virtualEnvType": "{{.virtualEnvType}}",
   "env":"{{.env}}",
   "sources": [
+    {{ range $index, $value := .sources }}
+      {{if eq $index 0 -}}
+        "{{$value}}"
+      {{- else -}}
+        ,"{{$value}}"
+      {{ end }}
+    {{end }}
   ],
   "sinks": [
+    {{ range $index, $value := .sinks }}
+      {{if eq $index 0 -}}
+        "{{$value}}"
+      {{- else -}}
+        ,"{{$value}}"
+      {{ end }}
+    {{end }}
   ],
   "functions": [
     {{ range $index, $value := .functions }}

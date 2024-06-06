@@ -366,7 +366,7 @@ func TestFunctionWrapper(t *testing.T) {
 	p := &PythonCodePackage{}
 	p.EtcDir = "."
 	p.packageDir = "."
-	p.wrapperFileInstanceMap = make(map[string]string)
+	p.functions.wrapperFileInstanceMap = make(map[string]string)
 	w.Name = "apply_butter_filter"
 	w.HasInitModel = true
 	w.FilesPath = "testdata/butterFilter.py"

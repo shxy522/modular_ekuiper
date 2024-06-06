@@ -3,11 +3,12 @@ from typing import List, Any
 from ekuiper import Function, Context
 
 from {{ .imports }} import {{.functionName}}
+{{if .initModel}}from {{ .imports }} import init_model{{end}}
 
 class {{.functionClassName}}(Function):
 
     def __init__(self):
-        pass
+        {{ if .initModel}}init_model(){{else}}pass{{end}}
 
     def validate(self, args: List[Any]):
         if len(args) != {{.parasLen}}:
