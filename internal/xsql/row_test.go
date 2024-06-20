@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/model"
 )
 
 // Row valuer, wildcarder test
@@ -37,51 +38,51 @@ func TestCollectionRow(t *testing.T) {
 			rowC:     &Tuple{Emitter: "a", Message: map[string]interface{}{"a": 1, "b": "2"}, Timestamp: conf.GetNowInMilli(), Metadata: nil},
 			value:    []string{"a", "b"},
 			wildcard: []string{""},
-			result:   []interface{}{1, "2", Message{"a": 1, "b": "2"}},
+			result:   []interface{}{1, "2", model.Message{"a": 1, "b": "2"}},
 		}, {
 			rowC:     &Tuple{Emitter: "a", Message: map[string]interface{}{"a": 1, "b": "2"}, AffiliateRow: AffiliateRow{CalCols: map[string]interface{}{"a": 4, "c": 3}, AliasMap: map[string]interface{}{"b": "b1"}}},
 			value:    []string{"a", "b", "c"},
 			wildcard: []string{""},
-			result:   []interface{}{4, "b1", 3, Message{"a": 4, "b": "b1", "c": 3}},
+			result:   []interface{}{4, "b1", 3, model.Message{"a": 4, "b": "b1", "c": 3}},
 		}, {
 			rowC: &JoinTuple{Tuples: []TupleRow{
-				&Tuple{Emitter: "src1", Message: Message{"a": 1, "b": "v1"}},
-				&Tuple{Emitter: "src2", Message: Message{"a": 2, "c": "w2"}},
+				&Tuple{Emitter: "src1", Message: model.Message{"a": 1, "b": "v1"}},
+				&Tuple{Emitter: "src2", Message: model.Message{"a": 2, "c": "w2"}},
 			}},
 			value:    []string{"a", "src2.a", "b", "c"},
 			wildcard: []string{"", "src1"},
-			result:   []interface{}{1, 2, "v1", "w2", Message{"a": 1, "b": "v1", "c": "w2"}, Message{"a": 1, "b": "v1"}},
+			result:   []interface{}{1, 2, "v1", "w2", model.Message{"a": 1, "b": "v1", "c": "w2"}, model.Message{"a": 1, "b": "v1"}},
 		}, {
 			rowC: &JoinTuple{Tuples: []TupleRow{
-				&Tuple{Emitter: "src1", Message: Message{"a": 1, "b": "v1"}},
-				&Tuple{Emitter: "src2", Message: Message{"a": 2, "c": "w2"}},
+				&Tuple{Emitter: "src1", Message: model.Message{"a": 1, "b": "v1"}},
+				&Tuple{Emitter: "src2", Message: model.Message{"a": 2, "c": "w2"}},
 			}, AffiliateRow: AffiliateRow{CalCols: map[string]interface{}{"a": 4, "d": 3}, AliasMap: map[string]interface{}{"d": 4}}},
 			value:    []string{"a", "src2.a", "b", "c", "d"},
 			wildcard: []string{"", "src1"},
-			result:   []interface{}{4, 2, "v1", "w2", 4, Message{"a": 4, "b": "v1", "c": "w2", "d": 4}, Message{"a": 1, "b": "v1"}},
+			result:   []interface{}{4, 2, "v1", "w2", 4, model.Message{"a": 4, "b": "v1", "c": "w2", "d": 4}, model.Message{"a": 1, "b": "v1"}},
 		}, {
-			rowC:     &GroupedTuples{Content: []TupleRow{&Tuple{Emitter: "src1", Message: Message{"a": 1, "b": "v1"}}, &Tuple{Emitter: "src1", Message: Message{"a": 2, "b": "v2"}}}},
+			rowC:     &GroupedTuples{Content: []TupleRow{&Tuple{Emitter: "src1", Message: model.Message{"a": 1, "b": "v1"}}, &Tuple{Emitter: "src1", Message: model.Message{"a": 2, "b": "v2"}}}},
 			value:    []string{"a", "b"},
 			wildcard: []string{""},
-			result:   []interface{}{1, "v1", Message{"a": 1, "b": "v1"}},
+			result:   []interface{}{1, "v1", model.Message{"a": 1, "b": "v1"}},
 		}, {
-			rowC:     &GroupedTuples{Content: []TupleRow{&Tuple{Emitter: "src1", Message: Message{"a": 1, "b": "v1"}}, &Tuple{Emitter: "src1", Message: Message{"a": 2, "b": "v2"}}}, AffiliateRow: AffiliateRow{CalCols: map[string]interface{}{"a": 4, "d": 3}, AliasMap: map[string]interface{}{"d": 4}}},
+			rowC:     &GroupedTuples{Content: []TupleRow{&Tuple{Emitter: "src1", Message: model.Message{"a": 1, "b": "v1"}}, &Tuple{Emitter: "src1", Message: model.Message{"a": 2, "b": "v2"}}}, AffiliateRow: AffiliateRow{CalCols: map[string]interface{}{"a": 4, "d": 3}, AliasMap: map[string]interface{}{"d": 4}}},
 			value:    []string{"a", "b", "d"},
 			wildcard: []string{""},
-			result:   []interface{}{4, "v1", 4, Message{"a": 4, "b": "v1", "d": 4}},
+			result:   []interface{}{4, "v1", 4, model.Message{"a": 4, "b": "v1", "d": 4}},
 		}, {
-			rowC:     &WindowTuples{Content: []TupleRow{&Tuple{Emitter: "src1", Message: Message{"a": 1, "b": "v1"}}, &Tuple{Emitter: "src1", Message: Message{"a": 2, "b": "v2"}}}, AffiliateRow: AffiliateRow{CalCols: map[string]interface{}{"a": 4, "d": 3}, AliasMap: map[string]interface{}{"d": 4}}},
+			rowC:     &WindowTuples{Content: []TupleRow{&Tuple{Emitter: "src1", Message: model.Message{"a": 1, "b": "v1"}}, &Tuple{Emitter: "src1", Message: model.Message{"a": 2, "b": "v2"}}}, AffiliateRow: AffiliateRow{CalCols: map[string]interface{}{"a": 4, "d": 3}, AliasMap: map[string]interface{}{"d": 4}}},
 			value:    []string{"a", "b", "d"},
 			wildcard: []string{""},
-			result:   []interface{}{4, "v1", 4, Message{"a": 4, "b": "v1", "d": 4}},
+			result:   []interface{}{4, "v1", 4, model.Message{"a": 4, "b": "v1", "d": 4}},
 		}, {
 			rowC: &JoinTuples{Content: []*JoinTuple{{Tuples: []TupleRow{
-				&Tuple{Emitter: "src1", Message: Message{"a": 1, "b": "v1"}, AffiliateRow: AffiliateRow{CalCols: map[string]interface{}{"b": "v2", "$$lag_a": 1}}},
-				&Tuple{Emitter: "src2", Message: Message{"a": 2, "c": "w2"}},
+				&Tuple{Emitter: "src1", Message: model.Message{"a": 1, "b": "v1"}, AffiliateRow: AffiliateRow{CalCols: map[string]interface{}{"b": "v2", "$$lag_a": 1}}},
+				&Tuple{Emitter: "src2", Message: model.Message{"a": 2, "c": "w2"}},
 			}}}, AffiliateRow: AffiliateRow{CalCols: map[string]interface{}{"a": 4, "d": 3}, AliasMap: map[string]interface{}{"d": 4}}},
 			value:    []string{"a", "b", "d"},
 			wildcard: []string{""},
-			result:   []interface{}{4, "v2", 4, Message{"a": 4, "b": "v2", "c": "w2", "d": 4}},
+			result:   []interface{}{4, "v2", 4, model.Message{"a": 4, "b": "v2", "c": "w2", "d": 4}},
 		},
 	}
 	fmt.Printf("The test bucket size is %d.\n\n", len(tests))
@@ -154,8 +155,8 @@ func TestTupleRow(t *testing.T) {
 			},
 		}, {
 			rowO: &JoinTuple{Tuples: []TupleRow{
-				&Tuple{Emitter: "src1", Message: Message{"a": 1, "b": "v1"}},
-				&Tuple{Emitter: "src2", Message: Message{"a": 2, "c": "w2"}},
+				&Tuple{Emitter: "src1", Message: model.Message{"a": 1, "b": "v1"}},
+				&Tuple{Emitter: "src2", Message: model.Message{"a": 2, "c": "w2"}},
 			}},
 			set: [][]map[string]interface{}{
 				{

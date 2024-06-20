@@ -23,6 +23,7 @@ import (
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/internal/topo/context"
 	"github.com/lf-edge/ekuiper/internal/xsql"
 	"github.com/lf-edge/ekuiper/pkg/ast"
@@ -50,23 +51,23 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 				WindowRange: xsql.NewWindowRange(1541152486013, 1541152487013),
@@ -75,19 +76,19 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
 						},
 					},
 				},
@@ -100,24 +101,24 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"f2": "w2"},
+						Message: model.Message{"f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -125,18 +126,18 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
 						},
 					},
 				},
@@ -148,24 +149,24 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1", "ts": cast.TimeFromUnixMilli(1568854515000)},
+						Message: model.Message{"id1": 1, "f1": "v1", "ts": cast.TimeFromUnixMilli(1568854515000)},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2", "ts": cast.TimeFromUnixMilli(1568854525000)},
+						Message: model.Message{"id1": 2, "f1": "v2", "ts": cast.TimeFromUnixMilli(1568854525000)},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3", "ts": cast.TimeFromUnixMilli(1568854535000)},
+						Message: model.Message{"id1": 3, "f1": "v3", "ts": cast.TimeFromUnixMilli(1568854535000)},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1", "ts": cast.TimeFromUnixMilli(1568854515000)},
+						Message: model.Message{"id2": 1, "f2": "w1", "ts": cast.TimeFromUnixMilli(1568854515000)},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w2", "ts": cast.TimeFromUnixMilli(1568854525000)},
+						Message: model.Message{"id2": 2, "f2": "w2", "ts": cast.TimeFromUnixMilli(1568854525000)},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3", "ts": cast.TimeFromUnixMilli(1568854545000)},
+						Message: model.Message{"id2": 4, "f2": "w3", "ts": cast.TimeFromUnixMilli(1568854545000)},
 					},
 				},
 			},
@@ -173,19 +174,19 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1", "ts": cast.TimeFromUnixMilli(1568854515000)}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1", "ts": cast.TimeFromUnixMilli(1568854515000)}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1", "ts": cast.TimeFromUnixMilli(1568854515000)}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1", "ts": cast.TimeFromUnixMilli(1568854515000)}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2", "ts": cast.TimeFromUnixMilli(1568854525000)}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2", "ts": cast.TimeFromUnixMilli(1568854525000)}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2", "ts": cast.TimeFromUnixMilli(1568854525000)}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2", "ts": cast.TimeFromUnixMilli(1568854525000)}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3", "ts": cast.TimeFromUnixMilli(1568854535000)}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3", "ts": cast.TimeFromUnixMilli(1568854535000)}},
 						},
 					},
 				},
@@ -197,24 +198,24 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w1"},
+						Message: model.Message{"id2": 4, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 5, "f2": "w2"},
+						Message: model.Message{"id2": 5, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 6, "f2": "w3"},
+						Message: model.Message{"id2": 6, "f2": "w3"},
 					},
 				},
 			},
@@ -227,23 +228,23 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "s1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "s1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "s1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 					&xsql.Tuple{
 						Emitter: "s2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "s2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "s2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -251,19 +252,19 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "s1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "s2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "s1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "s2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "s1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "s2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "s1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "s2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "s1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "s1", Message: model.Message{"id1": 3, "f1": "v3"}},
 						},
 					},
 				},
@@ -276,15 +277,15 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w2"},
+						Message: model.Message{"id2": 1, "f2": "w2"},
 					},
 				},
 			},
@@ -292,13 +293,13 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}}, &xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}}, &xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w2"}},
 						},
 					},
 				},
@@ -311,13 +312,13 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 				},
 			},
@@ -325,17 +326,17 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
 						},
 					},
 				},
@@ -348,13 +349,13 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 				},
 			},
@@ -362,17 +363,17 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
 						},
 					},
 				},
@@ -385,10 +386,10 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w2"},
+						Message: model.Message{"id2": 1, "f2": "w2"},
 					},
 				},
 			},
@@ -400,10 +401,10 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w2"},
+						Message: model.Message{"id2": 1, "f2": "w2"},
 					},
 				},
 			},
@@ -416,15 +417,15 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f2": "w1"},
+						Message: model.Message{"id1": 1, "f2": "w1"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w1"},
+						Message: model.Message{"id2": 2, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					},
 				},
 			},
@@ -432,14 +433,14 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f2": "w1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f2": "w1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 				},
@@ -452,24 +453,24 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -477,19 +478,19 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
 						},
 					},
 				},
@@ -502,24 +503,24 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -527,18 +528,18 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
 						},
 					},
 				},
@@ -551,24 +552,24 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": str2Map(`{"cid" : 1, "name" : "tom1"}`)},
+						Message: model.Message{"id1": 1, "f1": str2Map(`{"cid" : 1, "name" : "tom1"}`)},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": str2Map(`{"cid" : 2, "name" : "mike1"}`)},
+						Message: model.Message{"id1": 2, "f1": str2Map(`{"cid" : 2, "name" : "mike1"}`)},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": str2Map(`{"cid" : 3, "name" : "alice1"}`)},
+						Message: model.Message{"id1": 3, "f1": str2Map(`{"cid" : 3, "name" : "alice1"}`)},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": str2Map(`{"cid" : 1, "name" : "tom2"}`)},
+						Message: model.Message{"id2": 1, "f2": str2Map(`{"cid" : 1, "name" : "tom2"}`)},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": str2Map(`{"cid" : 2, "name" : "mike2"}`)},
+						Message: model.Message{"id2": 2, "f2": str2Map(`{"cid" : 2, "name" : "mike2"}`)},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": str2Map(`{"cid" : 4, "name" : "alice2"}`)},
+						Message: model.Message{"id2": 4, "f2": str2Map(`{"cid" : 4, "name" : "alice2"}`)},
 					},
 				},
 			},
@@ -576,19 +577,19 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": str2Map(`{"cid" : 1, "name" : "tom1"}`)}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": str2Map(`{"cid" : 1, "name" : "tom2"}`)}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": str2Map(`{"cid" : 1, "name" : "tom1"}`)}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": str2Map(`{"cid" : 1, "name" : "tom2"}`)}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": str2Map(`{"cid" : 2, "name" : "mike1"}`)}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": str2Map(`{"cid" : 2, "name" : "mike2"}`)}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": str2Map(`{"cid" : 2, "name" : "mike1"}`)}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": str2Map(`{"cid" : 2, "name" : "mike2"}`)}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": str2Map(`{"cid" : 3, "name" : "alice1"}`)}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": str2Map(`{"cid" : 3, "name" : "alice1"}`)}},
 						},
 					},
 				},
@@ -601,13 +602,13 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter:  "src1",
-						Message:  xsql.Message{"id1": 1, "f1": "v1"},
+						Message:  model.Message{"id1": 1, "f1": "v1"},
 						Metadata: xsql.Metadata{"topic": "devices/type1/device001"},
 					},
 
 					&xsql.Tuple{
 						Emitter:  "src2",
-						Message:  xsql.Message{"id2": 1, "f2": "w1"},
+						Message:  model.Message{"id2": 1, "f2": "w1"},
 						Metadata: xsql.Metadata{"topic": "devices/type2/device001"},
 					},
 				},
@@ -616,8 +617,8 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}, Metadata: xsql.Metadata{"topic": "devices/type1/device001"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}, Metadata: xsql.Metadata{"topic": "devices/type2/device001"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}, Metadata: xsql.Metadata{"topic": "devices/type1/device001"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}, Metadata: xsql.Metadata{"topic": "devices/type2/device001"}},
 						},
 					},
 				},
@@ -629,30 +630,30 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v2"},
+						Message: model.Message{"id1": 1, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v4"},
+						Message: model.Message{"id1": 3, "f1": "v4"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 4, "f1": "v5"},
+						Message: model.Message{"id1": 4, "f1": "v5"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 3, "f2": "w2"},
+						Message: model.Message{"id2": 3, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 3, "f2": "w3"},
+						Message: model.Message{"id2": 3, "f2": "w3"},
 					},
 				},
 			},
@@ -660,43 +661,43 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 3, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 3, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 3, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 3, "f2": "w3"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v4"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 3, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v4"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 3, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v4"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 3, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v4"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 3, "f2": "w3"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 4, "f1": "v5"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 4, "f1": "v5"}},
 						},
 					},
 				},
@@ -708,24 +709,24 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w3"},
+						Message: model.Message{"id2": 2, "f2": "w3"},
 					},
 				},
 			},
@@ -733,25 +734,25 @@ func TestLeftJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w3"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
 						},
 					},
 				},
@@ -794,24 +795,24 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -819,14 +820,14 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 				},
@@ -838,24 +839,24 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"f2": "w2"},
+						Message: model.Message{"f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -863,8 +864,8 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 				},
@@ -876,23 +877,23 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "s1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "s1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "s1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 					&xsql.Tuple{
 						Emitter: "s2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "s2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "s2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -900,14 +901,14 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "s1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "s2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "s1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "s2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "s1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "s2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "s1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "s2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 				},
@@ -920,15 +921,15 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w2"},
+						Message: model.Message{"id2": 1, "f2": "w2"},
 					},
 				},
 			},
@@ -936,14 +937,14 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w2"}},
 						},
 					},
 				},
@@ -956,19 +957,19 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					},
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v2"},
+						Message: model.Message{"id1": 1, "f1": "v2"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w2"},
+						Message: model.Message{"id2": 1, "f2": "w2"},
 					},
 				},
 			},
@@ -976,26 +977,26 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w2"}},
 						},
 					},
 				},
@@ -1008,13 +1009,13 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 				},
 			},
@@ -1027,13 +1028,13 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 				},
 			},
@@ -1046,10 +1047,10 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w2"},
+						Message: model.Message{"id2": 1, "f2": "w2"},
 					},
 				},
 			},
@@ -1062,10 +1063,10 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w2"},
+						Message: model.Message{"id2": 1, "f2": "w2"},
 					},
 				},
 			},
@@ -1078,24 +1079,24 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -1103,14 +1104,14 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 				},
@@ -1123,24 +1124,24 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -1148,8 +1149,8 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 				},
@@ -1162,24 +1163,24 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": str2Map(`{"cid" : 1, "name" : "tom1"}`)},
+						Message: model.Message{"id1": 1, "f1": str2Map(`{"cid" : 1, "name" : "tom1"}`)},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": str2Map(`{"cid" : 2, "name" : "mike1"}`)},
+						Message: model.Message{"id1": 2, "f1": str2Map(`{"cid" : 2, "name" : "mike1"}`)},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": str2Map(`{"cid" : 3, "name" : "alice1"}`)},
+						Message: model.Message{"id1": 3, "f1": str2Map(`{"cid" : 3, "name" : "alice1"}`)},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": str2Map(`{"cid" : 1, "name" : "tom2"}`)},
+						Message: model.Message{"id2": 1, "f2": str2Map(`{"cid" : 1, "name" : "tom2"}`)},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": str2Map(`{"cid" : 2, "name" : "mike2"}`)},
+						Message: model.Message{"id2": 2, "f2": str2Map(`{"cid" : 2, "name" : "mike2"}`)},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": str2Map(`{"cid" : 4, "name" : "alice2"}`)},
+						Message: model.Message{"id2": 4, "f2": str2Map(`{"cid" : 4, "name" : "alice2"}`)},
 					},
 				},
 			},
@@ -1187,14 +1188,14 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": str2Map(`{"cid" : 1, "name" : "tom1"}`)}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": str2Map(`{"cid" : 1, "name" : "tom2"}`)}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": str2Map(`{"cid" : 1, "name" : "tom1"}`)}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": str2Map(`{"cid" : 1, "name" : "tom2"}`)}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": str2Map(`{"cid" : 2, "name" : "mike1"}`)}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": str2Map(`{"cid" : 2, "name" : "mike2"}`)}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": str2Map(`{"cid" : 2, "name" : "mike1"}`)}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": str2Map(`{"cid" : 2, "name" : "mike2"}`)}},
 						},
 					},
 				},
@@ -1206,23 +1207,23 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "s1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "s1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "s1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 					&xsql.Tuple{
 						Emitter: "s2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "s2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "s2",
-						Message: xsql.Message{"id2": 2, "f2": "w3"},
+						Message: model.Message{"id2": 2, "f2": "w3"},
 					},
 				},
 			},
@@ -1230,20 +1231,20 @@ func TestInnerJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "s1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "s2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "s1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "s2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "s1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "s2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "s1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "s2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "s1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "s2", Message: xsql.Message{"id2": 2, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "s1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "s2", Message: model.Message{"id2": 2, "f2": "w3"}},
 						},
 					},
 				},
@@ -1286,24 +1287,24 @@ func TestRightJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -1311,21 +1312,21 @@ func TestRightJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 				},
@@ -1337,24 +1338,24 @@ func TestRightJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v3"},
+						Message: model.Message{"id1": 1, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"f2": "w2"},
+						Message: model.Message{"f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -1362,26 +1363,26 @@ func TestRightJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v3"}},
-						},
-					},
-
-					{
-						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"f2": "w2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v3"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"f2": "w2"}},
+						},
+					},
+
+					{
+						Tuples: []xsql.TupleRow{
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 				},
@@ -1393,15 +1394,15 @@ func TestRightJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w2"},
+						Message: model.Message{"id2": 1, "f2": "w2"},
 					},
 				},
 			},
@@ -1409,14 +1410,14 @@ func TestRightJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w2"}},
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
 						},
 					},
 				},
@@ -1428,13 +1429,13 @@ func TestRightJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v3"},
+						Message: model.Message{"id1": 1, "f1": "v3"},
 					},
 				},
 			},
@@ -1446,13 +1447,13 @@ func TestRightJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"f2": "w2"},
+						Message: model.Message{"f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -1460,19 +1461,19 @@ func TestRightJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"f2": "w2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"f2": "w2"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 				},
@@ -1514,27 +1515,27 @@ func TestFullJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w4"},
+						Message: model.Message{"id2": 2, "f2": "w4"},
 					},
 				},
 			},
@@ -1542,33 +1543,33 @@ func TestFullJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}}, &xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w4"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}}, &xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w4"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 				},
@@ -1581,24 +1582,24 @@ func TestFullJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -1606,27 +1607,27 @@ func TestFullJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 				},
@@ -1639,13 +1640,13 @@ func TestFullJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 				},
 			},
@@ -1653,19 +1654,19 @@ func TestFullJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
 						},
 					},
 				},
@@ -1678,24 +1679,24 @@ func TestFullJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w1"},
+						Message: model.Message{"id2": 4, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 5, "f2": "w2"},
+						Message: model.Message{"id2": 5, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 6, "f2": "w3"},
+						Message: model.Message{"id2": 6, "f2": "w3"},
 					},
 				},
 			},
@@ -1703,32 +1704,32 @@ func TestFullJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 5, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 5, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 6, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 6, "f2": "w3"}},
 						},
 					},
 				},
@@ -1741,13 +1742,13 @@ func TestFullJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -1755,19 +1756,19 @@ func TestFullJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 				},
@@ -1809,24 +1810,24 @@ func TestCrossJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w2"},
+						Message: model.Message{"id2": 2, "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					},
 				},
 			},
@@ -1834,58 +1835,58 @@ func TestCrossJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
-						},
-					},
-
-					{
-						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
-						},
-					},
-					{
-						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
-						},
-					},
-					{
-						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v3"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
+						},
+					},
+
+					{
+						Tuples: []xsql.TupleRow{
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
+						},
+					},
+					{
+						Tuples: []xsql.TupleRow{
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
+						},
+					},
+					{
+						Tuples: []xsql.TupleRow{
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v3"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 				},
@@ -1898,15 +1899,15 @@ func TestCrossJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w2"},
+						Message: model.Message{"id2": 1, "f2": "w2"},
 					},
 				},
 			},
@@ -1914,13 +1915,13 @@ func TestCrossJoinPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w1"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}}, &xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 1, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}}, &xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 1, "f2": "w2"}},
 						},
 					},
 				},
@@ -1932,10 +1933,10 @@ func TestCrossJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w2"},
+						Message: model.Message{"id2": 1, "f2": "w2"},
 					},
 				},
 			},
@@ -1947,10 +1948,10 @@ func TestCrossJoinPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w2"},
+						Message: model.Message{"id2": 1, "f2": "w2"},
 					},
 				},
 			},
@@ -1996,27 +1997,27 @@ func TestCrossJoinPlanError(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v3"},
+						Message: model.Message{"id1": 3, "f1": "v3"},
 					},
 
 					&xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 1, "f2": "w1"},
+						Message: model.Message{"id2": 1, "f2": "w1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": "3", "f2": "w2"},
+						Message: model.Message{"id2": "3", "f2": "w2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 4, "f2": "w3"},
+						Message: model.Message{"id2": 4, "f2": "w3"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id2": 2, "f2": "w4"},
+						Message: model.Message{"id2": 2, "f2": "w4"},
 					},
 				},
 			},

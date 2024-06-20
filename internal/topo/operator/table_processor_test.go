@@ -21,6 +21,7 @@ import (
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/internal/topo/context"
 	"github.com/lf-edge/ekuiper/internal/xsql"
 	"github.com/lf-edge/ekuiper/pkg/ast"
@@ -50,7 +51,7 @@ func TestTableProcessor_Apply(t *testing.T) {
 			result: &xsql.WindowTuples{
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
-						Message: xsql.Message{
+						Message: model.Message{
 							"a": []interface{}{
 								map[string]interface{}{"b": "hello1"},
 								map[string]interface{}{"b": "hello2"},
@@ -59,7 +60,7 @@ func TestTableProcessor_Apply(t *testing.T) {
 						Emitter: "demo",
 					},
 					&xsql.Tuple{
-						Message: xsql.Message{
+						Message: model.Message{
 							"a": []interface{}{
 								map[string]interface{}{"b": "hello2"},
 								map[string]interface{}{"b": "hello3"},
@@ -68,7 +69,7 @@ func TestTableProcessor_Apply(t *testing.T) {
 						Emitter: "demo",
 					},
 					&xsql.Tuple{
-						Message: xsql.Message{
+						Message: model.Message{
 							"a": []interface{}{
 								map[string]interface{}{"b": "hello3"},
 								map[string]interface{}{"b": "hello4"},
@@ -87,7 +88,7 @@ func TestTableProcessor_Apply(t *testing.T) {
 			result: &xsql.WindowTuples{
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
-						Message: xsql.Message{
+						Message: model.Message{
 							"a": map[string]interface{}{
 								"b": "hello",
 								"c": map[string]interface{}{
@@ -98,7 +99,7 @@ func TestTableProcessor_Apply(t *testing.T) {
 						Emitter: "demo",
 					},
 					&xsql.Tuple{
-						Message: xsql.Message{
+						Message: model.Message{
 							"a": map[string]interface{}{
 								"b": "world",
 								"c": map[string]interface{}{

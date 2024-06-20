@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/internal/topo/context"
 	"github.com/lf-edge/ekuiper/internal/xsql"
 )
@@ -37,13 +38,13 @@ func TestScriptOp(t *testing.T) {
 			script: `function exec(msg, meta) {msg.value = msg.value + 1; return msg}`,
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"value": int64(6),
 				},
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"value": int64(7),
 				},
 			},
@@ -59,19 +60,19 @@ func TestScriptOp(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "tbl",
-						Message: xsql.Message{
+						Message: model.Message{
 							"value": int64(6),
 						},
 					},
 					&xsql.Tuple{
 						Emitter: "tbl",
-						Message: xsql.Message{
+						Message: model.Message{
 							"value": 8.5,
 						},
 					},
 					&xsql.Tuple{
 						Emitter: "tbl",
-						Message: xsql.Message{
+						Message: model.Message{
 							"value": 10.2,
 						},
 					},
@@ -81,19 +82,19 @@ func TestScriptOp(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "",
-						Message: xsql.Message{
+						Message: model.Message{
 							"value": int64(7),
 						},
 					},
 					&xsql.Tuple{
 						Emitter: "",
-						Message: xsql.Message{
+						Message: model.Message{
 							"value": 9.5,
 						},
 					},
 					&xsql.Tuple{
 						Emitter: "",
-						Message: xsql.Message{
+						Message: model.Message{
 							"value": 11.2,
 						},
 					},
@@ -113,26 +114,26 @@ func TestScriptOp(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "tbl",
-						Message: xsql.Message{
+						Message: model.Message{
 							"value": int64(6),
 						},
 					},
 					&xsql.Tuple{
 						Emitter: "tbl",
-						Message: xsql.Message{
+						Message: model.Message{
 							"value": 8.5,
 						},
 					},
 					&xsql.Tuple{
 						Emitter: "tbl",
-						Message: xsql.Message{
+						Message: model.Message{
 							"value": 10.2,
 						},
 					},
 				},
 			},
 			result: &xsql.Tuple{
-				Message: xsql.Message{
+				Message: model.Message{
 					"value": 24.7,
 				},
 			},
