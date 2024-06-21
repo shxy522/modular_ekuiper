@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/internal/topo/context"
 	"github.com/lf-edge/ekuiper/internal/xsql"
 	"github.com/lf-edge/ekuiper/pkg/cast"
@@ -39,13 +40,13 @@ func TestAggregatePlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v1"},
+						Message: model.Message{"id1": 3, "f1": "v1"},
 					},
 				},
 				WindowRange: xsql.NewWindowRange(1541152486013, 1541152487013),
@@ -56,11 +57,11 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 1, "f1": "v1"},
+								Message: model.Message{"id1": 1, "f1": "v1"},
 							},
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 3, "f1": "v1"},
+								Message: model.Message{"id1": 3, "f1": "v1"},
 							},
 						},
 						WindowRange: xsql.NewWindowRange(1541152486013, 1541152487013),
@@ -69,7 +70,7 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 2, "f1": "v2"},
+								Message: model.Message{"id1": 2, "f1": "v2"},
 							},
 						},
 						WindowRange: xsql.NewWindowRange(1541152486013, 1541152487013),
@@ -83,13 +84,13 @@ func TestAggregatePlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v1"},
+						Message: model.Message{"id1": 3, "f1": "v1"},
 					},
 				},
 			},
@@ -99,7 +100,7 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 1, "f1": "v1"},
+								Message: model.Message{"id1": 1, "f1": "v1"},
 							},
 						},
 					},
@@ -107,7 +108,7 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 2, "f1": "v2"},
+								Message: model.Message{"id1": 2, "f1": "v2"},
 							},
 						},
 					},
@@ -115,7 +116,7 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 3, "f1": "v1"},
+								Message: model.Message{"id1": 3, "f1": "v1"},
 							},
 						},
 					},
@@ -128,15 +129,15 @@ func TestAggregatePlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter:  "src1",
-						Message:  xsql.Message{"id1": 1, "f1": "v1"},
+						Message:  model.Message{"id1": 1, "f1": "v1"},
 						Metadata: xsql.Metadata{"topic": "topic1"},
 					}, &xsql.Tuple{
 						Emitter:  "src1",
-						Message:  xsql.Message{"id1": 2, "f1": "v2"},
+						Message:  model.Message{"id1": 2, "f1": "v2"},
 						Metadata: xsql.Metadata{"topic": "topic2"},
 					}, &xsql.Tuple{
 						Emitter:  "src1",
-						Message:  xsql.Message{"id1": 3, "f1": "v1"},
+						Message:  model.Message{"id1": 3, "f1": "v1"},
 						Metadata: xsql.Metadata{"topic": "topic1"},
 					},
 				},
@@ -148,12 +149,12 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter:  "src1",
-								Message:  xsql.Message{"id1": 1, "f1": "v1"},
+								Message:  model.Message{"id1": 1, "f1": "v1"},
 								Metadata: xsql.Metadata{"topic": "topic1"},
 							},
 							&xsql.Tuple{
 								Emitter:  "src1",
-								Message:  xsql.Message{"id1": 3, "f1": "v1"},
+								Message:  model.Message{"id1": 3, "f1": "v1"},
 								Metadata: xsql.Metadata{"topic": "topic1"},
 							},
 						},
@@ -162,7 +163,7 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter:  "src1",
-								Message:  xsql.Message{"id1": 2, "f1": "v2"},
+								Message:  model.Message{"id1": 2, "f1": "v2"},
 								Metadata: xsql.Metadata{"topic": "topic2"},
 							},
 						},
@@ -176,19 +177,19 @@ func TestAggregatePlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v1"}},
 						},
 					},
 				},
@@ -200,8 +201,8 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+									&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 								},
 							},
 						},
@@ -211,8 +212,8 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+									&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 								},
 							},
 						},
@@ -222,7 +223,7 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v1"}},
+									&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v1"}},
 								},
 							},
 						},
@@ -237,19 +238,19 @@ func TestAggregatePlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v1"}},
 						},
 					},
 				},
@@ -260,13 +261,13 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+									&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 								},
 							},
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v1"}},
+									&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v1"}},
 								},
 							},
 						},
@@ -275,8 +276,8 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+									&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 								},
 							},
 						},
@@ -290,19 +291,19 @@ func TestAggregatePlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1", "ts": cast.TimeFromUnixMilli(1568854515000)}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1", "ts": cast.TimeFromUnixMilli(1568854515000)}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2", "ts": cast.TimeFromUnixMilli(1568854573431)}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2", "ts": cast.TimeFromUnixMilli(1568854573431)}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v1", "ts": cast.TimeFromUnixMilli(1568854515000)}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v1", "ts": cast.TimeFromUnixMilli(1568854515000)}},
 						},
 					},
 				},
@@ -313,13 +314,13 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1", "ts": cast.TimeFromUnixMilli(1568854515000)}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+									&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1", "ts": cast.TimeFromUnixMilli(1568854515000)}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 								},
 							},
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v1", "ts": cast.TimeFromUnixMilli(1568854515000)}},
+									&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v1", "ts": cast.TimeFromUnixMilli(1568854515000)}},
 								},
 							},
 						},
@@ -328,8 +329,8 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2", "ts": cast.TimeFromUnixMilli(1568854573431)}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+									&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2", "ts": cast.TimeFromUnixMilli(1568854573431)}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 								},
 							},
 						},
@@ -343,13 +344,13 @@ func TestAggregatePlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v1"},
+						Message: model.Message{"id1": 3, "f1": "v1"},
 					},
 				},
 			},
@@ -359,7 +360,7 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 1, "f1": "v1"},
+								Message: model.Message{"id1": 1, "f1": "v1"},
 							},
 						},
 					},
@@ -367,11 +368,11 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 2, "f1": "v2"},
+								Message: model.Message{"id1": 2, "f1": "v2"},
 							},
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 3, "f1": "v1"},
+								Message: model.Message{"id1": 3, "f1": "v1"},
 							},
 						},
 					},
@@ -385,12 +386,12 @@ func TestAggregatePlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "B", Message: xsql.Message{"module": 1, "topic": "moduleB topic", "value": 1}},
+							&xsql.Tuple{Emitter: "B", Message: model.Message{"module": 1, "topic": "moduleB topic", "value": 1}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "C", Message: xsql.Message{"module": 1, "topic": "moduleC topic", "value": 100}},
+							&xsql.Tuple{Emitter: "C", Message: model.Message{"module": 1, "topic": "moduleC topic", "value": 100}},
 						},
 					},
 				},
@@ -401,12 +402,12 @@ func TestAggregatePlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "B", Message: xsql.Message{"module": 1, "topic": "moduleB topic", "value": 1}},
+									&xsql.Tuple{Emitter: "B", Message: model.Message{"module": 1, "topic": "moduleB topic", "value": 1}},
 								},
 							},
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "C", Message: xsql.Message{"module": 1, "topic": "moduleC topic", "value": 100}},
+									&xsql.Tuple{Emitter: "C", Message: model.Message{"module": 1, "topic": "moduleC topic", "value": 100}},
 								},
 							},
 						},
@@ -470,13 +471,13 @@ func TestAggregatePlanError(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v1"},
+						Message: model.Message{"id1": 3, "f1": "v1"},
 					},
 				},
 			},

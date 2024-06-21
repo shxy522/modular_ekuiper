@@ -21,6 +21,7 @@ import (
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/internal/topo/context"
 	"github.com/lf-edge/ekuiper/internal/xsql"
 	"github.com/lf-edge/ekuiper/pkg/cast"
@@ -36,7 +37,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT concat(a, b, c) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "mya",
 					"b": "myb",
 					"c": "myc",
@@ -50,7 +51,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT concat(a, d, b, c) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "mya",
 					"b": "myb",
 					"c": "myc",
@@ -65,7 +66,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT endswith(a, b) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "mya",
 					"b": "myb",
 					"c": "myc",
@@ -79,7 +80,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT endswith(a, b) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "mya",
 					"b": "ya",
 					"c": "myc",
@@ -93,7 +94,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT endswith(a, d) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "mya",
 					"b": "ya",
 					"c": "myc",
@@ -107,7 +108,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT format_time(a, \"yyyy-MM-dd T HH:mm:ss\") AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": cast.TimeFromUnixMilli(1568854515000),
 					"b": "ya",
 					"c": "myc",
@@ -121,7 +122,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT format_time(meta(created) * 1000, \"yyyy-MM-dd T HH:mm:ss\") AS time FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "hello",
 					"b": "ya",
 					"c": "myc",
@@ -138,7 +139,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT format_time(d, \"yyyy-MM-dd T HH:mm:ss\") AS time FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "hello",
 					"b": "ya",
 					"c": "myc",
@@ -150,7 +151,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT indexof(a, \"a\") AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "mya",
 					"b": "ya",
 					"c": "myc",
@@ -164,7 +165,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT indexof(d, \"a\") AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "mya",
 					"b": "ya",
 					"c": "myc",
@@ -178,7 +179,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT length(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "中国",
 					"b": "ya",
 					"c": "myc",
@@ -192,7 +193,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT length(c) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "中国",
 					"b": "ya",
 					"c": "myc",
@@ -206,7 +207,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT length(d) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "中国",
 					"b": "ya",
 					"c": "myc",
@@ -220,7 +221,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT lower(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "NYCNicks",
 					"b": "ya",
 					"c": "myc",
@@ -234,7 +235,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT lower(d) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "NYCNicks",
 					"b": "ya",
 					"c": "myc",
@@ -246,7 +247,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT lpad(a, 2) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "NYCNicks",
 					"b": "ya",
 					"c": "myc",
@@ -260,7 +261,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT ltrim(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": " \ttrimme\n ",
 					"b": "ya",
 					"c": "myc",
@@ -274,7 +275,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT numbytes(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "中国",
 					"b": "ya",
 					"c": "myc",
@@ -288,7 +289,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT numbytes(b) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "中国",
 					"b": "ya",
 					"c": "myc",
@@ -302,7 +303,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT regexp_matches(a,\"foo.*\") AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "seafood",
 					"b": "ya",
 					"c": "myc",
@@ -316,7 +317,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT regexp_matches(b,\"foo.*\") AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "seafood",
 					"b": "ya",
 					"c": "myc",
@@ -330,7 +331,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT regexp_matches(d,\"foo.*\") AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "seafood",
 					"b": "ya",
 					"c": "myc",
@@ -344,7 +345,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT regexp_replace(a,\"a(x*)b\", \"REP\") AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "-ab-axxb-",
 					"b": "ya",
 					"c": "myc",
@@ -358,7 +359,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT regexp_replace(a,\"a(x*)b\", d) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "-ab-axxb-",
 					"b": "ya",
 					"c": "myc",
@@ -370,7 +371,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT regexp_substr(a,\"foo.*\") AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "seafood",
 					"b": "ya",
 					"c": "myc",
@@ -384,7 +385,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT regexp_substr(d,\"foo.*\") AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "seafood",
 					"b": "ya",
 					"c": "myc",
@@ -396,7 +397,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT rpad(a, 3) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "NYCNicks",
 					"b": "ya",
 					"c": "myc",
@@ -410,7 +411,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT rtrim(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": " \ttrimme\n ",
 					"b": "ya",
 					"c": "myc",
@@ -424,7 +425,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT substring(a, 3) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "NYCNicks",
 					"b": "ya",
 					"c": "myc",
@@ -438,7 +439,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT substring(a, 3, 5) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "NYCNicks",
 					"b": "ya",
 					"c": "myc",
@@ -452,7 +453,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT substring(a, 3, 100) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "NYCNicks",
 					"b": "ya",
 					"c": "myc",
@@ -466,7 +467,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT substring(a, 88, 100) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "NYCNicks",
 					"b": "ya",
 					"c": "myc",
@@ -480,7 +481,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT substring(a, 100) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "NYCNicks",
 					"b": "ya",
 					"c": "myc",
@@ -494,7 +495,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT substring(a, 100) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "NYCNicks",
 					"b": "ya",
 					"c": "myc",
@@ -508,7 +509,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT substring(d, 3, 100) AS bc FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "NYCNicks",
 					"b": "ya",
 					"c": "myc",
@@ -520,7 +521,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT endswith(a, b) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "mya",
 					"b": "ya",
 					"c": "myc",
@@ -534,7 +535,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT endswith(a, c) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "mya",
 					"b": "ya",
 					"c": "myc",
@@ -548,7 +549,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT endswith(d, c) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "mya",
 					"b": "ya",
 					"c": "myc",
@@ -562,7 +563,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT trim(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": " \ttrimme\n ",
 					"b": "ya",
 					"c": "myc",
@@ -576,7 +577,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: "SELECT upper(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "NYCNicks",
 					"b": "ya",
 					"c": "myc",
@@ -591,7 +592,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: `SELECT split_value(a,"/",0) AS a FROM test1`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "test/device001/message",
 				},
 			},
@@ -604,7 +605,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: `SELECT split_value(a,"/",1) AS a FROM test1`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "test/device001/message",
 				},
 			},
@@ -617,7 +618,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: `SELECT split_value(a,"/",2) AS a FROM test1`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "test/device001/message",
 				},
 			},
@@ -629,7 +630,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: `SELECT split_value(d,"/",2) AS a FROM test1`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "test/device001/message",
 				},
 			},
@@ -640,7 +641,7 @@ func TestStrFunc_Apply1(t *testing.T) {
 			sql: `SELECT split_value(a,"/",0) AS a, split_value(a,"/",3) AS b FROM test1`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "/test/device001/message",
 				},
 			},

@@ -20,6 +20,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/pkg/ast"
 )
 
@@ -27,13 +28,13 @@ func Test_MessageValTest(t *testing.T) {
 	tests := []struct {
 		key     string
 		table   string
-		message Message
+		message model.Message
 		exptV   interface{}
 		exptOk  bool
 	}{
 		{
 			key: "key1",
-			message: Message{
+			message: model.Message{
 				"key1": "val1",
 				"key2": "val2",
 			},
@@ -43,7 +44,7 @@ func Test_MessageValTest(t *testing.T) {
 
 		{
 			key: "key0",
-			message: Message{
+			message: model.Message{
 				"key1": "val1",
 				"key2": "val2",
 			},
@@ -53,7 +54,7 @@ func Test_MessageValTest(t *testing.T) {
 
 		{
 			key: "key1",
-			message: Message{
+			message: model.Message{
 				"Key1": "val1",
 				"key2": "val2",
 			},
@@ -64,7 +65,7 @@ func Test_MessageValTest(t *testing.T) {
 		{
 			key:   "subkey",
 			table: "key1",
-			message: Message{
+			message: model.Message{
 				"Key1":   "val1",
 				"subkey": "subval",
 			},
@@ -74,7 +75,7 @@ func Test_MessageValTest(t *testing.T) {
 
 		{
 			key: "192.168.0.1",
-			message: Message{
+			message: model.Message{
 				"Key1":        "val1",
 				"192.168.0.1": "000",
 			},
@@ -85,7 +86,7 @@ func Test_MessageValTest(t *testing.T) {
 		{
 			key:   "child",
 			table: "parent",
-			message: Message{
+			message: model.Message{
 				"key1":         "val1",
 				"child":        "child_val",
 				"parent.child": "demo",
@@ -96,7 +97,7 @@ func Test_MessageValTest(t *testing.T) {
 
 		{
 			key: "parent.child",
-			message: Message{
+			message: model.Message{
 				"key1":         "val1",
 				"child":        "child_val",
 				"parent.child": "demo",
@@ -107,7 +108,7 @@ func Test_MessageValTest(t *testing.T) {
 
 		{
 			key: "parent.Child",
-			message: Message{
+			message: model.Message{
 				"key1":         "val1",
 				"child":        "child_val",
 				"parent.child": "demo",

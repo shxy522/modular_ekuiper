@@ -21,6 +21,7 @@ import (
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/internal/topo/context"
 	"github.com/lf-edge/ekuiper/internal/xsql"
 )
@@ -35,7 +36,7 @@ func TestMathAndConversionFunc_Apply1(t *testing.T) {
 			sql: "SELECT abs(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": -1,
 				},
 			},
@@ -47,7 +48,7 @@ func TestMathAndConversionFunc_Apply1(t *testing.T) {
 			sql: "SELECT abs(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": int64(-1),
 				},
 			},
@@ -60,7 +61,7 @@ func TestMathAndConversionFunc_Apply1(t *testing.T) {
 			sql: "SELECT abs(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": -1.1,
 				},
 			},
@@ -73,7 +74,7 @@ func TestMathAndConversionFunc_Apply1(t *testing.T) {
 			sql: "SELECT abs(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": 1.1,
 				},
 			},

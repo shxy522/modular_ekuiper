@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/internal/topo/context"
 	"github.com/lf-edge/ekuiper/internal/topo/state"
 	"github.com/lf-edge/ekuiper/internal/xsql"
@@ -39,7 +40,7 @@ func TestChangedColsFunc_Apply1(t *testing.T) {
 			data: []interface{}{
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b1",
 						"c": "c1",
@@ -47,7 +48,7 @@ func TestChangedColsFunc_Apply1(t *testing.T) {
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b2",
 						"c": "c1",
@@ -55,14 +56,14 @@ func TestChangedColsFunc_Apply1(t *testing.T) {
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"c": "c1",
 					},
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b2",
 						"c": "c2",
@@ -83,14 +84,14 @@ func TestChangedColsFunc_Apply1(t *testing.T) {
 			data: []interface{}{
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b1",
 					},
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b2",
 						"c": "c1",
@@ -98,14 +99,14 @@ func TestChangedColsFunc_Apply1(t *testing.T) {
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"c": "c1",
 					},
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b2",
 						"c": "c2",

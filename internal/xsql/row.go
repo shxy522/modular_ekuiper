@@ -20,6 +20,7 @@ import (
 	"sync"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/pkg/ast"
 )
 
@@ -32,7 +33,7 @@ import (
 
 type Wildcarder interface {
 	// All Value returns the value and existence flag for a given key.
-	All(stream string) (Message, bool)
+	All(stream string) (model.Message, bool)
 }
 
 type Event interface {
@@ -217,12 +218,9 @@ func (d *AffiliateRow) Pick(cols [][]string) [][]string {
  *  Message definition
  */
 
-// Message is a valuer that substitutes values for the mapped interface. It is the basic type for data events.
-type Message map[string]interface{}
+var _ Valuer = model.Message{}
 
-var _ Valuer = Message{}
-
-type Metadata Message
+type Metadata model.Message
 
 // Alias will not need to convert cases
 type Alias struct {
@@ -236,7 +234,7 @@ type Alias struct {
 // Tuple The input row, produced by the source
 type Tuple struct {
 	Emitter   string
-	Message   Message // the original pointer is immutable & big; may be cloned
+	Message   model.Message // the original pointer is immutable & big; may be cloned
 	Timestamp int64
 	Metadata  Metadata // immutable
 
@@ -276,13 +274,13 @@ var _ CollectionRow = &GroupedTuples{}
  *   Implementations
  */
 
-func ToMessage(input interface{}) (Message, bool) {
-	var result Message
+func ToMessage(input interface{}) (model.Message, bool) {
+	var result model.Message
 	switch m := input.(type) {
-	case Message:
+	case model.Message:
 		result = m
 	case Metadata:
-		result = Message(m)
+		result = model.Message(m)
 	case map[string]interface{}:
 		result = m
 	default:
@@ -291,40 +289,10 @@ func ToMessage(input interface{}) (Message, bool) {
 	return result, true
 }
 
-func (m Message) Value(key, _ string) (interface{}, bool) {
-	if v, ok := m[key]; ok {
-		return v, ok
-	} else if conf.Config == nil || conf.Config.Basic.IgnoreCase {
-		// Only when with 'SELECT * FROM ...'  and 'schemaless', the key in map is not convert to lower case.
-		// So all of keys in map should be convert to lowercase and then compare them.
-		return m.getIgnoreCase(key)
-	} else {
-		return nil, false
-	}
-}
-
-func (m Message) getIgnoreCase(key interface{}) (interface{}, bool) {
-	if k, ok := key.(string); ok {
-		for mk, v := range m {
-			if strings.EqualFold(k, mk) {
-				return v, true
-			}
-		}
-	}
-	return nil, false
-}
-
-func (m Message) Meta(key, table string) (interface{}, bool) {
-	if key == "*" {
-		return map[string]interface{}(m), true
-	}
-	return m.Value(key, table)
-}
-
 // MetaData implementation
 
 func (m Metadata) Value(key, table string) (interface{}, bool) {
-	msg := Message(m)
+	msg := model.Message(m)
 	return msg.Value(key, table)
 }
 
@@ -332,7 +300,7 @@ func (m Metadata) Meta(key, table string) (interface{}, bool) {
 	if key == "*" {
 		return map[string]interface{}(m), true
 	}
-	msg := Message(m)
+	msg := model.Message(m)
 	return msg.Meta(key, table)
 }
 
@@ -346,7 +314,7 @@ func (t *Tuple) Value(key, table string) (interface{}, bool) {
 	return t.Message.Value(key, table)
 }
 
-func (t *Tuple) All(string) (Message, bool) {
+func (t *Tuple) All(string) (model.Message, bool) {
 	return t.ToMap(), true
 }
 
@@ -495,7 +463,7 @@ func (jt *JoinTuple) Meta(key, table string) (interface{}, bool) {
 	return jt.doGetValue(key, table, false)
 }
 
-func (jt *JoinTuple) All(stream string) (Message, bool) {
+func (jt *JoinTuple) All(stream string) (model.Message, bool) {
 	if stream != "" {
 		for _, t := range jt.Tuples {
 			if t.GetEmitter() == stream {
@@ -577,7 +545,7 @@ func (s *GroupedTuples) Meta(key, table string) (interface{}, bool) {
 	return s.Content[0].Meta(key, table)
 }
 
-func (s *GroupedTuples) All(_ string) (Message, bool) {
+func (s *GroupedTuples) All(_ string) (model.Message, bool) {
 	return s.ToMap(), true
 }
 

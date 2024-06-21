@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/lf-edge/ekuiper/internal/binder/function"
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/pkg/ast"
 	"github.com/lf-edge/ekuiper/pkg/cast"
 )
@@ -329,7 +330,7 @@ func (v *ValuerEval) Eval(expr ast.Expr) interface{} {
 							}
 							switch cf.Expr.(type) {
 							case *ast.Wildcard:
-								m, ok := temp.(Message)
+								m, ok := temp.(model.Message)
 								if !ok {
 									return fmt.Errorf("wildcarder return non message result")
 								}
@@ -461,7 +462,7 @@ func (v *ValuerEval) evalBinaryExpr(expr *ast.BinaryExpr) interface{} {
 	switch val := lhs.(type) {
 	case map[string]interface{}:
 		return v.evalJsonExpr(val, expr.OP, expr.RHS)
-	case Message:
+	case model.Message:
 		return v.evalJsonExpr(map[string]interface{}(val), expr.OP, expr.RHS)
 	case error:
 		return val
@@ -640,7 +641,7 @@ func (v *ValuerEval) evalJsonExpr(result interface{}, op ast.Token, expr ast.Exp
 		if val, ok := result.(map[string]interface{}); ok {
 			switch e := expr.(type) {
 			case *ast.JsonFieldRef:
-				ve := &ValuerEval{Valuer: Message(val)}
+				ve := &ValuerEval{Valuer: model.Message(val)}
 				return ve.Eval(e)
 			default:
 				return fmt.Errorf("the right expression is not a field reference node")

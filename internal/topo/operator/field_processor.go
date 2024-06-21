@@ -20,6 +20,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/internal/xsql"
 	"github.com/lf-edge/ekuiper/pkg/ast"
 	"github.com/lf-edge/ekuiper/pkg/cast"
@@ -37,7 +38,7 @@ func (p *defaultFieldProcessor) validateAndConvert(tuple *xsql.Tuple) error {
 	return err
 }
 
-func (p *defaultFieldProcessor) validateAndConvertMessage(schema map[string]*ast.JsonStreamField, message xsql.Message) (map[string]interface{}, error) {
+func (p *defaultFieldProcessor) validateAndConvertMessage(schema map[string]*ast.JsonStreamField, message model.Message) (map[string]interface{}, error) {
 	for name, sf := range schema {
 		v, ok := message.Value(name, "")
 		if !ok {

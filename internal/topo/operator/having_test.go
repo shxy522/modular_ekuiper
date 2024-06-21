@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/internal/topo/context"
 	"github.com/lf-edge/ekuiper/internal/xsql"
 )
@@ -38,13 +39,13 @@ func TestHavingPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 5, "f1": "v1"},
+						Message: model.Message{"id1": 5, "f1": "v1"},
 					},
 				},
 				WindowRange: xsql.NewWindowRange(1541152486013, 1541152487013),
@@ -53,13 +54,13 @@ func TestHavingPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 5, "f1": "v1"},
+						Message: model.Message{"id1": 5, "f1": "v1"},
 					},
 				},
 				WindowRange: xsql.NewWindowRange(1541152486013, 1541152487013),
@@ -71,7 +72,7 @@ func TestHavingPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					},
 				},
 			},
@@ -84,7 +85,7 @@ func TestHavingPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					},
 				},
 			},
@@ -92,7 +93,7 @@ func TestHavingPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					},
 				},
 			},
@@ -104,7 +105,7 @@ func TestHavingPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					},
 				},
 			},
@@ -116,7 +117,7 @@ func TestHavingPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					},
 				},
 			},
@@ -124,7 +125,7 @@ func TestHavingPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					},
 				},
 			},
@@ -137,11 +138,11 @@ func TestHavingPlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 1, "f1": "v1"},
+								Message: model.Message{"id1": 1, "f1": "v1"},
 							},
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 3, "f1": "v1"},
+								Message: model.Message{"id1": 3, "f1": "v1"},
 							},
 						},
 						WindowRange: xsql.NewWindowRange(1541152486013, 1541152487013),
@@ -150,7 +151,7 @@ func TestHavingPlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 2, "f1": "v2"},
+								Message: model.Message{"id1": 2, "f1": "v2"},
 							},
 						},
 						WindowRange: xsql.NewWindowRange(1541152486055, 1541152487055),
@@ -163,7 +164,7 @@ func TestHavingPlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 2, "f1": "v2"},
+								Message: model.Message{"id1": 2, "f1": "v2"},
 							},
 						},
 						WindowRange: xsql.NewWindowRange(1541152486055, 1541152487055),
@@ -179,14 +180,14 @@ func TestHavingPlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "test", Message: xsql.Message{"id": 1, "a": 122.33}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id": 1, "color": "w2"}},
+									&xsql.Tuple{Emitter: "test", Message: model.Message{"id": 1, "a": 122.33}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id": 1, "color": "w2"}},
 								},
 							},
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "test", Message: xsql.Message{"id": 5, "a": 177.51}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id": 5, "color": "w2"}},
+									&xsql.Tuple{Emitter: "test", Message: model.Message{"id": 5, "a": 177.51}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id": 5, "color": "w2"}},
 								},
 							},
 						},
@@ -196,14 +197,14 @@ func TestHavingPlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "test", Message: xsql.Message{"id": 2, "a": 89.03}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id": 2, "color": "w1"}},
+									&xsql.Tuple{Emitter: "test", Message: model.Message{"id": 2, "a": 89.03}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id": 2, "color": "w1"}},
 								},
 							},
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "test", Message: xsql.Message{"id": 4, "a": 14.6}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id": 4, "color": "w1"}},
+									&xsql.Tuple{Emitter: "test", Message: model.Message{"id": 4, "a": 14.6}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id": 4, "color": "w1"}},
 								},
 							},
 						},
@@ -217,14 +218,14 @@ func TestHavingPlan_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "test", Message: xsql.Message{"id": 1, "a": 122.33}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id": 1, "color": "w2"}},
+									&xsql.Tuple{Emitter: "test", Message: model.Message{"id": 1, "a": 122.33}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id": 1, "color": "w2"}},
 								},
 							},
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "test", Message: xsql.Message{"id": 5, "a": 177.51}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id": 5, "color": "w2"}},
+									&xsql.Tuple{Emitter: "test", Message: model.Message{"id": 5, "a": 177.51}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id": 5, "color": "w2"}},
 								},
 							},
 						},
@@ -265,13 +266,13 @@ func TestHavingPlanAlias_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1", "a": 8 / 3},
+						Message: model.Message{"id1": 1, "f1": "v1", "a": 8 / 3},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 5, "f1": "v1"},
+						Message: model.Message{"id1": 5, "f1": "v1"},
 					},
 				},
 			},
@@ -279,13 +280,13 @@ func TestHavingPlanAlias_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1", "a": 8 / 3},
+						Message: model.Message{"id1": 1, "f1": "v1", "a": 8 / 3},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 5, "f1": "v1"},
+						Message: model.Message{"id1": 5, "f1": "v1"},
 					},
 				},
 			},
@@ -296,7 +297,7 @@ func TestHavingPlanAlias_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1", "s": 1},
+						Message: model.Message{"id1": 1, "f1": "v1", "s": 1},
 					},
 				},
 			},
@@ -310,11 +311,11 @@ func TestHavingPlanAlias_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 1, "f1": "v1", "c": 2},
+								Message: model.Message{"id1": 1, "f1": "v1", "c": 2},
 							},
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 3, "f1": "v1"},
+								Message: model.Message{"id1": 3, "f1": "v1"},
 							},
 						},
 					},
@@ -322,7 +323,7 @@ func TestHavingPlanAlias_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 2, "f1": "v2", "c": 1},
+								Message: model.Message{"id1": 2, "f1": "v2", "c": 1},
 							},
 						},
 					},
@@ -334,11 +335,11 @@ func TestHavingPlanAlias_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 1, "f1": "v1", "c": 2},
+								Message: model.Message{"id1": 1, "f1": "v1", "c": 2},
 							},
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 3, "f1": "v1"},
+								Message: model.Message{"id1": 3, "f1": "v1"},
 							},
 						},
 					},
@@ -353,14 +354,14 @@ func TestHavingPlanAlias_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "test", Message: xsql.Message{"id": 1, "a": 122.33, "c": 2}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id": 1, "color": "w2"}},
+									&xsql.Tuple{Emitter: "test", Message: model.Message{"id": 1, "a": 122.33, "c": 2}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id": 1, "color": "w2"}},
 								},
 							},
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "test", Message: xsql.Message{"id": 5, "a": 177.51}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id": 5, "color": "w2"}},
+									&xsql.Tuple{Emitter: "test", Message: model.Message{"id": 5, "a": 177.51}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id": 5, "color": "w2"}},
 								},
 							},
 						},
@@ -369,8 +370,8 @@ func TestHavingPlanAlias_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "test", Message: xsql.Message{"id": 2, "a": 89.03, "c": 1}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id": 2, "color": "w1"}},
+									&xsql.Tuple{Emitter: "test", Message: model.Message{"id": 2, "a": 89.03, "c": 1}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id": 2, "color": "w1"}},
 								},
 							},
 						},
@@ -383,14 +384,14 @@ func TestHavingPlanAlias_Apply(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "test", Message: xsql.Message{"id": 1, "a": 122.33, "c": 2}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id": 1, "color": "w2"}},
+									&xsql.Tuple{Emitter: "test", Message: model.Message{"id": 1, "a": 122.33, "c": 2}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id": 1, "color": "w2"}},
 								},
 							},
 							&xsql.JoinTuple{
 								Tuples: []xsql.TupleRow{
-									&xsql.Tuple{Emitter: "test", Message: xsql.Message{"id": 5, "a": 177.51}},
-									&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id": 5, "color": "w2"}},
+									&xsql.Tuple{Emitter: "test", Message: model.Message{"id": 5, "a": 177.51}},
+									&xsql.Tuple{Emitter: "src2", Message: model.Message{"id": 5, "color": "w2"}},
 								},
 							},
 						},
@@ -430,13 +431,13 @@ func TestHavingPlanError(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 5, "f1": "v1"},
+						Message: model.Message{"id1": 5, "f1": "v1"},
 					},
 				},
 			},
@@ -453,11 +454,11 @@ func TestHavingPlanError(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 1, "f1": 3},
+								Message: model.Message{"id1": 1, "f1": 3},
 							},
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 3, "f1": 3},
+								Message: model.Message{"id1": 3, "f1": 3},
 							},
 						},
 					},
@@ -465,7 +466,7 @@ func TestHavingPlanError(t *testing.T) {
 						Content: []xsql.TupleRow{
 							&xsql.Tuple{
 								Emitter: "src1",
-								Message: xsql.Message{"id1": 2, "f1": "v2"},
+								Message: model.Message{"id1": 2, "f1": "v2"},
 							},
 						},
 					},

@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/model"
 )
 
 func TestCollectionAgg(t *testing.T) {
@@ -89,13 +90,13 @@ func TestCollectionAgg(t *testing.T) {
 			collO: &JoinTuples{Content: []*JoinTuple{
 				{
 					Tuples: []TupleRow{
-						&Tuple{Emitter: "src1", Message: Message{"a": 1, "b": "v1"}},
-						&Tuple{Emitter: "src2", Message: Message{"a": 2, "c": "w2"}},
+						&Tuple{Emitter: "src1", Message: model.Message{"a": 1, "b": "v1"}},
+						&Tuple{Emitter: "src2", Message: model.Message{"a": 2, "c": "w2"}},
 					},
 				}, {
 					Tuples: []TupleRow{
-						&Tuple{Emitter: "src1", Message: Message{"a": 3, "b": "v2"}},
-						&Tuple{Emitter: "src2", Message: Message{"a": 4, "c": "w1"}},
+						&Tuple{Emitter: "src1", Message: model.Message{"a": 3, "b": "v2"}},
+						&Tuple{Emitter: "src2", Message: model.Message{"a": 4, "c": "w1"}},
 					},
 				},
 			}},
@@ -142,13 +143,13 @@ func TestCollectionAgg(t *testing.T) {
 			collO: &GroupedTuplesSet{Groups: []*GroupedTuples{
 				{
 					Content: []TupleRow{
-						&Tuple{Emitter: "src1", Message: Message{"a": 1, "b": "v1"}},
-						&Tuple{Emitter: "src1", Message: Message{"a": 2, "b": "w2"}},
+						&Tuple{Emitter: "src1", Message: model.Message{"a": 1, "b": "v1"}},
+						&Tuple{Emitter: "src1", Message: model.Message{"a": 2, "b": "w2"}},
 					},
 				}, {
 					Content: []TupleRow{
-						&Tuple{Emitter: "src1", Message: Message{"a": 3, "b": "v2"}},
-						&Tuple{Emitter: "src1", Message: Message{"a": 4, "b": "w1"}},
+						&Tuple{Emitter: "src1", Message: model.Message{"a": 3, "b": "v2"}},
+						&Tuple{Emitter: "src1", Message: model.Message{"a": 4, "b": "w1"}},
 					},
 				},
 			}},
