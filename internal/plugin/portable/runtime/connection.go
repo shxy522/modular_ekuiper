@@ -174,7 +174,7 @@ func CreateSourceChannel(ctx api.StreamContext) (DataInChannel, error) {
 		return nil, fmt.Errorf("can't get new pull socket: %s", err)
 	}
 	setSockOptions(sock, map[string]interface{}{
-		mangos.OptionRecvDeadline: 500 * time.Millisecond,
+		mangos.OptionRecvDeadline: time.Duration(conf.Config.Portable.RecvTimeout) * time.Millisecond,
 	})
 	url := fmt.Sprintf("ipc:///tmp/%s_%s_%d.ipc", ctx.GetRuleId(), ctx.GetOpId(), ctx.GetInstanceId())
 	if err = listenWithRetry(sock, url); err != nil {
@@ -194,8 +194,8 @@ func CreateFunctionChannel(symbolName string) (DataReqChannel, error) {
 	}
 	// Function must send out data quickly and wait for the response with some buffer
 	setSockOptions(sock, map[string]interface{}{
-		mangos.OptionRecvDeadline: 5000 * time.Millisecond,
-		mangos.OptionSendDeadline: 1000 * time.Millisecond,
+		mangos.OptionRecvDeadline: time.Duration(conf.Config.Portable.RecvTimeout) * time.Millisecond,
+		mangos.OptionSendDeadline: time.Duration(conf.Config.Portable.SendTimeout) * time.Millisecond,
 		mangos.OptionRetryTime:    0,
 	})
 	url := fmt.Sprintf("ipc:///tmp/func_%s.ipc", symbolName)
@@ -215,7 +215,7 @@ func CreateSinkChannel(ctx api.StreamContext) (DataOutChannel, error) {
 		return nil, fmt.Errorf("can't get new push socket: %s", err)
 	}
 	setSockOptions(sock, map[string]interface{}{
-		mangos.OptionSendDeadline: 1000 * time.Millisecond,
+		mangos.OptionSendDeadline: time.Duration(conf.Config.Portable.SendTimeout) * time.Millisecond,
 	})
 	url := fmt.Sprintf("ipc:///tmp/%s_%s_%d.ipc", ctx.GetRuleId(), ctx.GetOpId(), ctx.GetInstanceId())
 	if err = sock.DialOptions(url, dialOptions); err != nil {
