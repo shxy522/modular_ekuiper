@@ -157,6 +157,8 @@ type KuiperConf struct {
 	Portable struct {
 		PythonBin   string `yaml:"pythonBin"`
 		InitTimeout int    `yaml:"initTimeout"`
+		SendTimeout int    `yaml:"sendTimeout"`
+		RecvTimeout int    `yaml:"recvTimeout"`
 	}
 }
 
