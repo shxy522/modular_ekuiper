@@ -33,6 +33,7 @@ import (
 	"github.com/lf-edge/ekuiper/internal/keyedstate"
 	meta2 "github.com/lf-edge/ekuiper/internal/meta"
 	"github.com/lf-edge/ekuiper/internal/pkg/store"
+	"github.com/lf-edge/ekuiper/internal/plugin/portable/runtime"
 	"github.com/lf-edge/ekuiper/internal/processor"
 	"github.com/lf-edge/ekuiper/internal/topo/connection/factory"
 	"github.com/lf-edge/ekuiper/internal/topo/rule"
@@ -179,6 +180,10 @@ func StartUp(Version, LoadFileType string) {
 		logger.Errorf("rest server shutdown error: %v", err)
 	}
 	logger.Info("rest server successfully shutdown.")
+
+	// kill all plugin process
+	runtime.GetPluginInsManager().KillAll()
+	logger.Info("all portable plugin process successfully shutdown.")
 
 	// close extend services
 	for k, v := range servers {
