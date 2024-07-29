@@ -20,6 +20,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"strconv"
 	"time"
 
 	"github.com/lestrrat-go/file-rotatelogs"
@@ -310,4 +311,20 @@ func ValidateRuleOption(option *api.RuleOption) error {
 func init() {
 	InitLogger()
 	InitClock()
+	LoadFvtTestMode()
+}
+
+var isFvtTestMode = false
+
+func LoadFvtTestMode() {
+	var err error
+	r := os.Getenv("KUIPER_FVT_TEST_MODE")
+	isFvtTestMode, err = strconv.ParseBool(r)
+	if err != nil {
+		isFvtTestMode = false
+	}
+}
+
+func IsFvtTestMode() bool {
+	return isFvtTestMode
 }
