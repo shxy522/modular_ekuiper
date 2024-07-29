@@ -184,10 +184,8 @@ func (p *pluginInsManager) AddPluginIns(name string, ins *PluginIns) {
 func (p *pluginInsManager) CreateIns(pluginMeta *PluginMeta) {
 	p.Lock()
 	defer p.Unlock()
-	if ins, ok := p.instances[pluginMeta.Name]; ok {
-		if len(ins.commands) != 0 {
-			go p.getOrStartProcess(pluginMeta, PortbleConf)
-		}
+	if _, ok := p.instances[pluginMeta.Name]; ok {
+		go p.getOrStartProcess(pluginMeta, PortbleConf)
 	}
 }
 
@@ -282,12 +280,10 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 		// clean up for stop unintentionally
 		if ins, ok := p.getPluginIns(pluginMeta.Name); ok && ins.process == cmd.Process {
 			ins.Lock()
-			if len(ins.commands) == 0 {
-				if ins.ctrlChan != nil {
-					_ = ins.ctrlChan.Close()
-				}
-				p.deletePluginIns(pluginMeta.Name)
+			if ins.ctrlChan != nil {
+				_ = ins.ctrlChan.Close()
 			}
+			p.deletePluginIns(pluginMeta.Name)
 			ins.process = nil
 			ins.Unlock()
 		}

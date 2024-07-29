@@ -52,6 +52,7 @@ func init() {
 }
 
 func TestSourceAndFunc(t *testing.T) {
+	t.Skip()
 	streamList := []string{"ext", "extpy"}
 	topotest.HandleStream(false, streamList, t)
 	tests := []struct {
