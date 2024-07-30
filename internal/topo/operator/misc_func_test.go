@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/internal/testx"
 	"github.com/lf-edge/ekuiper/internal/topo/context"
 	"github.com/lf-edge/ekuiper/internal/topo/state"
@@ -40,7 +41,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT md5(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "The quick brown fox jumps over the lazy dog",
 					"b": "myb",
 					"c": "myc",
@@ -54,7 +55,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT md5(d) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "The quick brown fox jumps over the lazy dog",
 					"b": "myb",
 					"c": "myc",
@@ -66,7 +67,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT sha1(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "The quick brown fox jumps over the lazy dog",
 					"b": "myb",
 					"c": "myc",
@@ -80,7 +81,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT sha256(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "The quick brown fox jumps over the lazy dog",
 					"b": "myb",
 					"c": "myc",
@@ -94,7 +95,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT sha384(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "The quick brown fox jumps over the lazy dog",
 					"b": "myb",
 					"c": "myc",
@@ -108,7 +109,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT sha512(a) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": "The quick brown fox jumps over the lazy dog",
 					"b": "myb",
 					"c": "myc",
@@ -123,7 +124,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT mqtt(topic) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{},
+				Message: model.Message{},
 				Metadata: xsql.Metadata{
 					"topic": "devices/device_001/message",
 				},
@@ -137,7 +138,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT mqtt(topic) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{},
+				Message: model.Message{},
 				Metadata: xsql.Metadata{
 					"topic": "devices/device_001/message",
 				},
@@ -151,7 +152,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT topic, mqtt(topic) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"topic": "fff",
 				},
 				Metadata: xsql.Metadata{
@@ -168,7 +169,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT cardinality(arr) as r FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"temperature": 43.2,
 					"arr":         []int{},
 				},
@@ -182,7 +183,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT cardinality(arr) as r FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"temperature": 43.2,
 					"arr":         []int{1, 2, 3, 4, 5},
 				},
@@ -196,7 +197,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT isNull(arr) as r FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"temperature": 43.2,
 					"arr":         []int{},
 				},
@@ -209,7 +210,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT isNull(arr) as r FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"temperature": 43.2,
 					"arr":         []float64(nil),
 				},
@@ -223,7 +224,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT isNull(rec) as r FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"temperature": 43.2,
 					"rec":         map[string]interface{}(nil),
 				},
@@ -236,7 +237,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT cast(a * 1000, \"datetime\") AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": 1.62000273e+09,
 					"b": "ya",
 					"c": "myc",
@@ -250,7 +251,7 @@ func TestMiscFunc_Apply1(t *testing.T) {
 			sql: "SELECT rule_id() AS rule_id FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{},
+				Message: model.Message{},
 			},
 			result: []map[string]interface{}{{
 				"rule_id": "rule0",
@@ -294,8 +295,8 @@ func TestMqttFunc_Apply2(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": "1", "f1": "v1"}, Metadata: xsql.Metadata{"topic": "devices/type1/device001"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": "1", "f2": "w1"}, Metadata: xsql.Metadata{"topic": "devices/type2/device001"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": "1", "f1": "v1"}, Metadata: xsql.Metadata{"topic": "devices/type1/device001"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": "1", "f2": "w1"}, Metadata: xsql.Metadata{"topic": "devices/type2/device001"}},
 						},
 					},
 				},
@@ -341,7 +342,7 @@ func TestMetaFunc_Apply1(t *testing.T) {
 			sql: "SELECT topic, meta(topic) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"topic": "fff",
 				},
 				Metadata: xsql.Metadata{
@@ -357,7 +358,7 @@ func TestMetaFunc_Apply1(t *testing.T) {
 			sql: "SELECT meta(device) as d, meta(temperature->device) as r FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"temperature": 43.2,
 				},
 				Metadata: xsql.Metadata{
@@ -377,7 +378,7 @@ func TestMetaFunc_Apply1(t *testing.T) {
 			sql: "SELECT meta(*) as r FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"temperature": 43.2,
 				},
 				Metadata: xsql.Metadata{
@@ -402,7 +403,7 @@ func TestMetaFunc_Apply1(t *testing.T) {
 			sql: "SELECT topic, meta(`Light-diming`->device) AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"topic": "fff",
 				},
 				Metadata: xsql.Metadata{
@@ -452,7 +453,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: `SELECT json_path_query(equipment, "$.arm_right") AS a FROM test`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class": "warrior",
 					"equipment": map[string]interface{}{
 						"rings": []map[string]interface{}{
@@ -476,7 +477,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: `SELECT json_path_query(equipment, "$.rings[*].weight") AS a FROM test`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class": "warrior",
 					"equipment": map[string]interface{}{
 						"rings": []interface{}{
@@ -502,7 +503,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: `SELECT json_path_query_first(equipment, "$.rings[*].weight") AS a FROM test`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class": "warrior",
 					"equipment": map[string]interface{}{
 						"rings": []interface{}{
@@ -526,7 +527,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: `SELECT json_path_query(equipment, "$.rings[? @.weight>1]") AS a FROM test`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class": "warrior",
 					"equipment": map[string]interface{}{
 						"rings": []interface{}{
@@ -555,7 +556,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: `SELECT json_path_query(equipment, "$.rings[? @.weight>1].name") AS a FROM test`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class": "warrior",
 					"equipment": map[string]interface{}{
 						"rings": []interface{}{
@@ -581,7 +582,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: `SELECT json_path_exists(equipment, "$.rings[? @.weight>5]") AS a FROM test`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class": "warrior",
 					"equipment": map[string]interface{}{
 						"rings": []interface{}{
@@ -605,7 +606,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: `SELECT json_path_exists(equipment, "$.ring1") AS a FROM test`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class": "warrior",
 					"equipment": map[string]interface{}{
 						"rings": []interface{}{
@@ -629,7 +630,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: `SELECT json_path_exists(equipment, "$.rings") AS a FROM test`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class": "warrior",
 					"equipment": map[string]interface{}{
 						"rings": []interface{}{
@@ -653,7 +654,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: `SELECT json_path_query(equipment, "$.rings[? (@.weight>1)].name") AS a FROM test`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class": "warrior",
 					"equipment": map[string]interface{}{
 						"rings": []map[string]interface{}{
@@ -679,7 +680,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: `SELECT json_path_query(equipment, "$.rings[*]") AS a FROM test`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class": "warrior",
 					"equipment": map[string]interface{}{
 						"rings": []float64{
@@ -699,7 +700,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: `SELECT json_path_query(equipment, "$.rings") AS a FROM test`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class": "warrior",
 					"equipment": map[string]interface{}{
 						"rings": []float64{
@@ -719,7 +720,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: `SELECT json_path_query(equipment, "$[0].rings[1]") AS a FROM test`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class": "warrior",
 					"equipment": []map[string]interface{}{
 						{
@@ -739,7 +740,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: "SELECT json_path_query(equipment, \"$[0][\\\"arm.left\\\"]\") AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class": "warrior",
 					"equipment": []map[string]interface{}{
 						{
@@ -759,7 +760,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: "SELECT json_path_query(equipment, \"$[\\\"arm.left\\\"]\") AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class":     "warrior",
 					"equipment": `{"rings": [0.1, 2.4],"arm.right": "Sword of flame","arm.left":  "Shield of faith"}`,
 				},
@@ -771,7 +772,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: "SELECT json_path_query(equipment, \"$[0][\\\"arm.left\\\"]\") AS a FROM test",
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class":     "warrior",
 					"equipment": `[{"rings": [0.1, 2.4],"arm.right": "Sword of flame","arm.left":  "Shield of faith"}]`,
 				},
@@ -783,7 +784,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: `SELECT all[poi[-1] + 1]->ts as powerOnTs FROM test`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"all": []map[string]interface{}{
 						{"SystemPowerMode": 0, "VehicleSpeed": 0, "FLWdwPosition": 0, "FrontWiperSwitchStatus": float64(1), "ts": 0},
 						{"SystemPowerMode": 0, "VehicleSpeed": 0, "FLWdwPosition": 0, "FrontWiperSwitchStatus": float64(4), "ts": 500},
@@ -803,7 +804,7 @@ func TestJsonPathFunc_Apply1(t *testing.T) {
 			sql: `SELECT json_path_query(equipment, "$.arm_right") AS a FROM test`,
 			data: &xsql.Tuple{
 				Emitter: "test",
-				Message: xsql.Message{
+				Message: model.Message{
 					"class": "warrior",
 					"equipment2": map[string]interface{}{
 						"rings": []map[string]interface{}{
@@ -866,7 +867,7 @@ func TestChangedFuncs_Apply1(t *testing.T) {
 			data: []interface{}{
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b1",
 						"c": "c1",
@@ -874,7 +875,7 @@ func TestChangedFuncs_Apply1(t *testing.T) {
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b2",
 						"c": "c1",
@@ -882,14 +883,14 @@ func TestChangedFuncs_Apply1(t *testing.T) {
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"c": "c1",
 					},
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b2",
 						"c": "c2",
@@ -909,28 +910,28 @@ func TestChangedFuncs_Apply1(t *testing.T) {
 			data: []interface{}{
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b1",
 					},
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"c": "c1",
 					},
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"c": "c1",
 					},
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b2",
 						"c": "c2",
@@ -938,17 +939,17 @@ func TestChangedFuncs_Apply1(t *testing.T) {
 				},
 			},
 			result: [][]map[string]interface{}{{{
-				"changed_col": xsql.Message{
+				"changed_col": model.Message{
 					"a": "a1",
 					"b": "b1",
 				},
 			}}, {{
-				"changed_col": xsql.Message{
+				"changed_col": model.Message{
 					"a": "a1",
 					"c": "c1",
 				},
 			}}, {{}}, {{
-				"changed_col": xsql.Message{
+				"changed_col": model.Message{
 					"a": "a1",
 					"b": "b2",
 					"c": "c2",
@@ -997,7 +998,7 @@ func TestLagFuncs_Apply1(t *testing.T) {
 			data: []interface{}{
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b1",
 						"c": "c1",
@@ -1005,7 +1006,7 @@ func TestLagFuncs_Apply1(t *testing.T) {
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b2",
 						"c": "c1",
@@ -1013,14 +1014,14 @@ func TestLagFuncs_Apply1(t *testing.T) {
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"c": "c1",
 					},
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b2",
 						"c": "c2",
@@ -1043,28 +1044,28 @@ func TestLagFuncs_Apply1(t *testing.T) {
 			data: []interface{}{
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b1",
 					},
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a2",
 						"c": "c1",
 					},
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"c": "c1",
 					},
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b2",
 						"c": "c2",
@@ -1087,28 +1088,28 @@ func TestLagFuncs_Apply1(t *testing.T) {
 			data: []interface{}{
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b1",
 					},
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a2",
 						"c": "c1",
 					},
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"c": "c1",
 					},
 				},
 				&xsql.Tuple{
 					Emitter: "test",
-					Message: xsql.Message{
+					Message: model.Message{
 						"a": "a1",
 						"b": "b2",
 						"c": "c2",

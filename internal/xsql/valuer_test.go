@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/pkg/ast"
 	"github.com/lf-edge/ekuiper/pkg/cast"
 )
@@ -29,7 +30,7 @@ import (
 func TestComparison(t *testing.T) {
 	testTime, _ := cast.InterfaceToTime(1541152488442, "")
 	data := []struct {
-		m Message
+		m model.Message
 		r []interface{}
 	}{
 		{ // 0
@@ -173,7 +174,7 @@ func TestComparison(t *testing.T) {
 
 func TestCalculation(t *testing.T) {
 	data := []struct {
-		m Message
+		m model.Message
 		r []interface{}
 	}{
 		{
@@ -260,7 +261,7 @@ func TestCalculation(t *testing.T) {
 
 func TestCase(t *testing.T) {
 	data := []struct {
-		m Message
+		m model.Message
 		r []interface{}
 	}{
 		{
@@ -345,7 +346,7 @@ func TestCase(t *testing.T) {
 
 func TestArray(t *testing.T) {
 	data := []struct {
-		m Message
+		m model.Message
 		r []interface{}
 	}{
 		{
@@ -388,7 +389,7 @@ func TestArray(t *testing.T) {
 
 func TestLike(t *testing.T) {
 	data := []struct {
-		m Message
+		m model.Message
 		r []interface{}
 	}{
 		{

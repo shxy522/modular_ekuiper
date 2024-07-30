@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
+	"github.com/lf-edge/ekuiper/internal/model"
 	"github.com/lf-edge/ekuiper/internal/topo/context"
 	"github.com/lf-edge/ekuiper/internal/xsql"
 	"github.com/lf-edge/ekuiper/pkg/cast"
@@ -37,7 +38,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE abc*2+3 > 12 AND abc < 20",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": int64(6),
 				},
 			},
@@ -48,13 +49,13 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT a FROM tbl WHERE def = ghi",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": int64(6),
 				},
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": int64(6),
 				},
 			},
@@ -63,7 +64,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT * FROM tbl WHERE abc > def and abc <= ghi",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": cast.TimeFromUnixMilli(1568854515000),
 					"def": cast.TimeFromUnixMilli(1568853515000),
 					"ghi": cast.TimeFromUnixMilli(1568854515000),
@@ -71,7 +72,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": cast.TimeFromUnixMilli(1568854515000),
 					"def": cast.TimeFromUnixMilli(1568853515000),
 					"ghi": cast.TimeFromUnixMilli(1568854515000),
@@ -83,13 +84,13 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE abc*2+3 > 12 AND abc < 20",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(6),
 				},
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(6),
 				},
 			},
@@ -99,14 +100,14 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE abc*2+3 > 12 OR def = \"hello\"",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(34),
 					"def": "hello",
 				},
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(34),
 					"def": "hello",
 				},
@@ -117,14 +118,14 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE abc > \"2019-09-19T00:55:15.000Z\"",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": cast.TimeFromUnixMilli(1568854515678),
 					"def": "hello",
 				},
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": cast.TimeFromUnixMilli(1568854515678),
 					"def": "hello",
 				},
@@ -135,14 +136,14 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE def IN (\"hello\") AND abc IN (34, 33)",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(34),
 					"def": "hello",
 				},
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(34),
 					"def": "hello",
 				},
@@ -153,14 +154,14 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE def NOT IN (\"ello\") AND abc NOT IN (35, 33)",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(34),
 					"def": "hello",
 				},
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(34),
 					"def": "hello",
 				},
@@ -171,7 +172,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE def IN strArraySet AND abc IN intArraySet",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc":         int64(34),
 					"def":         "hello",
 					"strArraySet": []string{"hello", "world"},
@@ -180,7 +181,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc":         int64(34),
 					"def":         "hello",
 					"strArraySet": []string{"hello", "world"},
@@ -193,7 +194,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE def NOT IN strArraySet AND abc NOT IN intArraySet",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc":         int64(34),
 					"def":         "hello",
 					"strArraySet": []string{"ello", "world"},
@@ -202,7 +203,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc":         int64(34),
 					"def":         "hello",
 					"strArraySet": []string{"ello", "world"},
@@ -215,7 +216,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE def IN (\"ello\")",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(34),
 				},
 			},
@@ -226,7 +227,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE def NOT IN (\"ello\")",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(34),
 				},
 			},
@@ -237,7 +238,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE def IN strArraySet",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc":         int64(34),
 					"def":         "hello",
 					"strArraySet": nil,
@@ -250,7 +251,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE def NOT IN strArraySet",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc":         int64(34),
 					"def":         "hello",
 					"strArraySet": nil,
@@ -258,7 +259,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc":         int64(34),
 					"def":         "hello",
 					"strArraySet": nil,
@@ -270,14 +271,14 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE abc IN (abc, def, ghm)",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(34),
 					"def": "hello",
 				},
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(34),
 					"def": "hello",
 				},
@@ -288,14 +289,14 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE abc NOT IN (def, ghm)",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(34),
 					"def": int64(35),
 				},
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(34),
 					"def": int64(35),
 				},
@@ -306,7 +307,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE json->abc IN json->intArraySet",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"json": map[string]interface{}{
 						"abc":         int64(34),
 						"def":         "hello",
@@ -317,7 +318,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"json": map[string]interface{}{
 						"abc":         int64(34),
 						"def":         "hello",
@@ -334,13 +335,13 @@ func TestFilterPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v1"},
+						Message: model.Message{"id1": 3, "f1": "v1"},
 					},
 				},
 				WindowRange: xsql.NewWindowRange(1541152486013, 1541152487013),
@@ -349,10 +350,10 @@ func TestFilterPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v1"},
+						Message: model.Message{"id1": 3, "f1": "v1"},
 					},
 				},
 				WindowRange: xsql.NewWindowRange(1541152486013, 1541152487013),
@@ -364,13 +365,13 @@ func TestFilterPlan_Apply(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v1"},
+						Message: model.Message{"id1": 3, "f1": "v1"},
 					},
 				},
 			},
@@ -382,19 +383,19 @@ func TestFilterPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v1"}},
 						},
 					},
 				},
@@ -404,13 +405,13 @@ func TestFilterPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v1"}},
 						},
 					},
 				},
@@ -423,19 +424,19 @@ func TestFilterPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v1"}},
 						},
 					},
 				},
@@ -445,13 +446,13 @@ func TestFilterPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v1"}},
 						},
 					},
 				},
@@ -464,19 +465,19 @@ func TestFilterPlan_Apply(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": "v1"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v1"}},
 						},
 					},
 				},
@@ -487,7 +488,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE meta(topic) = \"topic1\" ",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": int64(6),
 				},
 				Metadata: xsql.Metadata{
@@ -496,7 +497,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": int64(6),
 				},
 				Metadata: xsql.Metadata{
@@ -508,7 +509,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: `SELECT abc FROM tbl WHERE json_path_exists(samplers, "$[? @.result.throughput==30]")`,
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"samplers": []interface{}{
 						map[string]interface{}{
 							"name": "page1",
@@ -529,7 +530,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"samplers": []interface{}{
 						map[string]interface{}{
 							"name": "page1",
@@ -553,7 +554,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: `SELECT abc FROM tbl WHERE json_path_exists(samplers, "$[? @.result.throughput<20]")`,
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"samplers": []interface{}{
 						map[string]interface{}{
 							"name": "page1",
@@ -579,7 +580,7 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE abc*2 > 12 AND abc / 0 < 20",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(6),
 				},
 			},
@@ -589,13 +590,13 @@ func TestFilterPlan_Apply(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE abc*2+3 > 12 OR abc / 0 < 20",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(6),
 				},
 			},
 			result: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(6),
 				},
 			},
@@ -630,7 +631,7 @@ func TestFilterPlanError(t *testing.T) {
 			sql: "SELECT a FROM tbl WHERE a = b",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"a": int64(6),
 					"b": "astring",
 				},
@@ -648,22 +649,22 @@ func TestFilterPlanError(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id1": 3, "f1": "v1"},
+						Message: model.Message{"id1": 3, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id1": 2, "f1": "v2"},
+						Message: model.Message{"id1": 2, "f1": "v2"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v1"},
+						Message: model.Message{"id1": 3, "f1": "v1"},
 					},
 				},
 			},
@@ -671,16 +672,16 @@ func TestFilterPlanError(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src2",
-						Message: xsql.Message{"id1": 3, "f1": "v1"},
+						Message: model.Message{"id1": 3, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v1"},
+						Message: model.Message{"id1": 3, "f1": "v1"},
 					},
 				},
 			},
@@ -691,13 +692,13 @@ func TestFilterPlanError(t *testing.T) {
 				Content: []xsql.TupleRow{
 					&xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 1, "f1": "v1"},
+						Message: model.Message{"id1": 1, "f1": "v1"},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 2, "f1": 3},
+						Message: model.Message{"id1": 2, "f1": 3},
 					}, &xsql.Tuple{
 						Emitter: "src1",
-						Message: xsql.Message{"id1": 3, "f1": "v1"},
+						Message: model.Message{"id1": 3, "f1": "v1"},
 					},
 				},
 			},
@@ -709,19 +710,19 @@ func TestFilterPlanError(t *testing.T) {
 				Content: []*xsql.JoinTuple{
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 1, "f1": 50}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 2, "f2": "w2"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 1, "f1": 50}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 2, "f2": "w2"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 2, "f1": "v2"}},
-							&xsql.Tuple{Emitter: "src2", Message: xsql.Message{"id2": 4, "f2": "w3"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 2, "f1": "v2"}},
+							&xsql.Tuple{Emitter: "src2", Message: model.Message{"id2": 4, "f2": "w3"}},
 						},
 					},
 					{
 						Tuples: []xsql.TupleRow{
-							&xsql.Tuple{Emitter: "src1", Message: xsql.Message{"id1": 3, "f1": "v1"}},
+							&xsql.Tuple{Emitter: "src1", Message: model.Message{"id1": 3, "f1": "v1"}},
 						},
 					},
 				},
@@ -732,7 +733,7 @@ func TestFilterPlanError(t *testing.T) {
 			sql: "SELECT abc FROM tbl WHERE abc*2+3 > 12 AND abc / 0 < 20",
 			data: &xsql.Tuple{
 				Emitter: "tbl",
-				Message: xsql.Message{
+				Message: model.Message{
 					"abc": int64(6),
 				},
 			},
