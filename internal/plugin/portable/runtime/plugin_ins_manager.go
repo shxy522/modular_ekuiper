@@ -222,6 +222,11 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 		}
 		ins.ctrlChan = ctrlChan
 	}
+	defer func() {
+		if e != nil && ins.ctrlChan != nil {
+			ins.ctrlChan.Close()
+		}
+	}()
 	// init or restart all need to run the process
 	jsonArg, err := json.Marshal(pconf)
 	if err != nil {
@@ -283,9 +288,9 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 			if ins.ctrlChan != nil {
 				_ = ins.ctrlChan.Close()
 			}
-			p.deletePluginIns(pluginMeta.Name)
 			ins.process = nil
 			ins.Unlock()
+			p.deletePluginIns(pluginMeta.Name)
 		}
 		return nil
 	})
@@ -296,7 +301,7 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 	}
 	ins.process = process
 	p.instances[pluginMeta.Name] = ins
-	conf.Log.Infof("plugin %s start running", pluginMeta.Name)
+	conf.Log.Infof("plugin %s start running, process: %v", pluginMeta.Name, process.Pid)
 	// restore symbols by sending commands when restarting plugin
 	conf.Log.Infof("restore plugin %s symbols", pluginMeta.Name)
 	for m, c := range ins.commands {
