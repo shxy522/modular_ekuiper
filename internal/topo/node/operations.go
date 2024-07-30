@@ -16,6 +16,7 @@ package node
 
 import (
 	"fmt"
+	"math/rand"
 	"sync"
 
 	"github.com/lf-edge/ekuiper/internal/topo/node/metric"
@@ -81,9 +82,10 @@ func (o *UnaryOperator) Exec(ctx api.StreamContext, errCh chan<- error) {
 	}
 	// reset status
 	o.statManagers = nil
+	root := rand.Intn(100)
 
 	for i := 0; i < o.concurrency; i++ { // workers
-		instance := i
+		instance := i + root
 		go func() {
 			err := infra.SafeRun(func() error {
 				o.doOp(ctx.WithInstance(instance), errCh)

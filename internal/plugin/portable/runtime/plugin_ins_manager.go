@@ -21,7 +21,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sync"
-	"time"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
 	"github.com/lf-edge/ekuiper/pkg/api"
@@ -121,27 +120,10 @@ func (i *PluginIns) StopSymbol(ctx api.StreamContext, ctrl *Control) error {
 	}
 	err = i.sendCmd(jsonArg)
 	if err == nil {
-		referred := false
 		i.Lock()
 		delete(i.commands, ctrl.Meta)
 		i.Unlock()
 		ctx.GetLogger().Infof("stopped symbol %s", ctrl.SymbolName)
-		if !referred {
-			go func() {
-				// delay to kill the plugin process
-				time.Sleep(1 * time.Second)
-				i.RLock()
-				defer i.RUnlock()
-				if len(i.commands) == 0 {
-					err := GetPluginInsManager().Kill(i.name)
-					if err != nil {
-						ctx.GetLogger().Errorf("fail to stop plugin %s: %v", i.name, err)
-						return
-					}
-					ctx.GetLogger().Infof("stop plugin %s", i.name)
-				}
-			}()
-		}
 	}
 	return err
 }
@@ -177,6 +159,11 @@ func (p *pluginInsManager) getPluginIns(name string) (*PluginIns, bool) {
 	defer p.RUnlock()
 	ins, ok := p.instances[name]
 	return ins, ok
+}
+
+// DeletePluginIns should only run when there is no state aka. commands
+func (p *pluginInsManager) DeletePluginIns(name string) {
+	p.deletePluginIns(name)
 }
 
 // deletePluginIns should only run when there is no state aka. commands
@@ -230,15 +217,14 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 	}
 	// should only happen for first start, then the ctrl channel will keep running
 	if ins.ctrlChan == nil {
-		conf.Log.Infof("create control channel")
 		ctrlChan, err := CreateControlChannel(pluginMeta.Name)
 		if err != nil {
-			return nil, fmt.Errorf("can't create new control channel: %s", err.Error())
+			conf.Log.Errorf("plugin %s can't create new control channel: %s", pluginMeta.Name, err.Error())
+			return nil, fmt.Errorf("plugin %s can't create new control channel: %s", pluginMeta.Name, err.Error())
 		}
 		ins.ctrlChan = ctrlChan
 	}
 	// init or restart all need to run the process
-	conf.Log.Infof("executing plugin")
 	jsonArg, err := json.Marshal(pconf)
 	if err != nil {
 		return nil, fmt.Errorf("invalid conf: %v", pconf)
@@ -275,13 +261,13 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 	cmd.Stderr = conf.Log.Out
 	cmd.Dir = filepath.Dir(pluginMeta.Executable)
 
-	conf.Log.Println("plugin starting")
 	err = cmd.Start()
 	if err != nil {
-		return nil, fmt.Errorf("plugin executable %s stops with error %v", pluginMeta.Executable, err)
+		conf.Log.Errorf("plugin %s executable %s stops with error %v", pluginMeta.Name, pluginMeta.Executable, err)
+		return nil, fmt.Errorf("plugin %s executable %s stops with error %v", pluginMeta.Name, pluginMeta.Executable, err)
 	}
 	process := cmd.Process
-	conf.Log.Printf("plugin started pid: %d\n", process.Pid)
+	conf.Log.Printf("plugin %s started pid: %d\n", pluginMeta.Name, process.Pid)
 	defer func() {
 		if e != nil {
 			_ = process.Kill()
@@ -314,9 +300,9 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 	}
 	ins.process = process
 	p.instances[pluginMeta.Name] = ins
-	conf.Log.Println("plugin start running")
+	conf.Log.Infof("plugin %s start running", pluginMeta.Name)
 	// restore symbols by sending commands when restarting plugin
-	conf.Log.Info("restore plugin symbols")
+	conf.Log.Infof("restore plugin %s symbols", pluginMeta.Name)
 	for m, c := range ins.commands {
 		go func(key Meta, jsonArg []byte) {
 			e := ins.sendCmd(jsonArg)

@@ -215,7 +215,7 @@ func stopRule(name string) (result string) {
 
 func restartRule(name string) error {
 	stopRule(name)
-	time.Sleep(1 * time.Millisecond)
+	time.Sleep(1 * time.Second)
 	return startRule(name)
 }
 

@@ -16,6 +16,7 @@ package node
 
 import (
 	"fmt"
+	"math/rand"
 	"sync"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
@@ -104,6 +105,7 @@ func (m *SourceNode) Open(ctx api.StreamContext, errCh chan<- error) {
 			ctx = context.WithValue(ctx.(*context.DefaultContext), context.DecodeKey, converter)
 			m.reset()
 			logger.Infof("open source node with props %v, concurrency: %d, bufferLength: %d", conf.Printable(m.props), m.concurrency, m.bufferLength)
+			root := rand.Intn(100)
 			for i := 0; i < m.concurrency; i++ { // workers
 				go func(instance int) {
 					poe := infra.SafeRun(func() error {
@@ -194,7 +196,7 @@ func (m *SourceNode) Open(ctx api.StreamContext, errCh chan<- error) {
 					if poe != nil {
 						infra.DrainError(ctx, poe, errCh)
 					}
-				}(i)
+				}(i + root)
 			}
 			return nil
 		})

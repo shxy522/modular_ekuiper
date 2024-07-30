@@ -487,6 +487,7 @@ func ruleHandler(w http.ResponseWriter, r *http.Request) {
 			handleError(w, err, "Delete rule error", logger)
 			return
 		}
+		time.Sleep(time.Second)
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(content))
 	case http.MethodPut:
@@ -571,6 +572,7 @@ func stopRuleHandler(w http.ResponseWriter, r *http.Request) {
 	name := vars["name"]
 
 	result := stopRule(name)
+	time.Sleep(time.Second)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(result))
 }
