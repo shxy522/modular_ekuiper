@@ -1,4 +1,4 @@
-// Copyright 2021 EMQ Technologies Co., Ltd.
+// Copyright 2021-2024 EMQ Technologies Co., Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package portable
 import (
 	"sync"
 
+	"github.com/lf-edge/ekuiper/internal/conf"
 	"github.com/lf-edge/ekuiper/internal/plugin"
 )
 
@@ -31,6 +32,7 @@ type registry struct {
 
 // Set prerequisite: the pluginInfo must have been validated that the names are valid
 func (r *registry) Set(name string, pi *PluginInfo) {
+	conf.Log.Infof("set plugin info for %s", name)
 	r.Lock()
 	defer r.Unlock()
 	r.plugins[name] = pi
@@ -43,12 +45,15 @@ func (r *registry) Set(name string, pi *PluginInfo) {
 	for _, s := range pi.Functions {
 		r.functions[s] = name
 	}
+	conf.Log.Infof("set plugin info for %s done", name)
 }
 
 func (r *registry) Get(name string) (*PluginInfo, bool) {
+	conf.Log.Infof("get plugin info for %s", name)
 	r.RLock()
 	defer r.RUnlock()
 	result, ok := r.plugins[name]
+	conf.Log.Infof("get plugin info for %s done", name)
 	return result, ok
 }
 
@@ -69,6 +74,7 @@ func (r *registry) GetSymbol(pt plugin.PluginType, symbolName string) (string, b
 }
 
 func (r *registry) List() []*PluginInfo {
+	conf.Log.Info("list plugin info")
 	r.RLock()
 	defer r.RUnlock()
 	// return empty slice instead of nil to help json marshal
@@ -76,10 +82,12 @@ func (r *registry) List() []*PluginInfo {
 	for _, v := range r.plugins {
 		result = append(result, v)
 	}
+	conf.Log.Info("list plugin info done")
 	return result
 }
 
 func (r *registry) Delete(name string) {
+	conf.Log.Infof("delete plugin info for %s", name)
 	r.Lock()
 	defer r.Unlock()
 	pi, ok := r.plugins[name]
@@ -96,4 +104,5 @@ func (r *registry) Delete(name string) {
 	for _, s := range pi.Functions {
 		delete(r.functions, s)
 	}
+	conf.Log.Infof("delete plugin info done for %s", name)
 }

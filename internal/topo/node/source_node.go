@@ -106,7 +106,11 @@ func (m *SourceNode) Open(ctx api.StreamContext, errCh chan<- error) {
 			m.reset()
 			logger.Infof("open source node with props %v, concurrency: %d, bufferLength: %d", conf.Printable(m.props), m.concurrency, m.bufferLength)
 			root := rand.Intn(100)
-			for i := 0; i < m.concurrency; i++ { // workers
+			for i := 0; i < m.concurrency; i++ {
+				index := i // workers
+				if !conf.IsFvtTestMode() {
+					index = i + root
+				}
 				go func(instance int) {
 					poe := infra.SafeRun(func() error {
 						// Do open source instances
@@ -196,7 +200,7 @@ func (m *SourceNode) Open(ctx api.StreamContext, errCh chan<- error) {
 					if poe != nil {
 						infra.DrainError(ctx, poe, errCh)
 					}
-				}(i + root)
+				}(index)
 			}
 			return nil
 		})

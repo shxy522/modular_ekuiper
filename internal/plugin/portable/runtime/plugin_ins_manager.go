@@ -184,10 +184,8 @@ func (p *pluginInsManager) AddPluginIns(name string, ins *PluginIns) {
 func (p *pluginInsManager) CreateIns(pluginMeta *PluginMeta) {
 	p.Lock()
 	defer p.Unlock()
-	if ins, ok := p.instances[pluginMeta.Name]; ok {
-		if len(ins.commands) != 0 {
-			go p.getOrStartProcess(pluginMeta, PortbleConf)
-		}
+	if _, ok := p.instances[pluginMeta.Name]; ok {
+		go p.getOrStartProcess(pluginMeta, PortbleConf)
 	}
 }
 
@@ -224,6 +222,11 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 		}
 		ins.ctrlChan = ctrlChan
 	}
+	defer func() {
+		if e != nil && ins.ctrlChan != nil {
+			ins.ctrlChan.Close()
+		}
+	}()
 	// init or restart all need to run the process
 	jsonArg, err := json.Marshal(pconf)
 	if err != nil {
@@ -282,14 +285,12 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 		// clean up for stop unintentionally
 		if ins, ok := p.getPluginIns(pluginMeta.Name); ok && ins.process == cmd.Process {
 			ins.Lock()
-			if len(ins.commands) == 0 {
-				if ins.ctrlChan != nil {
-					_ = ins.ctrlChan.Close()
-				}
-				p.deletePluginIns(pluginMeta.Name)
+			if ins.ctrlChan != nil {
+				_ = ins.ctrlChan.Close()
 			}
 			ins.process = nil
 			ins.Unlock()
+			p.deletePluginIns(pluginMeta.Name)
 		}
 		return nil
 	})
@@ -300,7 +301,7 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 	}
 	ins.process = process
 	p.instances[pluginMeta.Name] = ins
-	conf.Log.Infof("plugin %s start running", pluginMeta.Name)
+	conf.Log.Infof("plugin %s start running, process: %v", pluginMeta.Name, process.Pid)
 	// restore symbols by sending commands when restarting plugin
 	conf.Log.Infof("restore plugin %s symbols", pluginMeta.Name)
 	for m, c := range ins.commands {

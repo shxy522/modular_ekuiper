@@ -19,6 +19,7 @@ import (
 	"math/rand"
 	"sync"
 
+	"github.com/lf-edge/ekuiper/internal/conf"
 	"github.com/lf-edge/ekuiper/internal/topo/node/metric"
 	"github.com/lf-edge/ekuiper/internal/xsql"
 	"github.com/lf-edge/ekuiper/pkg/api"
@@ -84,8 +85,11 @@ func (o *UnaryOperator) Exec(ctx api.StreamContext, errCh chan<- error) {
 	o.statManagers = nil
 	root := rand.Intn(100)
 
-	for i := 0; i < o.concurrency; i++ { // workers
-		instance := i + root
+	for i := 0; i < o.concurrency; i++ {
+		instance := i // workers
+		if !conf.IsFvtTestMode() {
+			instance = i + root
+		}
 		go func() {
 			err := infra.SafeRun(func() error {
 				o.doOp(ctx.WithInstance(instance), errCh)
