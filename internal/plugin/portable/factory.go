@@ -1,4 +1,4 @@
-// Copyright 2021-2023 EMQ Technologies Co., Ltd.
+// Copyright 2021-2024 EMQ Technologies Co., Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -75,10 +75,12 @@ var funcInsMap = &sync.Map{}
 func (m *Manager) Function(name string) (api.Function, error) {
 	ins, ok := funcInsMap.Load(name)
 	if ok {
+		conf.Log.Infof("return function %s from portable factory", name)
 		return ins.(api.Function), nil
 	}
 	meta, ok := m.GetPluginMeta(plugin.FUNCTION, name)
 	if !ok {
+		conf.Log.Infof("get plugin meta for %s returns nil", name)
 		return nil, nil
 	}
 	f, err := runtime.NewPortableFunc(name, meta)
@@ -87,6 +89,7 @@ func (m *Manager) Function(name string) (api.Function, error) {
 		return nil, err
 	}
 	funcInsMap.Store(name, f)
+	conf.Log.Infof("store function %s from portable factory", name)
 	return f, nil
 }
 

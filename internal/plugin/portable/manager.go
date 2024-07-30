@@ -1,4 +1,4 @@
-// Copyright 2021-2023 EMQ Technologies Co., Ltd.
+// Copyright 2021-2024 EMQ Technologies Co., Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -352,6 +352,7 @@ func (m *Manager) GetPluginMeta(pt plugin.PluginType, symbolName string) (*runti
 		return nil, false
 	}
 	pinfo, ok := m.reg.Get(pname)
+	conf.Log.Infof("gotten plugin meta for plugin %s", pname)
 	if !ok {
 		return nil, false
 	}
