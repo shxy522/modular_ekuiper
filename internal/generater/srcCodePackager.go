@@ -342,16 +342,13 @@ func (p *PythonCodePackage) copyOtherFile() error {
 	return nil
 }
 
-func (p *PythonCodePackage) generateInstallFile(env, subDir string) error {
+func (p *PythonCodePackage) generateInstallFile(env, tmpl string) error {
 	// load the template
-	fileContent, err := os.ReadFile(path.Join(p.EtcDir, subDir))
-	if err != nil {
-		return err
-	}
+	fileContent := tmpl
 	config := map[string]interface{}{
 		"env": env,
 	}
-	tp, err := template.New("installScript").Parse(string(fileContent))
+	tp, err := template.New("installScript").Parse(fileContent)
 	if err != nil {
 		return err
 	}
@@ -371,10 +368,8 @@ func (p *PythonCodePackage) generateInstallFile(env, subDir string) error {
 
 func (p *PythonCodePackage) generateRequirementFile() error {
 	// load the template
-	fileContent, err := os.ReadFile(path.Join(p.EtcDir, "templates/function/requirements.tmpl"))
-	if err != nil {
-		return err
-	}
+	var err error
+	fileContent := requirementsTemplate
 	u := p.meta
 
 	config := map[string]interface{}{
@@ -383,7 +378,7 @@ func (p *PythonCodePackage) generateRequirementFile() error {
 
 	var tp *template.Template = nil
 
-	tp, err = template.New("requirementFile").Parse(string(fileContent))
+	tp, err = template.New("requirementFile").Parse(fileContent)
 	if err != nil {
 		return err
 	}
@@ -403,10 +398,8 @@ func (p *PythonCodePackage) generateRequirementFile() error {
 
 func (p *PythonCodePackage) generateMainFile() error {
 	// load the template
-	fileContent, err := os.ReadFile(path.Join(p.EtcDir, "templates/function/main.tmpl"))
-	if err != nil {
-		return err
-	}
+	var err error
+	fileContent := mainTemplate
 	u := p.meta
 
 	config := map[string]interface{}{
@@ -418,7 +411,7 @@ func (p *PythonCodePackage) generateMainFile() error {
 
 	var tp *template.Template = nil
 
-	tp, err = template.New("mainFile").Parse(string(fileContent))
+	tp, err = template.New("mainFile").Parse(fileContent)
 	if err != nil {
 		return err
 	}
@@ -498,12 +491,10 @@ func (p *PythonCodePackage) generateJsonConfigFile() error {
 	return nil
 }
 
-func (f *wrapperFunc) generateFunctionWrapper(p *PythonCodePackage, subPath string) error {
+func (f *wrapperFunc) generateFunctionWrapper(p *PythonCodePackage, tmpl string) error {
 	// load the template
-	fileContent, err := os.ReadFile(path.Join(p.EtcDir, subPath))
-	if err != nil {
-		return err
-	}
+	fileContent := tmpl
+	var err error
 
 	// get python modules
 	var PythonModules string
@@ -544,7 +535,7 @@ func (f *wrapperFunc) generateFunctionWrapper(p *PythonCodePackage, subPath stri
 
 	var tp *template.Template = nil
 
-	tp, err = template.New("pythonCodeWrapper").Parse(string(fileContent))
+	tp, err = template.New("pythonCodeWrapper").Parse(fileContent)
 	if err != nil {
 		return err
 	}
@@ -640,7 +631,7 @@ func PackageSrcCode(data []byte) (string, error) {
 		return "", err
 	}
 
-	err = pck.generateInstallFile(fcs.Env, "templates/function/install.tmpl")
+	err = pck.generateInstallFile(fcs.Env, installTemplate)
 	if err != nil {
 		return "", err
 	}
@@ -650,7 +641,7 @@ func PackageSrcCode(data []byte) (string, error) {
 
 func generateFunctions(pck *PythonCodePackage) error {
 	for _, f := range pck.meta.Functions {
-		err := f.generateFunctionWrapper(pck, "templates/function/functionPython.tmpl")
+		err := f.generateFunctionWrapper(pck, functionTemplate)
 		if err != nil {
 
 			return err

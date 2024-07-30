@@ -348,7 +348,7 @@ func TestInstallScript(t *testing.T) {
 	p := &PythonCodePackage{}
 	p.EtcDir = "."
 	p.packageDir = "."
-	require.NoError(t, p.generateInstallFile("active", "templates/install.tmpl"))
+	require.NoError(t, p.generateInstallFile("active", installTemplate))
 	c, err := os.ReadFile("./install.sh")
 	require.NoError(t, err)
 	result := `#!/bin/sh
@@ -373,7 +373,7 @@ func TestFunctionWrapper(t *testing.T) {
 	w.Args = []interface{}{
 		1, 2, 3, 4, 5,
 	}
-	require.NoError(t, w.generateFunctionWrapper(p, "templates/functionPython.tmpl"))
+	require.NoError(t, w.generateFunctionWrapper(p, functionTemplate))
 	result := `# coding=utf-8
 from typing import List, Any
 from ekuiper import Function, Context
