@@ -22,7 +22,6 @@ require (
 	github.com/jhump/protoreflect v1.15.0
 	github.com/keepeye/logrus-filename v0.0.0-20190711075016-ce01a4391dd1
 	github.com/klauspost/compress v1.16.4
-	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/montanaflynn/stats v0.7.0
 	github.com/msgpack-rpc/msgpack-rpc-go v0.0.0-20131026060856-c76397e1782b
@@ -30,12 +29,12 @@ require (
 	github.com/prometheus/client_golang v1.14.0
 	github.com/redis/go-redis/v9 v9.0.3
 	github.com/robfig/cron/v3 v3.0.0
-	github.com/second-state/WasmEdge-go v0.12.0-alpha.2
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.2
 	github.com/u2takey/ffmpeg-go v0.4.1
 	github.com/ugorji/go/codec v1.2.10
 	github.com/urfave/cli v1.22.12
+	github.com/yisaer/file-rotatelogs v0.0.0-20240606072000-fe792f3c4e04
 	go.nanomsg.org/mangos/v3 v3.4.2
 	golang.org/x/text v0.9.0
 	google.golang.org/genproto v0.0.0-20230227214838-9b19f0bdc514

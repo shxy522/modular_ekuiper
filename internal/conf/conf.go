@@ -18,13 +18,17 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path"
+	"path/filepath"
+	"runtime"
 	"strconv"
+	"strings"
 	"time"
 
-	"github.com/lestrrat-go/file-rotatelogs"
 	"github.com/sirupsen/logrus"
+	"github.com/yisaer/file-rotatelogs"
 
 	"github.com/lf-edge/ekuiper/pkg/api"
 )
@@ -121,22 +125,26 @@ type SQLConf struct {
 
 type KuiperConf struct {
 	Basic struct {
-		Debug          bool     `yaml:"debug"`
-		ConsoleLog     bool     `yaml:"consoleLog"`
-		FileLog        bool     `yaml:"fileLog"`
-		RotateTime     int      `yaml:"rotateTime"`
-		MaxAge         int      `yaml:"maxAge"`
-		Ip             string   `yaml:"ip"`
-		Port           int      `yaml:"port"`
-		RestIp         string   `yaml:"restIp"`
-		RestPort       int      `yaml:"restPort"`
-		RestTls        *tlsConf `yaml:"restTls"`
-		Prometheus     bool     `yaml:"prometheus"`
-		PrometheusPort int      `yaml:"prometheusPort"`
-		PluginHosts    string   `yaml:"pluginHosts"`
-		Authentication bool     `yaml:"authentication"`
-		IgnoreCase     bool     `yaml:"ignoreCase"`
-		SQLConf        *SQLConf `yaml:"sql"`
+		LogLevel            string   `yaml:"logLevel"`
+		Debug               bool     `yaml:"debug"`
+		ConsoleLog          bool     `yaml:"consoleLog"`
+		FileLog             bool     `yaml:"fileLog"`
+		LogDisableTimestamp bool     `yaml:"logDisableTimestamp"`
+		RotateTime          int      `yaml:"rotateTime"`
+		MaxAge              int      `yaml:"maxAge"`
+		RotateSize          int64    `yaml:"rotateSize"`
+		RotateCount         int      `yaml:"rotateCount"`
+		Ip                  string   `yaml:"ip"`
+		Port                int      `yaml:"port"`
+		RestIp              string   `yaml:"restIp"`
+		RestPort            int      `yaml:"restPort"`
+		RestTls             *tlsConf `yaml:"restTls"`
+		Prometheus          bool     `yaml:"prometheus"`
+		PrometheusPort      int      `yaml:"prometheusPort"`
+		PluginHosts         string   `yaml:"pluginHosts"`
+		Authentication      bool     `yaml:"authentication"`
+		IgnoreCase          bool     `yaml:"ignoreCase"`
+		SQLConf             *SQLConf `yaml:"sql"`
 	}
 	Rule   api.RuleOption
 	Sink   *SinkConf
@@ -197,36 +205,13 @@ func InitConf() {
 	if 0 == len(Config.Basic.RestIp) {
 		Config.Basic.RestIp = "0.0.0.0"
 	}
-
-	if Config.Basic.Debug {
-		Log.SetLevel(logrus.DebugLevel)
+	if Config.Basic.LogLevel == "" {
+		Config.Basic.LogLevel = InfoLogLevel
 	}
-
-	if Config.Basic.FileLog {
-		logDir, err := GetLoc(logDir)
-		if err != nil {
-			Log.Fatal(err)
-		}
-
-		file := path.Join(logDir, logFileName)
-		logWriter, err := rotatelogs.New(
-			file+".%Y-%m-%d_%H-%M-%S",
-			rotatelogs.WithLinkName(file),
-			rotatelogs.WithRotationTime(time.Hour*time.Duration(Config.Basic.RotateTime)),
-			rotatelogs.WithMaxAge(time.Hour*time.Duration(Config.Basic.MaxAge)),
-		)
-
-		if err != nil {
-			fmt.Println("Failed to init log file settings..." + err.Error())
-			Log.Infof("Failed to log to file, using default stderr.")
-		} else if Config.Basic.ConsoleLog {
-			mw := io.MultiWriter(os.Stdout, logWriter)
-			Log.SetOutput(mw)
-		} else if !Config.Basic.ConsoleLog {
-			Log.SetOutput(logWriter)
-		}
-	} else if Config.Basic.ConsoleLog {
-		Log.SetOutput(os.Stdout)
+	SetLogLevel(Config.Basic.LogLevel, Config.Basic.Debug)
+	SetLogFormat(Config.Basic.LogDisableTimestamp)
+	if err := SetConsoleAndFileLog(Config.Basic.ConsoleLog, Config.Basic.FileLog); err != nil {
+		log.Fatal(err)
 	}
 
 	if Config.Store.Type == "redis" && Config.Store.Redis.ConnectionSelector != "" {
@@ -254,6 +239,61 @@ func InitConf() {
 	_ = Config.Sink.Validate()
 
 	_ = ValidateRuleOption(&Config.Rule)
+}
+
+func SetConsoleAndFileLog(consoleLog, fileLog bool) error {
+	if !fileLog {
+		if consoleLog {
+			Log.SetOutput(os.Stdout)
+		}
+		return nil
+	}
+
+	if Config.Basic.RotateSize < 1 {
+		// default 10MB
+		Config.Basic.RotateSize = 10485760
+	}
+	if Config.Basic.RotateCount < 1 {
+		Config.Basic.RotateCount = 3
+	}
+
+	logDir, err := GetLogLoc()
+	if err != nil {
+		return err
+	}
+
+	file := path.Join(logDir, logFileName)
+	ro := []rotatelogs.Option{
+		rotatelogs.WithRotationTime(time.Hour * time.Duration(Config.Basic.RotateTime)),
+		rotatelogs.WithRotationSize(Config.Basic.RotateSize),
+	}
+	if Config.Basic.RotateCount > 0 {
+		ro = append(ro, rotatelogs.WithRotationCount(uint(Config.Basic.RotateCount)))
+	} else if Config.Basic.MaxAge > 0 {
+		ro = append(ro, rotatelogs.WithMaxAge(time.Hour*time.Duration(Config.Basic.MaxAge)))
+	}
+	if !strings.EqualFold(runtime.GOOS, "windows") {
+		ro = append(ro, rotatelogs.WithLinkName(file))
+	}
+	logWriter, err := rotatelogs.New(
+		file[:len(file)-len(filepath.Ext(file))]+".%Y-%m-%dT%H-%M-%S"+filepath.Ext(file),
+		ro...,
+	)
+	if err != nil {
+		fmt.Printf("Failed to init log file settings: %v", err)
+		Log.Infof("Failed to log to file, using default stderr.")
+	} else if consoleLog {
+		mw := io.MultiWriter(os.Stdout, logWriter)
+		Log.SetOutput(mw)
+	} else {
+		Log.SetOutput(logWriter)
+	}
+	if Config.Basic.RotateCount > 0 {
+		// gc outdated log files by logrus itself
+	} else if Config.Basic.MaxAge > 0 {
+		gcOutdatedLog(logDir, time.Hour*time.Duration(Config.Basic.MaxAge))
+	}
+	return nil
 }
 
 func ValidateRuleOption(option *api.RuleOption) error {
@@ -327,4 +367,72 @@ func LoadFvtTestMode() {
 
 func IsFvtTestMode() bool {
 	return isFvtTestMode
+}
+
+func gcOutdatedLog(filePath string, maxDuration time.Duration) {
+	entries, err := os.ReadDir(filePath)
+	if err != nil {
+		Log.Errorf("gc outdated logs when started failed, err:%v", err)
+	}
+	now := time.Now()
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		if isLogOutdated(entry.Name(), now, maxDuration) {
+			err := os.Remove(path.Join(filePath, entry.Name()))
+			if err != nil {
+				Log.Errorf("remove outdated log %v failed, err:%v", entry.Name(), err)
+			}
+		}
+	}
+}
+
+func isLogOutdated(name string, now time.Time, maxDuration time.Duration) bool {
+	if name == logFileName {
+		return false
+	}
+	layout := ".2006-01-02_15-04-05"
+	logDateExt := path.Ext(name)
+	if t, err := time.Parse(layout, logDateExt); err != nil {
+		Log.Errorf("parse log %v datetime failed, err:%v", name, err)
+		return false
+	} else if int64(now.Sub(t))-int64(maxDuration) > 0 {
+		return true
+	}
+	return false
+}
+
+const (
+	DebugLogLevel = "debug"
+	InfoLogLevel  = "info"
+	WarnLogLevel  = "warn"
+	ErrorLogLevel = "error"
+	FatalLogLevel = "fatal"
+	PanicLogLevel = "panic"
+)
+
+func SetLogLevel(level string, debug bool) {
+	if debug {
+		Log.SetLevel(logrus.DebugLevel)
+		return
+	}
+	switch level {
+	case DebugLogLevel:
+		Log.SetLevel(logrus.DebugLevel)
+	case InfoLogLevel:
+		Log.SetLevel(logrus.InfoLevel)
+	case WarnLogLevel:
+		Log.SetLevel(logrus.WarnLevel)
+	case ErrorLogLevel:
+		Log.SetLevel(logrus.ErrorLevel)
+	case FatalLogLevel:
+		Log.SetLevel(logrus.FatalLevel)
+	case PanicLogLevel:
+		Log.SetLevel(logrus.PanicLevel)
+	}
+}
+
+func SetLogFormat(disableTimestamp bool) {
+	Log.Formatter.(*logrus.TextFormatter).DisableTimestamp = disableTimestamp
 }

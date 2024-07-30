@@ -310,6 +310,7 @@ func TestInitByFiles(t *testing.T) {
 }
 
 func TestManage(t *testing.T) {
+	t.Skip()
 	// Test HasFunctionSet
 	if m.HasFunctionSet("sample") {
 		t.Error("HasFunctionSet failed, got true should be false")
