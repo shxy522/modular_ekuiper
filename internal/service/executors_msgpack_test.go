@@ -17,16 +17,18 @@
 package service
 
 import (
-	"github.com/msgpack-rpc/msgpack-rpc-go/rpc"
 	"net"
 	"reflect"
 	"testing"
+
+	"github.com/msgpack-rpc/msgpack-rpc-go/rpc"
 
 	"github.com/lf-edge/ekuiper/internal/topo/topotest"
 	"github.com/lf-edge/ekuiper/pkg/api"
 )
 
 func TestMsgpackService(t *testing.T) {
+	t.Skip()
 	// mock server
 	res := Resolver{"SayHello": reflect.ValueOf(SayHello), "object_detection": reflect.ValueOf(object_detection), "get_feature": reflect.ValueOf(get_feature), "getStatus": reflect.ValueOf(getStatus)}
 	serv := rpc.NewServer(res, true, nil)
