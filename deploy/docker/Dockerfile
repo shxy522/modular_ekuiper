@@ -40,6 +40,18 @@ RUN adduser -DH -s /sbin/nologin -u ${KUIPER_USER_ID} ${KUIPER_USER} && \
     mkdir -p /usr/local/taos && \
     chown -Rh ${KUIPER_USER}:${KUIPER_USER} /usr/local/taos
 
+# 设置清华源
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 安装Python依赖包
+RUN pip install --no-cache-dir \
+    opencv-python \
+    grpcio \
+    grpcio-tools \
+    numpy \
+    requests \
+    docker
+
 # Run the kuiper process under the kuiper user
 USER ${KUIPER_USER}
 
