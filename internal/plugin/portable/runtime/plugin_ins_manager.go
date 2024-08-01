@@ -1,4 +1,4 @@
-// Copyright 2021-2023 EMQ Technologies Co., Ltd.
+// Copyright 2021-2024 EMQ Technologies Co., Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -134,6 +134,7 @@ func (i *PluginIns) Stop() error {
 	i.RLock()
 	defer i.RUnlock()
 	if i.process != nil { // will also trigger process exit clean up
+		conf.Log.Infof("kill process %d", i.process.Pid)
 		err = i.process.Kill()
 	}
 	return err
@@ -184,8 +185,14 @@ func (p *pluginInsManager) AddPluginIns(name string, ins *PluginIns) {
 func (p *pluginInsManager) CreateIns(pluginMeta *PluginMeta) {
 	p.Lock()
 	defer p.Unlock()
-	if _, ok := p.instances[pluginMeta.Name]; ok {
-		go p.getOrStartProcess(pluginMeta, PortbleConf)
+	conf.Log.Infof("plugin %s run create ins", pluginMeta.Name)
+	if ins, ok := p.instances[pluginMeta.Name]; ok {
+		if len(ins.commands) != 0 {
+			conf.Log.Infof("plugin %s run get or start", pluginMeta.Name)
+			go p.getOrStartProcess(pluginMeta, PortbleConf)
+		} else {
+			conf.Log.Infof("plugin %s reuse previous instance with %d commands", pluginMeta.Name, len(ins.commands))
+		}
 	}
 }
 
@@ -206,15 +213,18 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 	// run initialization for firstly creating plugin instance
 	ins, ok = p.instances[pluginMeta.Name]
 	if !ok {
+		conf.Log.Infof("plugin %s create instance", pluginMeta.Name)
 		ins = NewPluginIns(pluginMeta.Name, nil, nil)
 		p.instances[pluginMeta.Name] = ins
 	}
 	// ins process has not run yet
 	if ins.process != nil && ins.ctrlChan != nil {
+		conf.Log.Infof("plugin %s reuse process and ctrlChan", pluginMeta.Name)
 		return ins, nil
 	}
 	// should only happen for first start, then the ctrl channel will keep running
 	if ins.ctrlChan == nil {
+		conf.Log.Infof("plugin %s is creating control channel", pluginMeta.Name)
 		ctrlChan, err := CreateControlChannel(pluginMeta.Name)
 		if err != nil {
 			conf.Log.Errorf("plugin %s can't create new control channel: %s", pluginMeta.Name, err.Error())
@@ -222,11 +232,6 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 		}
 		ins.ctrlChan = ctrlChan
 	}
-	defer func() {
-		if e != nil && ins.ctrlChan != nil {
-			ins.ctrlChan.Close()
-		}
-	}()
 	// init or restart all need to run the process
 	jsonArg, err := json.Marshal(pconf)
 	if err != nil {
@@ -270,7 +275,7 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 		return nil, fmt.Errorf("plugin %s executable %s stops with error %v", pluginMeta.Name, pluginMeta.Executable, err)
 	}
 	process := cmd.Process
-	conf.Log.Printf("plugin %s started pid: %d\n", pluginMeta.Name, process.Pid)
+	conf.Log.Infof("plugin %s started pid: %d\n", pluginMeta.Name, process.Pid)
 	defer func() {
 		if e != nil {
 			_ = process.Kill()
@@ -285,12 +290,15 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 		// clean up for stop unintentionally
 		if ins, ok := p.getPluginIns(pluginMeta.Name); ok && ins.process == cmd.Process {
 			ins.Lock()
-			if ins.ctrlChan != nil {
-				_ = ins.ctrlChan.Close()
+			if len(ins.commands) == 0 {
+				conf.Log.Infof("plugin %s close ctrlChan and instance", pluginMeta.Name)
+				if ins.ctrlChan != nil {
+					_ = ins.ctrlChan.Close()
+				}
+				p.deletePluginIns(pluginMeta.Name)
 			}
 			ins.process = nil
 			ins.Unlock()
-			p.deletePluginIns(pluginMeta.Name)
 		}
 		return nil
 	})
@@ -321,6 +329,7 @@ func (p *pluginInsManager) Kill(name string) error {
 	defer p.Unlock()
 	var err error
 	if ins, ok := p.instances[name]; ok {
+		conf.Log.Infof("killing plugin %s", name)
 		err = ins.Stop()
 	} else {
 		conf.Log.Warnf("instance %s not found when deleting", name)

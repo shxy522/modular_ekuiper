@@ -449,6 +449,7 @@ func rulesHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		id, err := createRule("", string(body))
 		if err != nil {
+			conf.Log.Errorf("create rule %s failed, %v", id, err)
 			handleError(w, err, "", logger)
 			return
 		}
@@ -481,9 +482,11 @@ func ruleHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add(ContentType, ContentTypeJSON)
 		w.Write([]byte(rule))
 	case http.MethodDelete:
+		conf.Log.Infof("start to delete rule %v", name)
 		deleteRule(name)
 		content, err := ruleProcessor.ExecDrop(name)
 		if err != nil {
+			conf.Log.Errorf("delete rule %v failed, %v", name, err)
 			handleError(w, err, "Delete rule error", logger)
 			return
 		}
@@ -491,19 +494,22 @@ func ruleHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(content))
 	case http.MethodPut:
+		conf.Log.Infof("start to update rule %v", name)
 		_, err := ruleProcessor.GetRuleById(name)
 		if err != nil {
+			conf.Log.Infof("update rule %v failed, %v", name, err)
 			handleError(w, err, "Rule not found", logger)
 			return
 		}
-
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
+			conf.Log.Infof("update rule %v failed, %v", name, err)
 			handleError(w, err, "Invalid body", logger)
 			return
 		}
 		err = updateRule(name, string(body))
 		if err != nil {
+			conf.Log.Infof("update rule %v failed, %v", name, err)
 			handleError(w, err, "Update rule error", logger)
 			return
 		}
@@ -511,6 +517,7 @@ func ruleHandler(w http.ResponseWriter, r *http.Request) {
 		_, err = ruleProcessor.ExecUpdate(name, string(body))
 		var result string
 		if err != nil {
+			conf.Log.Infof("update rule %v failed, %v", name, err)
 			handleError(w, err, "Update rule error, suggest to delete it and recreate", logger)
 			return
 		} else {
