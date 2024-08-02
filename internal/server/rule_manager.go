@@ -79,7 +79,7 @@ func createRule(name, ruleJson string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("invalid rule json: %v", err)
 	}
-	conf.Log.Infof("start to create rule %s", r.Name)
+	conf.Log.Infof("start to create rule %s", r.Id)
 	// Store to KV
 	err = ruleProcessor.ExecCreate(r.Id, ruleJson)
 	if err != nil {
