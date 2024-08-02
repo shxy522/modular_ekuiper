@@ -19,11 +19,18 @@ import (
 	"database/sql"
 	"encoding/gob"
 	"fmt"
-	"strings"
+	"time"
 
+	"github.com/lf-edge/ekuiper/internal/conf"
 	kvEncoding "github.com/lf-edge/ekuiper/internal/pkg/store/encoding"
 	"github.com/lf-edge/ekuiper/pkg/errorx"
 )
+
+var createTsMap map[string]int64
+
+func init() {
+	createTsMap = make(map[string]int64)
+}
 
 type sqlKvStore struct {
 	database Database
@@ -60,9 +67,16 @@ func (kv *sqlKvStore) Setnx(key string, value interface{}) error {
 		_, err = stmt.Exec(key, b)
 		stmt.Close()
 		if err != nil {
-			if strings.Contains(err.Error(), "UNIQUE constraint failed") {
-				return fmt.Errorf(`Item %s already exists`, key)
+			errMsg := bytes.NewBufferString(fmt.Sprintf("key: %v err:%v ", fmt.Sprintf("%s.%s", kv.table, key), err))
+			if lastCreatedTS, ok := createTsMap[fmt.Sprintf("%s.%s", kv.table, key)]; ok {
+				errMsg.WriteString(fmt.Sprintf("lastCreated:%v ", lastCreatedTS))
 			}
+			errMsgS := errMsg.String()
+			conf.Log.Errorf(errMsgS)
+			err = fmt.Errorf("store item %s failed, msg:%v", key, errMsgS)
+		} else {
+			conf.Log.Infof("store %s.%s success", kv.table, key)
+			createTsMap[fmt.Sprintf("%s.%s", kv.table, key)] = time.Now().Unix()
 		}
 		return err
 	})
@@ -146,6 +160,9 @@ func (kv *sqlKvStore) Delete(key string) error {
 		}
 		query = fmt.Sprintf("DELETE FROM '%s' WHERE key='%s';", kv.table, key)
 		_, err = db.Exec(query)
+		if err == nil {
+			delete(createTsMap, fmt.Sprintf("%s.%s", kv.table, key))
+		}
 		return err
 	})
 }
