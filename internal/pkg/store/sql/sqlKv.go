@@ -26,9 +26,7 @@ import (
 	"github.com/lf-edge/ekuiper/pkg/errorx"
 )
 
-var (
-	createTsMap map[string]int64
-)
+var createTsMap map[string]int64
 
 func init() {
 	createTsMap = make(map[string]int64)
