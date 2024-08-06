@@ -89,8 +89,10 @@ func portablesHandler(w http.ResponseWriter, r *http.Request) {
 			handleError(w, err, "Invalid body: Error decoding the portable plugin json", logger)
 			return
 		}
+		conf.Log.Infof("recv install portable plugin %v request", sd.GetName())
 		err = portableManager.Register(sd)
 		if err != nil {
+			conf.Log.Errorf("install portable plugin %v request err:%v", sd.GetName(), err)
 			handleError(w, err, "portable plugin create command error", logger)
 			return
 		}
@@ -105,8 +107,10 @@ func portableHandler(w http.ResponseWriter, r *http.Request) {
 	name := vars["name"]
 	switch r.Method {
 	case http.MethodDelete:
+		conf.Log.Infof("recv delete portable plugin %v request", name)
 		err := portableManager.Delete(name)
 		if err != nil {
+			conf.Log.Errorf("delete portable plugin %v request err:%v", name, err)
 			handleError(w, err, fmt.Sprintf("delete portable plugin %s error", name), logger)
 			return
 		}
@@ -128,12 +132,14 @@ func portableHandler(w http.ResponseWriter, r *http.Request) {
 			handleError(w, err, "Invalid body: Error decoding the portable plugin json", logger)
 			return
 		}
+		conf.Log.Infof("recv update portable plugin %v request", name)
 		err = portableManager.Delete(name)
 		if err != nil {
 			conf.Log.Errorf("delete portable plugin %s error: %v", name, err)
 		}
 		err = portableManager.Register(sd)
 		if err != nil {
+			conf.Log.Errorf("update portable plugin %v request err:%v", name, err)
 			handleError(w, err, "portable plugin update command error", logger)
 			return
 		}
