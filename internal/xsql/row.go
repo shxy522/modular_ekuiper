@@ -1,4 +1,4 @@
-// Copyright 2022-2023 EMQ Technologies Co., Ltd.
+// Copyright 2022-2024 EMQ Technologies Co., Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -341,6 +341,8 @@ func (t *Tuple) ToMap() map[string]interface{} {
 			m[k] = v
 		}
 		t.cachedMap = m
+		t.AffiliateRow.MergeMap(t.cachedMap)
+	} else {
 		t.AffiliateRow.MergeMap(t.cachedMap)
 	}
 	return t.cachedMap
