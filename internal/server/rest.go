@@ -73,7 +73,9 @@ func handleError(w http.ResponseWriter, err error, prefix string, logger api.Log
 		message += ": "
 	}
 	message += err.Error()
-	logger.Error(message)
+	if prefix != "get rule topo error" {
+		logger.Error(message)
+	}
 	var ec int
 	switch e := err.(type) {
 	case *errorx.Error:
