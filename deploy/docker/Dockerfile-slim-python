@@ -35,7 +35,20 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /sdk/python
-RUN pip install ekuiper
+
+# 设置清华源
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 安装Python依赖包
+RUN pip install --no-cache-dir \
+    opencv-python \
+    grpcio \
+    grpcio-tools \
+    numpy \
+    requests \
+    docker \
+    ekuiper
+
 RUN sh install.sh
 
 WORKDIR /kuiper
