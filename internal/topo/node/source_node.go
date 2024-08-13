@@ -178,8 +178,8 @@ func (m *SourceNode) Open(ctx api.StreamContext, errCh chan<- error) {
 									m.Broadcast(val)
 									stats.IncTotalExceptions(val.Error())
 								default: // table
-									m.Broadcast(val)
 									stats.SetOutData(fmt.Sprintf("%s", val))
+									m.Broadcast(val)
 								}
 								stats.IncTotalRecordsOut()
 								stats.SetBufferLength(int64(buffer.GetLength()))

@@ -154,8 +154,8 @@ func (o *UnaryOperator) doOp(ctx api.StreamContext, errCh chan<- error) {
 				stats.SetBufferLength(int64(len(o.input)))
 			default:
 				stats.ProcessTimeEnd()
-				o.Broadcast(val)
 				stats.SetOutData(fmt.Sprintf("%s", val))
+				o.Broadcast(val)
 				stats.IncTotalRecordsOut()
 				stats.SetBufferLength(int64(len(o.input)))
 			}
