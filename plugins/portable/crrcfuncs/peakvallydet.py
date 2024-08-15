@@ -38,7 +38,6 @@ def peakvallydet(signal, pthresh):
     maxthresh = []
     minthresh = []
     peaks = []
-    valleys = []
     peak_valleys_value = []
 
     t = array(range(len(signal)))
@@ -52,18 +51,19 @@ def peakvallydet(signal, pthresh):
     for x, y in maxthresh:
         try:
             if (v[x - 1][1] < y) & (v[x + 1][1] < y):
-                peaks.append(y)
+                peaks.append((x, y))
         except Exception:
             pass
 
     for x, y in minthresh:
         try:
             if (v[x - 1][1] > y) & (v[x + 1][1] > y):
-                valleys.append(y)
+                peaks.append((x, y))
         except Exception:
             pass
-    for p, k in zip(peaks, valleys):
-        peak_valleys_value.append(p - k)
+    peak_valleys = sorted(peaks, key=lambda tup: tup[0])
+    for x, y in peak_valleys:
+        peak_valleys_value.append(y)
     return peak_valleys_value
 
 
