@@ -100,12 +100,21 @@ if __name__ == '__main__':
 
 `
 
-	installTemplate = `#!/bin/sh
+	condaInstallTemplate = `#!/bin/sh
 
 cur=$(dirname "$0")
 echo "Base path $cur"
 conda install --name {{.env}} --yes --file $cur/requirements.txt
-echo "Done"`
+echo "Done"
+exit 0`
+
+	pipInstallTemplate = `#!/bin/sh
+
+cur=$(dirname "$0")
+echo "Base path $cur"
+pip install -r $cur/requirements.txt
+echo "Done"
+exit 0`
 
 	requirementsTemplate = `{{ range $index, $value := .dependencies -}}
     {{ $value }}
