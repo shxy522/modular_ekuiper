@@ -334,9 +334,9 @@ func (m *Manager) install(name, src string, shellParas []string) (resultErr erro
 		cmd.Stderr = &errb
 		err = cmd.Run()
 		if err != nil {
-			return fmt.Errorf(`err:%v stdout:%s stderr:%s`, err, outb.String(), errb.String())
+			return fmt.Errorf(`install %s err:%v stdout:%s stderr:%s`, name, err, outb.String(), errb.String())
 		} else {
-			conf.Log.Infof(`install script output: %s`, outb.String())
+			conf.Log.Infof(`install %s script output: %s`, name, outb.String())
 		}
 	}
 	return m.doRegister(name, pi, false)

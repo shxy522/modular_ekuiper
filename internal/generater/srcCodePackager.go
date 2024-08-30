@@ -631,7 +631,19 @@ func PackageSrcCode(data []byte) (string, error) {
 		return "", err
 	}
 
-	err = pck.generateInstallFile(fcs.Env, installTemplate)
+	if fcs.VirtualEnvType == "conda" {
+		err = pck.generateInstallFile(fcs.Env, condaInstallTemplate)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		err = pck.generateInstallFile(fcs.Env, condaInstallTemplate)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	err = pck.generateInstallFile(fcs.Env, pipInstallTemplate)
 	if err != nil {
 		return "", err
 	}
