@@ -20,6 +20,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/lf-edge/ekuiper/internal/conf"
@@ -48,6 +50,7 @@ type PluginIns struct {
 	// audit the commands, so that when restarting the plugin, we can replay the commands
 	commands map[Meta][]byte
 	process  *os.Process // created when used by rule and deleted when no rule uses it
+	Status   *PluginStatus
 }
 
 func NewPluginIns(name string, ctrlChan ControlChannel, process *os.Process) *PluginIns {
@@ -56,6 +59,7 @@ func NewPluginIns(name string, ctrlChan ControlChannel, process *os.Process) *Pl
 		ctrlChan: ctrlChan,
 		name:     name,
 		commands: make(map[Meta][]byte),
+		Status:   NewPluginStatus(),
 	}
 }
 
@@ -133,6 +137,7 @@ func (i *PluginIns) Stop() error {
 	var err error
 	i.RLock()
 	defer i.RUnlock()
+	i.Status.Stop()
 	if i.process != nil { // will also trigger process exit clean up
 		conf.Log.Infof("kill process %d", i.process.Pid)
 		err = i.process.Kill()
@@ -153,6 +158,21 @@ func GetPluginInsManager() *pluginInsManager {
 		}
 	})
 	return pm
+}
+
+func (p *pluginInsManager) GetPluginInsStatus(name string) (*PluginStatus, error) {
+	p.Lock()
+	defer p.Unlock()
+	ins, ok := p.instances[name]
+	if !ok {
+		return nil, fmt.Errorf("plugin %s not found", name)
+	}
+	ps, err := queryPluginProcessStatus(name, ins.Status.Pid)
+	if err != nil {
+		return nil, fmt.Errorf("query plugin %s process %s ps failed, err:%v", name, ins.Status.Pid, err)
+	}
+	ins.Status.ProcessStatus = ps
+	return ins.Status, nil
 }
 
 func (p *pluginInsManager) getPluginIns(name string) (*PluginIns, bool) {
@@ -228,6 +248,7 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 		ctrlChan, err := CreateControlChannel(pluginMeta.Name)
 		if err != nil {
 			conf.Log.Errorf("plugin %s can't create new control channel: %s", pluginMeta.Name, err.Error())
+			ins.Status.StatusErr(err)
 			return nil, fmt.Errorf("plugin %s can't create new control channel: %s", pluginMeta.Name, err.Error())
 		}
 		ins.ctrlChan = ctrlChan
@@ -235,6 +256,7 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 	// init or restart all need to run the process
 	jsonArg, err := json.Marshal(pconf)
 	if err != nil {
+		ins.Status.StatusErr(err)
 		return nil, fmt.Errorf("invalid conf: %v", pconf)
 	}
 	var cmd *exec.Cmd
@@ -263,6 +285,7 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 		return nil
 	})
 	if err != nil {
+		ins.Status.StatusErr(err)
 		return nil, fmt.Errorf("fail to start plugin %s: %v", pluginMeta.Name, err)
 	}
 	cmd.Stdout = conf.Log.Out
@@ -272,18 +295,21 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 	err = cmd.Start()
 	if err != nil {
 		conf.Log.Errorf("plugin %s executable %s stops with error %v", pluginMeta.Name, pluginMeta.Executable, err)
+		ins.Status.StatusErr(err)
 		return nil, fmt.Errorf("plugin %s executable %s stops with error %v", pluginMeta.Name, pluginMeta.Executable, err)
 	}
 	process := cmd.Process
 	conf.Log.Infof("plugin %s started pid: %d\n", pluginMeta.Name, process.Pid)
 	defer func() {
 		if e != nil {
+			ins.Status.StatusErr(e)
 			_ = process.Kill()
 		}
 	}()
 	go infra.SafeRun(func() error { // just print out error inside
 		err = cmd.Wait()
 		if err != nil {
+			ins.Status.StatusErr(err)
 			conf.Log.Printf("plugin executable %s stops with error %v", pluginMeta.Executable, err)
 		}
 		// must make sure the plugin ins is not cleaned up yet by checking the process identity
@@ -305,17 +331,20 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 	conf.Log.Println("waiting handshake")
 	err = ins.ctrlChan.Handshake()
 	if err != nil {
+		ins.Status.StatusErr(err)
 		return nil, fmt.Errorf("plugin %s control handshake error: %v", pluginMeta.Executable, err)
 	}
 	ins.process = process
 	p.instances[pluginMeta.Name] = ins
 	conf.Log.Infof("plugin %s start running, process: %v", pluginMeta.Name, process.Pid)
+	ins.Status.StartRunning(ins.process.Pid)
 	// restore symbols by sending commands when restarting plugin
 	conf.Log.Infof("restore plugin %s symbols", pluginMeta.Name)
 	for m, c := range ins.commands {
 		go func(key Meta, jsonArg []byte) {
 			e := ins.sendCmd(jsonArg)
 			if e != nil {
+				ins.Status.StatusErr(err)
 				conf.Log.Errorf("send command to %v error: %v", key, e)
 			}
 		}(m, c)
@@ -354,4 +383,66 @@ type PluginMeta struct {
 	Executable  string `json:"executable"`
 	VirtualType string `json:"virtualEnvType,omitempty"`
 	Env         string `json:"env,omitempty"`
+}
+
+const (
+	PluginStatusRunning = "running"
+	PluginStatusInit    = "initializing"
+	PluginStatusErr     = "error"
+	PluginStatusStop    = "stop"
+)
+
+type PluginStatus struct {
+	Status        string         `json:"status"`
+	ErrMsg        string         `json:"errMsg"`
+	Pid           int            `json:"pid"`
+	ProcessStatus *ProcessStatus `json:"processStatus"`
+}
+
+func NewPluginStatus() *PluginStatus {
+	return &PluginStatus{
+		Status: PluginStatusInit,
+	}
+}
+
+func (s *PluginStatus) StatusErr(err error) {
+	s.Status = PluginStatusErr
+	s.ErrMsg = err.Error()
+}
+
+func (s *PluginStatus) StartRunning(pid int) {
+	s.Status = PluginStatusRunning
+	s.Pid = pid
+	s.ErrMsg = ""
+}
+
+func (s *PluginStatus) Stop() {
+	s.Status = PluginStatusStop
+	s.ErrMsg = ""
+}
+
+func queryPluginProcessStatus(name string, pid int) (*ProcessStatus, error) {
+	cmd := exec.Command("ps", "-p", strconv.FormatInt(int64(pid), 10), "-o", "%cpu,%mem")
+	output, err := cmd.Output()
+	if err != nil {
+		return nil, fmt.Errorf("query plugin %s process %v failed, err:%v", name, pid, err)
+	}
+	lines := strings.Split(string(output), "\n")
+	if len(lines) < 2 {
+		return nil, fmt.Errorf("query plugin %s process %v failed, no such process", name, pid)
+	}
+	s := &ProcessStatus{}
+	for _, line := range lines[1:] {
+		if strings.TrimSpace(line) != "" {
+			fields := strings.Fields(line)
+			s.CPU = fields[0]
+			s.Memory = fields[1]
+		}
+	}
+	return s, nil
+}
+
+type ProcessStatus struct {
+	CPU    string `json:"cpu"`
+	Memory string `json:"memory"`
 }

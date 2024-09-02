@@ -29,6 +29,7 @@ import (
 	"github.com/lf-edge/ekuiper/internal/conf"
 	"github.com/lf-edge/ekuiper/internal/plugin"
 	"github.com/lf-edge/ekuiper/internal/plugin/portable"
+	"github.com/lf-edge/ekuiper/internal/plugin/portable/runtime"
 	"github.com/lf-edge/ekuiper/pkg/errorx"
 )
 
@@ -52,6 +53,7 @@ func (p portableComp) register() {
 func (p portableComp) rest(r *mux.Router) {
 	r.HandleFunc("/plugins/portables", portablesHandler).Methods(http.MethodGet, http.MethodPost)
 	r.HandleFunc("/plugins/portables/{name}", portableHandler).Methods(http.MethodGet, http.MethodDelete, http.MethodPut)
+	r.HandleFunc("/plugins/portables/{name}/status", portableStatusHandler).Methods(http.MethodGet)
 }
 
 func portablesHandler(w http.ResponseWriter, r *http.Request) {
@@ -98,6 +100,22 @@ func portablesHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte(fmt.Sprintf("portable plugin %s is created", sd.GetName())))
+	}
+}
+
+func portableStatusHandler(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	vars := mux.Vars(r)
+	name := vars["name"]
+	switch r.Method {
+	case http.MethodGet:
+		pm := runtime.GetPluginInsManager()
+		status, err := pm.GetPluginInsStatus(name)
+		if err != nil {
+			handleError(w, err, fmt.Sprintf("query portable plugin %s status error: %v", name, err), logger)
+			return
+		}
+		jsonResponse(status, w, logger)
 	}
 }
 
