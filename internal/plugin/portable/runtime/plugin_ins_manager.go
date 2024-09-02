@@ -165,7 +165,7 @@ func (p *pluginInsManager) GetPluginInsStatus(name string) (*PluginStatus, error
 	defer p.Unlock()
 	ins, ok := p.instances[name]
 	if !ok {
-		return nil, fmt.Errorf("plugin %s not found", name)
+		return nil, fmt.Errorf("plugin %s not started", name)
 	}
 	ps, err := queryPluginProcessStatus(name, ins.Status.Pid)
 	if err != nil {
