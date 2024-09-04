@@ -55,15 +55,28 @@ func (p *FuncOp) Apply(ctx api.StreamContext, data interface{}, fv *xsql.Functio
 				return true, nil
 			})
 		} else {
-			err = input.RangeSet(func(_ int, row xsql.Row) (bool, error) {
-				ve := &xsql.ValuerEval{Valuer: xsql.MultiValuer(row, &xsql.WindowRangeValuer{WindowRange: input.GetWindowRange()}, fv, &xsql.WildcardValuer{Data: row})}
-				result := ve.Eval(p.CallExpr)
-				if e, ok := result.(error); ok {
-					return false, e
-				}
-				row.Set(p.Name, result)
-				return true, nil
-			})
+			if input.IsAgg() {
+				input.GroupRange(func(i int, aggRow xsql.CollectionRow) (bool, error) {
+					afv.SetData(aggRow)
+					ve := &xsql.ValuerEval{Valuer: xsql.MultiAggregateValuer(aggRow, fv, aggRow, fv, afv, &xsql.WildcardValuer{Data: aggRow})}
+					result := ve.Eval(p.CallExpr)
+					if e, ok := result.(error); ok {
+						return false, e
+					}
+					aggRow.Set(p.Name, result)
+					return true, nil
+				})
+			} else {
+				err = input.RangeSet(func(_ int, row xsql.Row) (bool, error) {
+					ve := &xsql.ValuerEval{Valuer: xsql.MultiValuer(row, &xsql.WindowRangeValuer{WindowRange: input.GetWindowRange()}, fv, &xsql.WildcardValuer{Data: row})}
+					result := ve.Eval(p.CallExpr)
+					if e, ok := result.(error); ok {
+						return false, e
+					}
+					row.Set(p.Name, result)
+					return true, nil
+				})
+			}
 		}
 		if err != nil {
 			return err

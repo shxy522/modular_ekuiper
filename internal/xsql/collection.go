@@ -56,6 +56,7 @@ type SingleCollection interface {
 	Collection
 	CollectionRow
 	SetIsAgg(isAgg bool)
+	IsAgg() bool
 	// ToAggMaps returns the aggregated data as a map
 	ToAggMaps() []map[string]interface{}
 	// ToRowMaps returns all the data in the collection
@@ -298,6 +299,10 @@ func (w *WindowTuples) SetIsAgg(_ bool) {
 	w.isAgg = true
 }
 
+func (w *WindowTuples) IsAgg() bool {
+	return w.isAgg
+}
+
 func (s *JoinTuples) Len() int { return len(s.Content) }
 func (s *JoinTuples) Swap(i, j int) {
 	s.cachedMap = nil
@@ -434,6 +439,10 @@ func (s *JoinTuples) Pick(allWildcard bool, cols [][]string, wildcardEmitters ma
 
 func (s *JoinTuples) SetIsAgg(_ bool) {
 	s.isAgg = true
+}
+
+func (s *JoinTuples) IsAgg() bool {
+	return s.isAgg
 }
 
 func (s *GroupedTuplesSet) Len() int        { return len(s.Groups) }
