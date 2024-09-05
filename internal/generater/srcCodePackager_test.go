@@ -348,7 +348,7 @@ func TestInstallScript(t *testing.T) {
 	p := &PythonCodePackage{}
 	p.EtcDir = "."
 	p.packageDir = "."
-	require.NoError(t, p.generateInstallFile("active", installTemplate))
+	require.NoError(t, p.generateInstallFile("active", condaInstallTemplate))
 	c, err := os.ReadFile("./install.sh")
 	require.NoError(t, err)
 	result := `#!/bin/sh
