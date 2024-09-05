@@ -33,13 +33,6 @@ func registerObjectFunc() {
 				}
 				return list, true
 			}
-			if arg, ok := targetArg.(map[string][]interface{}); ok {
-				list := make([]string, 0, len(arg))
-				for key := range arg {
-					list = append(list, key)
-				}
-				return list, true
-			}
 			return fmt.Errorf("the argument should be map[string]interface{}"), false
 		},
 		val:   ValidateOneArg,
