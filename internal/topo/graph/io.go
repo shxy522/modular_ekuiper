@@ -128,7 +128,7 @@ var OpIO = map[string][]*IOType{
 		{Type: IOINPUT_TYPE_SAME},
 	},
 	"function": {
-		{Type: IOINPUT_TYPE_ANY, CollectionType: IOCOLLECTION_TYPE_SINGLE, RowType: IOROW_TYPE_ANY},
+		{Type: IOINPUT_TYPE_ANY, CollectionType: IOCOLLECTION_TYPE_ANY, RowType: IOROW_TYPE_ANY},
 		{Type: IOINPUT_TYPE_SAME},
 	},
 	"groupby": {
