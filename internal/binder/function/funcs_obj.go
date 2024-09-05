@@ -25,8 +25,8 @@ func registerObjectFunc() {
 	builtins["keys"] = builtinFunc{
 		fType: ast.FuncTypeScalar,
 		exec: func(ctx api.FunctionContext, args []interface{}) (interface{}, bool) {
-			targetArg := args[0]
-			if arg, ok := targetArg.(map[string]interface{}); ok {
+			arg := args[0]
+			if arg, ok := arg.(map[string]interface{}); ok {
 				list := make([]string, 0, len(arg))
 				for key := range arg {
 					list = append(list, key)
