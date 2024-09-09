@@ -15,6 +15,7 @@
 package node
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"sync"
@@ -151,6 +152,13 @@ func (o *UnaryOperator) doOp(ctx api.StreamContext, errCh chan<- error) {
 					o.Broadcast(v)
 					stats.IncTotalRecordsOut()
 				}
+				stats.SetBufferLength(int64(len(o.input)))
+			case xsql.Collection:
+				stats.ProcessTimeEnd()
+				content, _ := json.Marshal(val.Clone().ToMaps())
+				stats.SetOutData(string(content))
+				o.Broadcast(val)
+				stats.IncTotalRecordsOut()
 				stats.SetBufferLength(int64(len(o.input)))
 			default:
 				stats.ProcessTimeEnd()

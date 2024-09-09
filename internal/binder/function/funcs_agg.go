@@ -16,6 +16,7 @@ package function
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/montanaflynn/stats"
 
@@ -25,6 +26,15 @@ import (
 	"github.com/lf-edge/ekuiper/pkg/cast"
 )
 
+func isInColumns(key string, columns []string) bool {
+	for _, c := range columns {
+		if c == key {
+			return true
+		}
+	}
+	return false
+}
+
 func registerAggFunc() {
 	builtins["agg_by_key"] = builtinFunc{
 		fType: ast.FuncTypeAgg,
@@ -33,23 +43,32 @@ func registerAggFunc() {
 			if !ok {
 				return fmt.Errorf("agg_by_key should used as agg function"), false
 			}
-			result := make(map[string][]interface{})
+			args1, ok := args[1].([]interface{})
+			if !ok {
+				return fmt.Errorf("agg_by_key should used as agg function"), false
+			}
+			c, ok := args1[0].(string)
+			if !ok {
+				return fmt.Errorf("agg_by_key should defined aggregate columns"), false
+			}
+			columns := strings.Split(c, ",")
+			result := make([]interface{}, 0)
 			for _, item := range arg0 {
 				m, ok := item.(model.Message)
 				if !ok {
 					continue
 				}
 				for k, v := range m {
-					if v1, ok := result[k]; ok {
-						result[k] = append(v1, v)
-					} else {
-						result[k] = []interface{}{v}
+					if isInColumns(k, columns) {
+						result = append(result, v)
 					}
 				}
 			}
 			return result, true
 		},
-		val:   ValidateOneArg,
+		val: func(ctx api.FunctionContext, args []ast.Expr) error {
+			return ValidateLen(2, len(args))
+		},
 		check: returnNilIfHasAnyNil,
 	}
 	builtins["avg"] = builtinFunc{
