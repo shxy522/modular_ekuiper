@@ -52,17 +52,35 @@ func registerAggFunc() {
 				return fmt.Errorf("agg_by_key should defined aggregate columns"), false
 			}
 			columns := strings.Split(c, ",")
-			result := make([]interface{}, 0)
+			result := make([][]interface{}, 0)
+			aggData := make(map[string][]interface{})
 			for _, item := range arg0 {
 				m, ok := item.(model.Message)
 				if !ok {
 					continue
 				}
-				for k, v := range m {
-					if isInColumns(k, columns) {
-						result = append(result, v)
+				for aggColumn, v := range m {
+					if isInColumns(aggColumn, columns) {
+						aggColumnData, ok := aggData[aggColumn]
+						if !ok {
+							aggColumnData = make([]interface{}, 0)
+							aggData[aggColumn] = aggColumnData
+						}
+						switch d := v.(type) {
+						case []interface{}:
+							for _, subValue := range d {
+								aggColumnData = append(aggColumnData, subValue)
+							}
+						default:
+							aggColumnData = append(aggColumnData, v)
+						}
+						aggData[aggColumn] = aggColumnData
+
 					}
 				}
+			}
+			for _, col := range columns {
+				result = append(result, aggData[col])
 			}
 			return result, true
 		},
