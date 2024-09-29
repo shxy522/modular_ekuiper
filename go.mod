@@ -34,7 +34,7 @@ require (
 	github.com/u2takey/ffmpeg-go v0.4.1
 	github.com/ugorji/go/codec v1.2.10
 	github.com/urfave/cli v1.22.12
-	github.com/yisaer/file-rotatelogs v0.0.0-20240606072000-fe792f3c4e04
+	github.com/yisaer/file-rotatelogs v0.0.0-20240926070915-3a4d03835c68
 	go.nanomsg.org/mangos/v3 v3.4.2
 	golang.org/x/text v0.9.0
 	google.golang.org/genproto v0.0.0-20230227214838-9b19f0bdc514
