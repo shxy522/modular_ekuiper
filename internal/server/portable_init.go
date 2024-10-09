@@ -95,7 +95,8 @@ func portablesHandler(w http.ResponseWriter, r *http.Request) {
 		err = portableManager.Register(sd)
 		if err != nil {
 			conf.Log.Errorf("install portable plugin %v request err:%v", sd.GetName(), err)
-			handleError(w, err, "portable plugin create command error", logger)
+			errMsg := fmt.Errorf("portable plugin create failed, err:%v", err.Error())
+			handleError(w, errMsg, "", logger)
 			return
 		}
 		w.WriteHeader(http.StatusCreated)

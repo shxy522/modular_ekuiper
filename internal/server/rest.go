@@ -185,7 +185,9 @@ func SourceCodeHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		dwnpath, err := generater.PackageSrcCode(all)
 		if err != nil {
-			handleError(w, err, "Invalid body: Error decoding file json", logger)
+			errMsg := fmt.Errorf("package python failed, err:%v", err.Error())
+			conf.Log.Error(errMsg.Error())
+			handleError(w, errMsg, "Invalid body: Error decoding file json", logger)
 			return
 		}
 		jsonResponse(dwnpath, w, logger)
@@ -452,7 +454,8 @@ func rulesHandler(w http.ResponseWriter, r *http.Request) {
 		id, err := createRule("", string(body))
 		if err != nil {
 			conf.Log.Errorf("create rule %s failed, %v", id, err)
-			handleError(w, err, "", logger)
+			errMsg := fmt.Errorf("create rule failed, id:%v, err:%v", id, err)
+			handleError(w, errMsg, "", logger)
 			return
 		}
 		result := fmt.Sprintf("Rule %s was created successfully.", id)
@@ -500,19 +503,22 @@ func ruleHandler(w http.ResponseWriter, r *http.Request) {
 		_, err := ruleProcessor.GetRuleById(name)
 		if err != nil {
 			conf.Log.Infof("update rule %v failed, %v", name, err)
-			handleError(w, err, "Rule not found", logger)
+			errMsg := fmt.Errorf("upadte rule failed, id:%v, err:%v", name, err)
+			handleError(w, errMsg, "", logger)
 			return
 		}
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			conf.Log.Infof("update rule %v failed, %v", name, err)
-			handleError(w, err, "Invalid body", logger)
+			errMsg := fmt.Errorf("upadte rule failed, id:%v, err:%v", name, err)
+			handleError(w, errMsg, "", logger)
 			return
 		}
 		err = updateRule(name, string(body))
 		if err != nil {
 			conf.Log.Infof("update rule %v failed, %v", name, err)
-			handleError(w, err, "Update rule error", logger)
+			errMsg := fmt.Errorf("upadte rule failed, id:%v, err:%v", name, err)
+			handleError(w, errMsg, "", logger)
 			return
 		}
 		// Update to db after validation
@@ -520,7 +526,8 @@ func ruleHandler(w http.ResponseWriter, r *http.Request) {
 		var result string
 		if err != nil {
 			conf.Log.Infof("update rule %v failed, %v", name, err)
-			handleError(w, err, "Update rule error, suggest to delete it and recreate", logger)
+			errMsg := fmt.Errorf("upadte rule failed, id:%v, err:%v", name, err)
+			handleError(w, errMsg, "", logger)
 			return
 		} else {
 			result = fmt.Sprintf("Rule %s was updated successfully.", name)
@@ -543,13 +550,17 @@ func getStatusRuleHandler(w http.ResponseWriter, r *http.Request) {
 	if nodeName == "" && outField == "" {
 		content, err = getRuleStatus(name)
 		if err != nil {
-			handleError(w, err, "get rule status error", logger)
+			errMsg := fmt.Errorf("get rule status failed, id:%v, err:%v", name, err)
+			conf.Log.Error(errMsg)
+			handleError(w, errMsg, "", logger)
 			return
 		}
 	} else {
 		content, err = getRuleStatusFor(name, nodeName, outField)
 		if err != nil {
-			handleError(w, err, "get rule status error", logger)
+			errMsg := fmt.Errorf("get rule status failed, id:%v, err:%v", name, err)
+			conf.Log.Error(errMsg)
+			handleError(w, errMsg, "", logger)
 			return
 		}
 	}
@@ -567,7 +578,8 @@ func startRuleHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := startRule(name)
 	if err != nil {
-		handleError(w, err, "start rule error", logger)
+		errMsg := fmt.Errorf("start rule failed, id:%v, err:%v", name, err)
+		handleError(w, errMsg, "", logger)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
