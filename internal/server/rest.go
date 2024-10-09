@@ -26,6 +26,7 @@ import (
 	"reflect"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gorilla/handlers"
@@ -150,7 +151,19 @@ func createRestServer(ip string, port int, needToken bool) *http.Server {
 	r.HandleFunc("/data/import", configurationImportHandler).Methods(http.MethodPost)
 	r.HandleFunc("/data/import/status", configurationStatusHandler).Methods(http.MethodGet)
 	r.HandleFunc("/packager/python", SourceCodeHandler).Methods(http.MethodPost)
-	r.PathPrefix("/web/").Handler(http.StripPrefix("/web/", http.FileServer(http.Dir("web"))))
+	r.PathPrefix("/web/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		path := filepath.Clean(r.URL.Path)
+		if !strings.HasPrefix(path, "/web/") {
+			http.Error(w, "Not Found", http.StatusNotFound)
+			return
+		}
+		ext := filepath.Ext(path)
+		if ext != ".zip" {
+			http.Error(w, "only allowed to download zip file", http.StatusForbidden)
+			return
+		}
+		http.StripPrefix("/web/", http.FileServer(http.Dir("web"))).ServeHTTP(w, r)
+	})
 	// Register extended routes
 	for k, v := range components {
 		logger.Infof("register rest endpoint for component %s", k)
