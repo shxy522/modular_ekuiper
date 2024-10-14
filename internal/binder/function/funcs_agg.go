@@ -39,7 +39,6 @@ func registerAggFunc() {
 	builtins["agg_by_key"] = builtinFunc{
 		fType: ast.FuncTypeAgg,
 		exec: func(ctx api.FunctionContext, args []interface{}) (interface{}, bool) {
-			panic("123")
 			arg0, ok := args[0].([]interface{})
 			if !ok {
 				return fmt.Errorf("agg_by_key should used as agg function"), false
