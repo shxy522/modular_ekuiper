@@ -47,12 +47,15 @@ func registerAggFunc() {
 			if !ok {
 				return fmt.Errorf("agg_by_key should used as agg function"), false
 			}
+			result := make([][]interface{}, 0)
+			if len(args1) < 1 {
+				return result, true
+			}
 			c, ok := args1[0].(string)
 			if !ok {
 				return fmt.Errorf("agg_by_key should defined aggregate columns"), false
 			}
 			columns := strings.Split(c, ",")
-			result := make([][]interface{}, 0)
 			aggData := make(map[string][]interface{})
 			for _, item := range arg0 {
 				m, ok := item.(model.Message)
@@ -80,7 +83,10 @@ func registerAggFunc() {
 				}
 			}
 			for _, col := range columns {
-				result = append(result, aggData[col])
+				_, ok := aggData[col]
+				if ok {
+					result = append(result, aggData[col])
+				}
 			}
 			return result, true
 		},
