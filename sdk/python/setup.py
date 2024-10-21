@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='ekuiper',
-    version='0.0.1',
+    version='0.0.2',
     packages=find_packages(),
     url='https://github.com/lf-edge/ekuiper',
     license='Apache License 2.0',

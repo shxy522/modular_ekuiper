@@ -38,6 +38,7 @@ var (
 		mangos.OptionDialAsynch:       false,
 		mangos.OptionMaxReconnectTime: 5 * time.Second,
 		mangos.OptionReconnectTime:    100 * time.Millisecond,
+		mangos.OptionMaxRecvSize:      0,
 	}
 )
 
@@ -175,6 +176,7 @@ func CreateSourceChannel(ctx api.StreamContext) (DataInChannel, error) {
 	}
 	setSockOptions(sock, map[string]interface{}{
 		mangos.OptionRecvDeadline: time.Duration(conf.Config.Portable.RecvTimeout) * time.Millisecond,
+		mangos.OptionMaxRecvSize:  0,
 	})
 	url := fmt.Sprintf("ipc:///tmp/%s_%s_%d.ipc", ctx.GetRuleId(), ctx.GetOpId(), ctx.GetInstanceId())
 	if err = listenWithRetry(sock, url); err != nil {
@@ -197,6 +199,7 @@ func CreateFunctionChannel(symbolName string) (DataReqChannel, error) {
 		mangos.OptionRecvDeadline: time.Duration(conf.Config.Portable.RecvTimeout) * time.Millisecond,
 		mangos.OptionSendDeadline: time.Duration(conf.Config.Portable.SendTimeout) * time.Millisecond,
 		mangos.OptionRetryTime:    0,
+		mangos.OptionMaxRecvSize:  0,
 	})
 	url := fmt.Sprintf("ipc:///tmp/func_%s.ipc", symbolName)
 	if err = listenWithRetry(sock, url); err != nil {
@@ -216,6 +219,7 @@ func CreateSinkChannel(ctx api.StreamContext) (DataOutChannel, error) {
 	}
 	setSockOptions(sock, map[string]interface{}{
 		mangos.OptionSendDeadline: time.Duration(conf.Config.Portable.SendTimeout) * time.Millisecond,
+		mangos.OptionMaxRecvSize:  0,
 	})
 	url := fmt.Sprintf("ipc:///tmp/%s_%s_%d.ipc", ctx.GetRuleId(), ctx.GetOpId(), ctx.GetInstanceId())
 	if err = sock.DialOptions(url, dialOptions); err != nil {
@@ -238,6 +242,7 @@ func CreateControlChannel(pluginName string) (ControlChannel, error) {
 	// thus, if the plugin exit, the control channel will be closed
 	setSockOptions(sock, map[string]interface{}{
 		mangos.OptionRecvDeadline: 1 * time.Hour,
+		mangos.OptionMaxRecvSize:  0,
 	})
 	url := fmt.Sprintf("ipc:///tmp/plugin_%s.ipc", pluginName)
 	if err = listenWithRetry(sock, url); err != nil {

@@ -464,6 +464,7 @@ func rulesHandler(w http.ResponseWriter, r *http.Request) {
 			handleError(w, err, "Invalid body", logger)
 			return
 		}
+		conf.Log.Infof("start to create rule body:%s", string(body))
 		id, err := createRule("", string(body))
 		if err != nil {
 			conf.Log.Errorf("create rule %s failed, %v", id, err)
