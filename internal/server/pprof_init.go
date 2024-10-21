@@ -15,10 +15,8 @@
 package server
 
 import (
-	"log"
 	"net/http"
 	_ "net/http/pprof"
-	"os"
 )
 
 func init() {
@@ -31,10 +29,10 @@ type pprofComp struct {
 
 func (p pprofComp) serve() {
 	go func() {
-		if err := http.ListenAndServe(":6060", nil); err != nil {
-			log.Fatal(err)
-		}
-		os.Exit(0)
+		//if err := http.ListenAndServe(":6060", nil); err != nil {
+		//	log.Fatal(err)
+		//}
+		//os.Exit(0)
 	}()
 }
 
