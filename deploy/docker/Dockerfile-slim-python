@@ -36,6 +36,8 @@ RUN apt-get update \
 
 WORKDIR /sdk/python
 
+RUN python3 setup.py sdist && python3 setup.py install
+
 # 设置清华源
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
@@ -47,7 +49,6 @@ RUN pip install --no-cache-dir \
     numpy \
     requests \
     docker \
-    ekuiper
 
 RUN sh install.sh
 
