@@ -307,10 +307,11 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 		}
 	}()
 	go infra.SafeRun(func() error { // just print out error inside
+		pid := cmd.Process.Pid
 		err = cmd.Wait()
 		if err != nil {
 			ins.Status.StatusErr(err)
-			conf.Log.Printf("plugin executable %s stops with error %v", pluginMeta.Executable, err)
+			conf.Log.Printf("PID %v plugin executable %s stops with error %v", pid, pluginMeta.Executable, err)
 		}
 		// must make sure the plugin ins is not cleaned up yet by checking the process identity
 		// clean up for stop unintentionally
@@ -328,7 +329,6 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 		}
 		return nil
 	})
-	conf.Log.Println("waiting handshake")
 	err = ins.ctrlChan.Handshake()
 	if err != nil {
 		ins.Status.StatusErr(err)

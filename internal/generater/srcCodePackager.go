@@ -295,7 +295,7 @@ func (p *PythonCodePackage) copySourcePythonFile() error {
 		if err != nil {
 			return err
 		}
-		baseFilePath := "plugins/portable/" + p.packageDir + "/"
+		baseFilePath := "/kuiper/plugins/portable/" + p.packageDir + "/"
 
 		config := map[string]interface{}{
 			"BASEPATH": baseFilePath,
