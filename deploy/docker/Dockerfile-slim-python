@@ -48,7 +48,7 @@ RUN pip install --no-cache-dir \
     grpcio-tools \
     numpy \
     requests \
-    docker \
+    docker
 
 RUN sh install.sh
 
