@@ -50,6 +50,8 @@ RUN pip install --no-cache-dir \
     requests \
     docker
 
+RUN python3 setup.py sdist && python3 setup.py install
+
 RUN sh install.sh
 
 WORKDIR /kuiper
