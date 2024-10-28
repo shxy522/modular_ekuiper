@@ -46,7 +46,8 @@ RUN pip install --no-cache-dir \
     grpcio-tools \
     numpy \
     requests \
-    docker
+    docker \
+    pynng
 
 RUN python3 setup.py sdist && python3 setup.py install
 
