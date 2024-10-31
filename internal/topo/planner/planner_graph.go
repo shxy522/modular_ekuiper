@@ -110,6 +110,13 @@ func PlanByGraph(rule *api.Rule) (*topo.Topo, error) {
 			}
 			nt := strings.ToLower(gn.NodeType)
 			switch nt {
+			case "srfunc":
+				fop, err := parseSrfFunc(gn.Props, sourceNames)
+				if err != nil {
+					return nil, fmt.Errorf("parse function %s with %v error: %w", nodeName, gn.Props, err)
+				}
+				op := Transform(fop, nodeName, rule.Options)
+				nodeMap[nodeName] = op
 			case "function":
 				fop, err := parseFunc(gn.Props, sourceNames)
 				if err != nil {
@@ -669,6 +676,37 @@ func parsePick(props map[string]interface{}, sourceNames []string) (*operator.Pr
 		isAggregate: xsql.IsAggStatement(stmt),
 	}.Init()
 	return &operator.ProjectOp{ColNames: t.colNames, AliasNames: t.aliasNames, AliasFields: t.aliasFields, ExprFields: t.exprFields, IsAggregate: t.isAggregate, AllWildcard: t.allWildcard, WildcardEmitters: t.wildcardEmitters, ExprNames: t.exprNames, SendMeta: t.sendMeta}, nil
+}
+
+func parseSrfFunc(props map[string]interface{}, sourceNames []string) (*operator.SrfFuncOp, error) {
+	m, ok := props["expr"]
+	if !ok {
+		return nil, errors.New("no expr")
+	}
+	funcExpr, ok := m.(string)
+	if !ok {
+		return nil, fmt.Errorf("expr %v is not string", m)
+	}
+	stmt, err := xsql.NewParserWithSources(strings.NewReader("select "+funcExpr+" from nonexist"), sourceNames).Parse()
+	if err != nil {
+		return nil, err
+	}
+	f := stmt.Fields[0]
+	c, ok := f.Expr.(*ast.Call)
+	if !ok {
+		// never happen
+		return nil, fmt.Errorf("expr %s is not ast.Call", funcExpr)
+	}
+	if c.FuncType != ast.FuncTypeSrf {
+		return nil, fmt.Errorf("expr %s is not srf function", funcExpr)
+	}
+	var name string
+	if f.AName != "" {
+		name = f.AName
+	} else {
+		name = f.Name
+	}
+	return &operator.SrfFuncOp{CallExpr: c, Name: name}, nil
 }
 
 func parseFunc(props map[string]interface{}, sourceNames []string) (*operator.FuncOp, error) {

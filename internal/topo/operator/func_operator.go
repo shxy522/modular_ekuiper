@@ -103,3 +103,43 @@ func (p *FuncOp) Apply(ctx api.StreamContext, data interface{}, fv *xsql.Functio
 	}
 	return data
 }
+
+type SrfFuncOp struct {
+	CallExpr *ast.Call
+	Name     string
+}
+
+func (p *SrfFuncOp) Apply(ctx api.StreamContext, data interface{}, fv *xsql.FunctionValuer, afv *xsql.AggregateFunctionValuer) interface{} {
+	ctx.GetLogger().Debugf("FuncOp receive: %s", data)
+	switch input := data.(type) {
+	case error:
+		return input
+	case xsql.TupleRow:
+		ve := &xsql.ValuerEval{Valuer: xsql.MultiValuer(input, fv)}
+		result := ve.Eval(p.CallExpr)
+		if e, ok := result.(error); ok {
+			return e
+		}
+		results, ok := result.([]interface{})
+		if !ok {
+			return nil
+		}
+		newTuples := make([]xsql.TupleRow, 0)
+		for _, res := range results {
+			newTuple := input.Clone().(xsql.TupleRow)
+			newTuple.Del(p.Name)
+			if mv, ok := res.(map[string]interface{}); ok {
+				for k, v := range mv {
+					newTuple.Set(k, v)
+				}
+			} else {
+				newTuple.Set(p.Name, res)
+			}
+			newTuples = append(newTuples, newTuple)
+		}
+		return newTuples
+	default:
+		return fmt.Errorf("run func error: invalid input %[1]T(%[1]v)", input)
+	}
+
+}
