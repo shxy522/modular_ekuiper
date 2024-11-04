@@ -374,6 +374,7 @@ func (o *WindowOperator) execProcessingWindow(ctx api.StreamContext, inputs []*x
 			log.Debugf("First tick at %v(%d), defined at %d", now, now.UnixMilli(), firstTime)
 			switch o.window.Type {
 			case ast.TUMBLING_WINDOW:
+				conf.Log.Infof("tumblingWindow Ticker:%v", (time.Duration(o.window.Length) * time.Millisecond).String())
 				o.ticker = conf.GetTicker(o.window.Length)
 			case ast.HOPPING_WINDOW:
 				o.ticker = conf.GetTicker(o.window.Interval)
