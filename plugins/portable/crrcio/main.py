@@ -18,11 +18,9 @@ from ekuiper import plugin, PluginConfig
 
 from file_source import File
 from zmq_source import Zmq
-from ws_source import ws_zmq
 from pic_source import pic
-from file_oss_source import file_oss_source
-from pic_oss_source import pic_oss_source
 
 if __name__ == '__main__':
-    c = PluginConfig("crrcio", {"crrc_zmq": lambda: Zmq(), "crrc_zmq_ws": lambda:ws_zmq(),"crrc_file": lambda: File(),"crrc_pic":lambda :pic(),"crrc_oss_file":lambda:file_oss_source(),"crrc_oss_pic":lambda: pic_oss_source()}, {},{})
+    c = PluginConfig("crrcio", {"crrc_zmq": lambda: Zmq(), "crrc_file": lambda: File(),"crrc_pic":lambda :pic()}, {},
+                     {})
     plugin.start(c)
