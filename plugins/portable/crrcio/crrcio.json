@@ -4,11 +4,8 @@
   "executable": "main.py",
   "sources": [
     "crrc_zmq",
-    "crrc_zmq_ws",
     "crrc_file",
-    "crrc_pic",
-    "crrc_oss_file",
-    "crrc_oss_pic"
+    "crrc_pic"
   ],
   "sinks": [
   ],
