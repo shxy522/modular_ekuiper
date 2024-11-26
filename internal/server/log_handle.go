@@ -29,7 +29,7 @@ import (
 
 func zipFile(targetFilePath string, tmpFilename string) (string, string, error) {
 	tmpdir := os.TempDir()
-	tmpZipFile, err := os.CreateTemp(tmpdir, tmpFilename)
+	tmpZipFile, err := os.Create(filepath.Join(tmpdir, tmpFilename))
 	if err != nil {
 		return "", "", err
 	}
@@ -81,6 +81,9 @@ func logsDownloadHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	defer func() {
+		os.Remove(zipFilePath)
+	}()
 	downloadHandler(zipFilePath, w, r)
 }
 
