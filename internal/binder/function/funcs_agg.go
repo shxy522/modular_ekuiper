@@ -92,7 +92,7 @@ func registerAggFunc() {
 			}
 			arg0Content, _ := json.Marshal(arg0)
 			resultContent, _ := json.Marshal(result)
-			conf.Log.Infof("recv list count:%v,columns:%v,input:%v,output:%v", len(arg0), args1, string(arg0Content), string(resultContent))
+			conf.Log.Debugf("recv list count:%v,columns:%v,input:%v,output:%v", len(arg0), args1, string(arg0Content), string(resultContent))
 			return result, true
 		},
 		val: func(ctx api.FunctionContext, args []ast.Expr) error {
