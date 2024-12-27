@@ -34,7 +34,8 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN wget -O /usr/share/fonts/truetype/ https://www.fontsupply.com//fonts/simhei.ttf
+#RUN wget -O /usr/share/fonts/truetype/ https://www.fontsupply.com//fonts/simhei.t
+COPY ./simhei.ttf /usr/share/fonts/truetype/simhei.ttf
 RUN fc-cache -fv
 
 WORKDIR /sdk/python
