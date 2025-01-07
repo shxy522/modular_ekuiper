@@ -159,4 +159,5 @@ func (sm *DefaultStatManager) GetMetrics() []interface{} {
 
 func (sm *DefaultStatManager) Clean(_ string) {
 	// do nothing
+	sm.outData = ""
 }

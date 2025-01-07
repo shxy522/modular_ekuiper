@@ -220,6 +220,14 @@ func restartRule(name string) error {
 	return startRule(name)
 }
 
+func cleanRuleStatus(name string) {
+	if rs, ok := registry.Load(name); ok {
+		if rs != nil && rs.Topology != nil {
+			rs.Topology.RemoveMetrics()
+		}
+	}
+}
+
 func getRuleStatus(name string) (string, error) {
 	if rs, ok := registry.Load(name); ok {
 		result, err := rs.GetState()

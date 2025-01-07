@@ -31,6 +31,8 @@ import (
 	"github.com/lf-edge/ekuiper/pkg/infra"
 )
 
+const opInstanceRootBase = 9999
+
 type SourceNode struct {
 	*defaultNode
 	streamType   ast.StreamType
@@ -105,7 +107,7 @@ func (m *SourceNode) Open(ctx api.StreamContext, errCh chan<- error) {
 			ctx = context.WithValue(ctx.(*context.DefaultContext), context.DecodeKey, converter)
 			m.reset()
 			logger.Infof("open source node with props %v, concurrency: %d, bufferLength: %d", conf.Printable(m.props), m.concurrency, m.bufferLength)
-			root := rand.Intn(100)
+			root := rand.Intn(opInstanceRootBase)
 			for i := 0; i < m.concurrency; i++ {
 				index := i // workers
 				if !conf.IsFvtTestMode() {

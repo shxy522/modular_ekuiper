@@ -138,6 +138,7 @@ func createRestServer(ip string, port int, needToken bool) *http.Server {
 	r.HandleFunc("/tables/{name}/schema", tableSchemaHandler).Methods(http.MethodGet)
 	r.HandleFunc("/rules", rulesHandler).Methods(http.MethodGet, http.MethodPost)
 	r.HandleFunc("/rules/{name}", ruleHandler).Methods(http.MethodDelete, http.MethodGet, http.MethodPut)
+	r.HandleFunc("/rules/{name}/status/clean", cleanStatusRuleHandler).Methods(http.MethodPut)
 	r.HandleFunc("/rules/{name}/status", getStatusRuleHandler).Methods(http.MethodGet)
 	r.HandleFunc("/rules/{name}/start", startRuleHandler).Methods(http.MethodPost)
 	r.HandleFunc("/rules/{name}/stop", stopRuleHandler).Methods(http.MethodPost)
@@ -551,6 +552,15 @@ func ruleHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(result))
 	}
+}
+
+func cleanStatusRuleHandler(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	vars := mux.Vars(r)
+	name := vars["name"]
+	cleanRuleStatus(name)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("success"))
 }
 
 // get status of a rule

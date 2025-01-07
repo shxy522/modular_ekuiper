@@ -132,7 +132,7 @@ func (m *SinkNode) Open(ctx api.StreamContext, result chan<- error) {
 
 			m.reset()
 			logger.Infof("open sink node %d instances", m.concurrency)
-			for i := 0; i < m.concurrency; i++ { // workers
+			for i := 0; i < m.concurrency; i++ {
 				go func(instance int) {
 					panicOrError := infra.SafeRun(func() error {
 						var (

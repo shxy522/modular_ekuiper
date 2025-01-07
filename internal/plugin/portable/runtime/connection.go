@@ -16,6 +16,7 @@ package runtime
 
 import (
 	"fmt"
+	"os"
 	"sync"
 	"time"
 
@@ -261,7 +262,7 @@ func setSockOptions(sock mangos.Socket, sockOptions map[string]interface{}) {
 	}
 }
 
-func listenWithRetry(sock mangos.Socket, url string) error {
+func listenWithRetry(sock mangos.Socket, url string) (err error) {
 	var (
 		retryCount    = 5
 		retryInterval = 100
@@ -277,5 +278,6 @@ func listenWithRetry(sock mangos.Socket, url string) error {
 			return err
 		}
 		time.Sleep(time.Duration(retryInterval) * time.Millisecond)
+		os.Remove(url)
 	}
 }
