@@ -84,7 +84,7 @@ func (o *UnaryOperator) Exec(ctx api.StreamContext, errCh chan<- error) {
 	}
 	// reset status
 	o.statManagers = nil
-	root := rand.Intn(100)
+	root := rand.Intn(opInstanceRootBase)
 
 	for i := 0; i < o.concurrency; i++ {
 		instance := i // workers
