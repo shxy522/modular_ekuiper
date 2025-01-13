@@ -20,18 +20,19 @@ def chebyshev(signal, sample_rate, ftype, filter_band, order=5, rp=3):
     type_meaning = ['lowpass', 'highpass', 'bandpass', 'bandstop']
     nyq = 0.5 * sample_rate
     if ftype == 0:
-        cut = filter_band / nyq
+        assert len(filter_band) == 1
+        cut = filter_band[0] / nyq
         b, a = sg.cheby1(order, rp, cut, btype=type_meaning[ftype])
     elif ftype == 1:
         assert len(filter_band) == 1
-        cut = filter_band / nyq
+        cut = filter_band[0] / nyq
         b, a = sg.cheby1(order, rp, cut, btype=type_meaning[ftype])
     elif ftype == 2:
         assert len(filter_band) == 2
         lowcut, highcut = filter_band[0] / nyq, filter_band[1] / nyq
         b, a = sg.cheby1(order, rp, [lowcut, highcut], btype=type_meaning[ftype])
     elif ftype == 3:
-        assert len(filter_band) == 3
+        assert len(filter_band) == 2
         lowcut, highcut = filter_band[0] / nyq, filter_band[1] / nyq
         b, a = sg.cheby1(order, rp, [lowcut, highcut], btype=type_meaning[ftype])
     else:
