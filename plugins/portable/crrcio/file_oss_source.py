@@ -40,7 +40,7 @@ class file_oss_source(Source):
         self.hatId = 322
         self.address = 1
         self.channel = 1
-        self.interval = 1
+        self.interval = 0.5
         self.channelDatas = []
 
     def configure(self, datasource: str, conf: dict):
@@ -92,7 +92,7 @@ class file_oss_source(Source):
                     print(m)
                     buffer = []
                     count = count + 1
-                    # time.sleep(self.interval)
+                    time.sleep(self.interval)
         if buffer:
             signal = []
             for line in buffer:
