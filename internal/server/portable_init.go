@@ -42,7 +42,9 @@ type portableStatusManager struct {
 var psmManager *portableStatusManager
 
 func init() {
-	psmManager = &portableStatusManager{}
+	psmManager = &portableStatusManager{
+		status: make(map[string]string),
+	}
 }
 
 func (psm *portableStatusManager) StartInstall(pluginName string) {
@@ -126,6 +128,7 @@ func portablesHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		conf.Log.Infof("recv install portable plugin %v request", sd.GetName())
+		psmManager.StartInstall(sd.GetName())
 		err = portableManager.Register(sd)
 		if err != nil {
 			conf.Log.Errorf("install portable plugin %v request err:%v", sd.GetName(), err)
@@ -133,6 +136,7 @@ func portablesHandler(w http.ResponseWriter, r *http.Request) {
 			handleError(w, errMsg, "", logger)
 			return
 		}
+		psmManager.Installed(sd.GetName())
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte(fmt.Sprintf("portable plugin %s is created", sd.GetName())))
 	}
