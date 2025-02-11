@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/gorilla/mux"
 
@@ -32,6 +33,41 @@ import (
 	"github.com/lf-edge/ekuiper/internal/plugin/portable/runtime"
 	"github.com/lf-edge/ekuiper/pkg/errorx"
 )
+
+type portableStatusManager struct {
+	sync.RWMutex
+	status map[string]string
+}
+
+var psmManager *portableStatusManager
+
+func init() {
+	psmManager = &portableStatusManager{
+		status: make(map[string]string),
+	}
+}
+
+func (psm *portableStatusManager) StartInstall(pluginName string) {
+	psm.Lock()
+	defer psm.Unlock()
+	psm.status[pluginName] = "installing"
+}
+
+func (psm *portableStatusManager) Installed(pluginName string) {
+	psm.Lock()
+	defer psm.Unlock()
+	psm.status[pluginName] = "installed"
+}
+
+func (psm *portableStatusManager) GetPluginInstallStatus(name string) (string, bool) {
+	psm.RLock()
+	defer psm.RUnlock()
+	s, ok := psm.status[name]
+	if ok {
+		return s, true
+	}
+	return "", false
+}
 
 var portableManager *portable.Manager
 
@@ -92,6 +128,7 @@ func portablesHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		conf.Log.Infof("recv install portable plugin %v request", sd.GetName())
+		psmManager.StartInstall(sd.GetName())
 		err = portableManager.Register(sd)
 		if err != nil {
 			conf.Log.Errorf("install portable plugin %v request err:%v", sd.GetName(), err)
@@ -99,6 +136,7 @@ func portablesHandler(w http.ResponseWriter, r *http.Request) {
 			handleError(w, errMsg, "", logger)
 			return
 		}
+		psmManager.Installed(sd.GetName())
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte(fmt.Sprintf("portable plugin %s is created", sd.GetName())))
 	}
@@ -110,13 +148,28 @@ func portableStatusHandler(w http.ResponseWriter, r *http.Request) {
 	name := vars["name"]
 	switch r.Method {
 	case http.MethodGet:
-		pm := runtime.GetPluginInsManager()
-		status, err := pm.GetPluginInsStatus(name)
+		status, err := runtime.GetPluginInsManager().GetPluginInsStatus(name)
 		if err != nil {
 			handleError(w, err, fmt.Sprintf("query portable plugin %s status error: %v", name, err), logger)
 			return
 		}
-		jsonResponse(status, w, logger)
+		_, foundInManager := portableManager.GetPluginInfo(name)
+		installStatus, foundInstallStatus := psmManager.GetPluginInstallStatus(name)
+		hasPluginRunningStatus := status != nil
+		if hasPluginRunningStatus {
+			jsonResponse(status, w, logger)
+			return
+		}
+		switch {
+		case !foundInstallStatus && !foundInManager:
+			w.WriteHeader(http.StatusNotFound)
+		case foundInstallStatus && !foundInManager:
+			w.Write([]byte(installStatus))
+			w.WriteHeader(http.StatusOK)
+		case foundInManager:
+			w.Write([]byte("installed"))
+			w.WriteHeader(http.StatusOK)
+		}
 	}
 }
 
