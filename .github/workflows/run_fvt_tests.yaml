@@ -92,12 +92,12 @@ jobs:
     - name: run fvt tests
       timeout-minutes: 12
       run: ./test/run_jmeter.sh with_edgex=true
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: always()
       with:
         name: kuiper_logs_with_edgex
         path: ${{ env.KUIPER_LOG_PATH }}
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: always()
       with:
         name: jmeter_logs_with_edgex
@@ -182,12 +182,12 @@ jobs:
           fvt_dir=`pwd`
           /opt/jmeter/bin/jmeter.sh -Jjmeter.save.saveservice.output_format=xml -n -t test/redis_kv_storage.jmx -Dfvt="$fvt_dir" -l jmeter_logs/redis_kv_storage.jtl -j jmeter_logs/redis_kv_storage.log
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: kuiper_logs_redis_storage
           path: ${{ env.KUIPER_LOG_PATH }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: jmeter_logs_redis_storage
