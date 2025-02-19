@@ -718,7 +718,8 @@ func parseFunc(props map[string]interface{}, sourceNames []string) (*operator.Fu
 	if !ok {
 		return nil, fmt.Errorf("expr %v is not string", m)
 	}
-	stmt, err := xsql.NewParserWithSources(strings.NewReader("select "+funcExpr+" from nonexist"), sourceNames).Parse()
+	x := "select " + funcExpr + " from nonexist"
+	stmt, err := xsql.NewParserWithSources(strings.NewReader(x), sourceNames).Parse()
 	if err != nil {
 		return nil, err
 	}
