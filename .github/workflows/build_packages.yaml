@@ -60,7 +60,7 @@ jobs:
         cd _packages && for var in $(ls); do sudo bash -c "echo $(sha256sum $var | awk '{print $1}') > $var.sha256"; done && cd -
     - uses: actions/upload-artifact@v4
       with:
-        name: packages
+        name: packages1
         path: _packages/
 
   docker:
@@ -92,7 +92,7 @@ jobs:
         cd _packages && for var in $(ls); do sudo bash -c "echo $(sha256sum $var | awk '{print $1}') > $var.sha256"; done && cd -
     - uses: actions/upload-artifact@v4
       with:
-        name: packages
+        name: packages2
         path: _packages/
 
   release:
