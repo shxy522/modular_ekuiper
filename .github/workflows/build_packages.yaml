@@ -69,7 +69,7 @@ jobs:
       run: |
         arch=$(echo $ARCH | sed -r 's|linux/([a-z]*)(/.*)*|\1|g')
         ref=$(echo ${REF/\//-})
-        artifact_name="kuiper-${ref}-${{ matrix.os }}-${arch}-${pkg}"
+        artifact_name="kuiper-${ref}-${{ matrix.os }}-${arch}-${PKG}"
         echo "artifact_name=$artifact_name" >> $GITHUB_OUTPUT
     - uses: actions/upload-artifact@v4
       with:
