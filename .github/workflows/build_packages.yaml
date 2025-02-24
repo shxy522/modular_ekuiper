@@ -15,7 +15,7 @@ on:
 
 jobs:
   prepare:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       arch: ${{ steps.arch.outputs.arch }}
     steps:
@@ -28,7 +28,7 @@ jobs:
           fi
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: prepare
 
     strategy:
@@ -77,7 +77,7 @@ jobs:
         path: _packages/
 
   docker:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: prepare
 
     strategy:
@@ -121,7 +121,7 @@ jobs:
         path: _packages/
 
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     needs:
     - build

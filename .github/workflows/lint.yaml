@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   check_licenses:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
           $(go env GOPATH)/bin/go-licenses check ./... --disallowed_types forbidden,restricted,unknown --ignore modernc.org/mathutil
 
   golangci_lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs:
       - check_licenses
     steps:

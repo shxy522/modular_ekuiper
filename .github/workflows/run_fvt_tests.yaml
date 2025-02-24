@@ -12,7 +12,7 @@ env:
 
 jobs:
   fvt_tests_with_edgex:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
       # Service containers to run with `runner-job`
     services:
@@ -117,7 +117,7 @@ jobs:
         done
 
   fvt_tests_redis_as_storage:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     # Service containers to run with `runner-job`
     services:
@@ -207,7 +207,7 @@ jobs:
           done
 
   fvt_tests_for_container_in_helm:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v3

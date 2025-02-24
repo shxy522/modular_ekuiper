@@ -10,7 +10,7 @@ on:
 
 jobs:
   python:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: github.repository == 'lf-edge/ekuiper'
     steps:
       - uses: actions/checkout@v3
