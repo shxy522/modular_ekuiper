@@ -52,12 +52,12 @@ RUN pip install --no-cache-dir \
     requests \
     docker
 
-# 设置清华源
-RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-
 RUN python3 setup.py sdist && python3 setup.py install
 
 RUN sh install.sh
+
+# 设置清华源
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 WORKDIR /kuiper
 
