@@ -115,9 +115,19 @@ jobs:
         ref=$(echo ${REF/\//-})
         artifact_name="kuiper-${ref}-${{ matrix.os }}-${arch}"
         echo "artifact_name=$artifact_name" >> $GITHUB_OUTPUT
+    - name: Set artifact name
+      id: artifact_name
+      env:
+        ARCH: ${{ matrix.arch }}
+        REF: ${{ github.ref_name }}
+      run: |
+        arch=$(echo $ARCH | sed -r 's|linux/([a-z]*)(/.*)*|\1|g')
+        ref=$(echo ${REF/\//-})
+        artifact_name="kuiper-${ref}-${{ matrix.os }}-${arch}"
+        echo "artifact_name=$artifact_name" >> $GITHUB_OUTPUT
     - uses: actions/upload-artifact@v4
       with:
-        name: packages
+        name: ${{ steps.artifact_name.outputs.artifact_name }}
         path: _packages/
 
   release:
