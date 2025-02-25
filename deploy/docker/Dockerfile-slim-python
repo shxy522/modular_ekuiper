@@ -19,8 +19,9 @@ COPY . /go/kuiper
 
 WORKDIR /go/kuiper
 
-ENV GOPROXY https://goproxy.cn
 RUN make build_without_edgex
+
+ENV GOPROXY https://goproxy.cn
 
 FROM python:3.8.12-slim-bullseye
 
@@ -52,12 +53,12 @@ RUN pip install --no-cache-dir \
     requests \
     docker
 
-# 设置清华源
-RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-
 RUN python3 setup.py sdist && python3 setup.py install
 
 RUN sh install.sh
+
+# 设置清华源
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 WORKDIR /kuiper
 
