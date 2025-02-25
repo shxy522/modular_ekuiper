@@ -14,7 +14,7 @@ on:
 
 jobs:
   check_commit_message:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check Type
         uses: gsactions/commit-message-checker@v2
