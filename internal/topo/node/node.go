@@ -120,7 +120,9 @@ func (o *defaultNode) doBroadcast(val interface{}) {
 		case <-o.ctx.Done():
 			// rule stop so stop waiting
 		default:
-			o.statManagers[0].IncTotalExceptions(fmt.Sprintf("buffer full, drop message from to %s", name))
+			if len(o.statManagers) > 0 {
+				o.statManagers[0].IncTotalExceptions(fmt.Sprintf("buffer full, drop message from to %s", name))
+			}
 			o.ctx.GetLogger().Debugf("drop message from %s to %s", o.name, name)
 		}
 		switch vt := val.(type) {
