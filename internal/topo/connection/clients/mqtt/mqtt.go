@@ -81,7 +81,7 @@ func (ms *MQTTClient) CfgValidate(props map[string]interface{}) error {
 		ms.pVersion = 3
 	}
 
-	tlsOpts := cert.TlsConfigurationOptions{
+	tlsOpts := &cert.TlsConfigurationOptions{
 		SkipCertVerify: cfg.InsecureSkipVerify,
 		CertFile:       cfg.Certification,
 		KeyFile:        cfg.PrivateKPath,

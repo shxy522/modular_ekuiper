@@ -165,7 +165,7 @@ func (cc *ClientConf) InitConf(device string, props map[string]interface{}) erro
 			return fmt.Errorf("headers must be a map or a string")
 		}
 	}
-	tlsOpts := cert.TlsConfigurationOptions{
+	tlsOpts := &cert.TlsConfigurationOptions{
 		SkipCertVerify: c.InsecureSkipVerify,
 		CertFile:       c.CertificationPath,
 		KeyFile:        c.PrivateKeyPath,
