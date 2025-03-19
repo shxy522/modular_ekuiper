@@ -15,6 +15,8 @@
 package io
 
 import (
+	sqlsink "github.com/lf-edge/ekuiper/extensions/sinks/sql"
+	sqlsource "github.com/lf-edge/ekuiper/extensions/sources/sql"
 	"github.com/lf-edge/ekuiper/internal/io/file"
 	"github.com/lf-edge/ekuiper/internal/io/http"
 	"github.com/lf-edge/ekuiper/internal/io/memory"
@@ -41,6 +43,7 @@ var (
 		"memory":   func() api.Source { return memory.GetSource() },
 		"neuron":   func() api.Source { return neuron.GetSource() },
 		"video":    func() api.Source { return &video.VideoPullSource{} },
+		"sql":      func() api.Source { return sqlsource.GetSource() },
 	}
 	sinks = map[string]NewSinkFunc{
 		"log":         sink.NewLogSink,
@@ -51,6 +54,9 @@ var (
 		"memory":      func() api.Sink { return memory.GetSink() },
 		"neuron":      func() api.Sink { return neuron.GetSink() },
 		"file":        func() api.Sink { return file.File() },
+		"sql": func() api.Sink {
+			return sqlsink.GetSink()
+		},
 	}
 	lookupSources = map[string]NewLookupSourceFunc{
 		"memory": func() api.LookupSource { return memory.GetLookupSource() },
