@@ -16,7 +16,9 @@ package io
 
 import (
 	kafkasink "github.com/lf-edge/ekuiper/extensions/sinks/kafka"
+	sqlsink "github.com/lf-edge/ekuiper/extensions/sinks/sql"
 	"github.com/lf-edge/ekuiper/extensions/sources/kafka"
+	sqlsource "github.com/lf-edge/ekuiper/extensions/sources/sql"
 	"github.com/lf-edge/ekuiper/internal/io/file"
 	"github.com/lf-edge/ekuiper/internal/io/http"
 	"github.com/lf-edge/ekuiper/internal/io/memory"
@@ -44,6 +46,7 @@ var (
 		"neuron":   func() api.Source { return neuron.GetSource() },
 		"video":    func() api.Source { return &video.VideoPullSource{} },
 		"kafka":    func() api.Source { return kafka.GetSource() },
+		"sql":      func() api.Source { return sqlsource.GetSource() },
 	}
 	sinks = map[string]NewSinkFunc{
 		"log":         sink.NewLogSink,
@@ -55,6 +58,9 @@ var (
 		"neuron":      func() api.Sink { return neuron.GetSink() },
 		"file":        func() api.Sink { return file.File() },
 		"kafka":       func() api.Sink { return kafkasink.GetSink() },
+		"sql": func() api.Sink {
+			return sqlsink.GetSink()
+		},
 	}
 	lookupSources = map[string]NewLookupSourceFunc{
 		"memory": func() api.LookupSource { return memory.GetLookupSource() },
