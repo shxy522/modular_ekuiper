@@ -24,10 +24,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build plugins
-// +build plugins
-
-package main
+package influx
 
 import (
 	"encoding/json"
@@ -194,6 +191,6 @@ func (m *influxSink) Close(ctx api.StreamContext) error {
 	return nil
 }
 
-func Influx() api.Sink {
+func GetSink() api.Sink {
 	return &influxSink{}
 }
