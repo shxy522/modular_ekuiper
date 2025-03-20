@@ -16,6 +16,7 @@ package io
 
 import (
 	"github.com/lf-edge/ekuiper/extensions/sinks/influx"
+	"github.com/lf-edge/ekuiper/extensions/sinks/influx2"
 	kafkasink "github.com/lf-edge/ekuiper/extensions/sinks/kafka"
 	sqlsink "github.com/lf-edge/ekuiper/extensions/sinks/sql"
 	"github.com/lf-edge/ekuiper/extensions/sources/kafka"
@@ -59,10 +60,9 @@ var (
 		"neuron":      func() api.Sink { return neuron.GetSink() },
 		"file":        func() api.Sink { return file.File() },
 		"kafka":       func() api.Sink { return kafkasink.GetSink() },
-		"sql": func() api.Sink {
-			return sqlsink.GetSink()
-		},
-		"influx": func() api.Sink { return influx.GetSink() },
+		"sql":         func() api.Sink { return sqlsink.GetSink() },
+		"influx":      func() api.Sink { return influx.GetSink() },
+		"influx2":     func() api.Sink { return influx2.GetSink() },
 	}
 	lookupSources = map[string]NewLookupSourceFunc{
 		"memory": func() api.LookupSource { return memory.GetLookupSource() },

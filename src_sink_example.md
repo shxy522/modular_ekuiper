@@ -111,3 +111,43 @@
   }
 }
 ```
+
+## influx2
+
+```json
+{
+  "id": "rule1",
+  "name": "Test Condition",
+  "graph": {
+    "nodes": {
+      "mqttdemo": {
+        "type": "source",
+        "nodeType": "mqtt",
+        "props": {
+          "server": "tcp://127.0.0.1:1883",
+          "datasource": "/test"
+        }
+      },
+      "influx2out": {
+        "type": "sink",
+        "nodeType": "influx2",
+        "props": {
+          "addr": "http://localhost:8086",
+          "token": "test_token",
+          "org": "admin",
+          "measurement": "test",
+          "bucket": "admin",
+          "tags": "{\"tag1\":\"value1\"}",
+          "fields": ["a", "b"]
+        }
+      }
+    },
+    "topo": {
+      "sources": ["mqttdemo"],
+      "edges": {
+        "mqttdemo": ["influx2out"]
+      }
+    }
+  }
+}
+```
