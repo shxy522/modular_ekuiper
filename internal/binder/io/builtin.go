@@ -19,6 +19,7 @@ import (
 	"github.com/lf-edge/ekuiper/extensions/sinks/influx2"
 	kafkasink "github.com/lf-edge/ekuiper/extensions/sinks/kafka"
 	sqlsink "github.com/lf-edge/ekuiper/extensions/sinks/sql"
+	"github.com/lf-edge/ekuiper/extensions/sinks/tdengine"
 	"github.com/lf-edge/ekuiper/extensions/sources/kafka"
 	sqlsource "github.com/lf-edge/ekuiper/extensions/sources/sql"
 	"github.com/lf-edge/ekuiper/internal/io/file"
@@ -63,6 +64,7 @@ var (
 		"sql":         func() api.Sink { return sqlsink.GetSink() },
 		"influx":      func() api.Sink { return influx.GetSink() },
 		"influx2":     func() api.Sink { return influx2.GetSink() },
+		"tdengine":    func() api.Sink { return tdengine.GetSink() },
 	}
 	lookupSources = map[string]NewLookupSourceFunc{
 		"memory": func() api.LookupSource { return memory.GetLookupSource() },
