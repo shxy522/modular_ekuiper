@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package sql
 
 import (
 	"database/sql"
@@ -100,7 +100,7 @@ func (s *sqlLookupSource) Lookup(ctx api.StreamContext, fields []string, keys []
 	for rows.Next() {
 		data := make(map[string]interface{})
 		columns := make([]interface{}, len(cols))
-		prepareValues(columns, types, cols)
+		prepareValues(ctx, columns, types, cols)
 
 		err := rows.Scan(columns...)
 		if err != nil {
