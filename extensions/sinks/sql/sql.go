@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package sql
 
 import (
 	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/lf-edge/ekuiper/extensions/sqldatabase"
 	"github.com/lf-edge/ekuiper/extensions/sqldatabase/driver"
@@ -66,10 +67,15 @@ func (t *sqlConfig) getKeyValues(ctx api.StreamContext, mapData map[string]inter
 		for _, k := range t.Fields {
 			keys = append(keys, k)
 			if v, ok := mapData[k]; ok && v != nil {
-				if reflect.String == reflect.TypeOf(v).Kind() {
-					vals = append(vals, fmt.Sprintf("'%v'", v))
+				if vt, tok := v.(time.Time); tok {
+					vals = append(vals, fmt.Sprintf("'%v'", vt.String()))
 				} else {
-					vals = append(vals, fmt.Sprintf(`%v`, v))
+					kind := reflect.TypeOf(v).Kind()
+					if reflect.String == kind {
+						vals = append(vals, fmt.Sprintf("'%v'", v))
+					} else {
+						vals = append(vals, fmt.Sprintf(`%v`, v))
+					}
 				}
 			} else {
 				logger.Warnln("not found field:", k)
@@ -342,6 +348,6 @@ func (m *sqlSink) save(ctx api.StreamContext, table string, data map[string]inte
 	return m.writeToDB(ctx, &sqlStr)
 }
 
-func Sql() api.Sink {
+func GetSink() api.Sink {
 	return &sqlSink{}
 }

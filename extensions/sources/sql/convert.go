@@ -12,12 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package sql
 
 import (
 	"database/sql"
 	"database/sql/driver"
 	"reflect"
+	"strings"
+
+	"github.com/lf-edge/ekuiper/pkg/api"
 )
 
 func scanIntoMap(mapValue map[string]interface{}, values []interface{}, columns []string) {
@@ -35,11 +38,16 @@ func scanIntoMap(mapValue map[string]interface{}, values []interface{}, columns 
 	}
 }
 
-func prepareValues(values []interface{}, columnTypes []*sql.ColumnType, columns []string) {
+func prepareValues(ctx api.StreamContext, values []interface{}, columnTypes []*sql.ColumnType, columns []string) {
 	if len(columnTypes) > 0 {
 		for idx, columnType := range columnTypes {
+			nullable, ok := columnType.Nullable()
+			if got := buildScanValueByColumnType(ctx, columnType.Name(), columnType.DatabaseTypeName(), nullable && ok); got != nil {
+				values[idx] = got
+				continue
+			}
 			if columnType.ScanType() != nil {
-				values[idx] = reflect.New(reflect.PtrTo(columnType.ScanType())).Interface()
+				values[idx] = reflect.New(reflect.PointerTo(columnType.ScanType())).Interface()
 			} else {
 				values[idx] = new(interface{})
 			}
@@ -48,5 +56,33 @@ func prepareValues(values []interface{}, columnTypes []*sql.ColumnType, columns 
 		for idx := range columns {
 			values[idx] = new(interface{})
 		}
+	}
+}
+
+func buildScanValueByColumnType(ctx api.StreamContext, colName, colType string, nullable bool) interface{} {
+	switch strings.ToUpper(colType) {
+	case "CHAR", "VARCHAR", "NCHAR", "NVARCHAR", "TEXT", "NTEXT":
+		if nullable {
+			return &sql.NullString{}
+		}
+		return new(string)
+	case "DECIMAL", "NUMERIC", "FLOAT", "REAL":
+		if nullable {
+			return &sql.NullFloat64{}
+		}
+		return new(float64)
+	case "BOOL":
+		if nullable {
+			return &sql.NullBool{}
+		}
+		return new(bool)
+	case "INT", "BIGINT", "SMALLINT", "TINYINT":
+		if nullable {
+			return &sql.NullInt64{}
+		}
+		return new(int64)
+	default:
+		ctx.GetLogger().Debugf("sql source meet column %v unknown columnType:%v", colName, colType)
+		return nil
 	}
 }
