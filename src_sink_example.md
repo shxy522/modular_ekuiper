@@ -33,6 +33,10 @@
 }
 ```
 
+Kakfa Source 配置项参考: https://ekuiper.org/docs/zh/latest/guide/sources/plugin/kafka.html
+
+Kafka Sink 配置项参考: https://ekuiper.org/docs/zh/latest/guide/sinks/plugin/kafka.html
+
 ## Sql Source/Sink Example
 
 ```json
@@ -71,6 +75,9 @@
   }
 }
 ```
+
+SQL Source 配置项参考:  https://ekuiper.org/docs/zh/latest/guide/sources/plugin/sql.html
+SQL SINK 配置项参考: https://ekuiper.org/docs/zh/latest/guide/sinks/plugin/sql.html
 
 ## influx
 
@@ -112,6 +119,8 @@
 }
 ```
 
+influx 配置项参考： https://ekuiper.org/docs/zh/latest/guide/sinks/plugin/influx.html
+
 ## influx2
 
 ```json
@@ -151,3 +160,58 @@
   }
 }
 ```
+
+influxv2 配置项参考： https://ekuiper.org/docs/zh/latest/guide/sinks/plugin/influx2.html
+
+## tdengine v3
+
+```json
+{
+  "id": "rule1",
+  "name": "Test Condition",
+  "graph": {
+    "nodes": {
+      "mqttdemo": {
+        "type": "source",
+        "nodeType": "mqtt",
+        "props": {
+          "server": "tcp://127.0.0.1:1883",
+          "datasource": "/test"
+        }
+      },
+      "tdengineout": {
+        "type": "sink",
+        "nodeType": "tdengine",
+        "props": {
+          "host": "hostname",
+          "port": 6030,
+          "database": "dab",
+          "table": "{{.table}}",
+          "tsfieldname": "ts",
+          "fields": [
+            "f1",
+            "f2"
+          ],
+          "sTable": "myStable",
+          "tagFields": [
+            "f3",
+            "f4"
+          ]
+        }
+      }
+    },
+    "topo": {
+      "sources": [
+        "mqttdemo"
+      ],
+      "edges": {
+        "mqttdemo": [
+          "tdengineout"
+        ]
+      }
+    }
+  }
+}
+```
+
+tdengines 配置项： https://ekuiper.org/docs/zh/v1.14/guide/sinks/plugin/tdengine.html

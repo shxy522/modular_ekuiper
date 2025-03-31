@@ -341,25 +341,26 @@ func TestAggFuncNil(t *testing.T) {
 }
 
 func TestAggByKey(t *testing.T) {
-	t.Skip()
 	testcases := []struct {
 		args  []interface{}
-		value map[string][]interface{}
+		value interface{}
 	}{
 		{
 			args: []interface{}{
-				model.Message{
+				[]interface{}{model.Message{
 					"a": 1,
 					"b": 2,
-				},
-				model.Message{
+					"c": 5,
+				}, model.Message{
 					"a": 3,
 					"b": 4,
-				},
+					"c": 6,
+				}},
+				[]interface{}{"a,c"},
 			},
-			value: map[string][]interface{}{
-				"a": {1, 3},
-				"b": {2, 4},
+			value: [][]interface{}{
+				{1, 3},
+				{5, 6},
 			},
 		},
 	}
@@ -371,7 +372,7 @@ func TestAggByKey(t *testing.T) {
 	f, ok := builtins["agg_by_key"]
 	require.True(t, ok)
 	for _, tc := range testcases {
-		v, ok := f.exec(fctx, []interface{}{tc.args})
+		v, ok := f.exec(fctx, tc.args)
 		require.True(t, ok)
 		require.Equal(t, v, tc.value)
 	}
