@@ -17,6 +17,7 @@ package runtime
 import (
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -210,7 +211,7 @@ func CreateFunctionChannel(symbolName string) (DataReqChannel, error) {
 	return &NanomsgReqRepChannel{sock: sock}, nil
 }
 
-func CreateSinkChannel(ctx api.StreamContext) (DataOutChannel, error) {
+func CreateSinkChannel(ctx api.StreamContext, instanceID int) (DataOutChannel, error) {
 	var (
 		sock mangos.Socket
 		err  error
@@ -222,12 +223,19 @@ func CreateSinkChannel(ctx api.StreamContext) (DataOutChannel, error) {
 		mangos.OptionSendDeadline: time.Duration(conf.Config.Portable.SendTimeout) * time.Millisecond,
 		mangos.OptionMaxRecvSize:  0,
 	})
-	url := fmt.Sprintf("ipc:///tmp/%s_%s_%d.ipc", ctx.GetRuleId(), ctx.GetOpId(), ctx.GetInstanceId())
+	url := fmt.Sprintf("ipc:///tmp/%s_%s_%d.ipc", ctx.GetRuleId(), ctx.GetOpId(), instanceID)
 	if err = sock.DialOptions(url, dialOptions); err != nil {
 		return nil, fmt.Errorf("can't dial on push socket: %s", err.Error())
 	}
 	conf.Log.Infof("sink channel created: %s", url)
 	return sock, nil
+}
+
+func extractFileUrl(url string) string {
+	if strings.HasPrefix(url, "ipc:///tmp/") {
+		return url[len("ipc://"):]
+	}
+	return url
 }
 
 func CreateControlChannel(pluginName string) (ControlChannel, error) {
@@ -278,6 +286,6 @@ func listenWithRetry(sock mangos.Socket, url string) (err error) {
 			return err
 		}
 		time.Sleep(time.Duration(retryInterval) * time.Millisecond)
-		os.Remove(url)
+		os.Remove(extractFileUrl(url))
 	}
 }

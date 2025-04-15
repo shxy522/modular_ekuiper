@@ -17,6 +17,8 @@ package runtime
 import (
 	"errors"
 	"fmt"
+	"math/rand"
+	"os"
 
 	"github.com/lf-edge/ekuiper/pkg/api"
 	"github.com/lf-edge/ekuiper/pkg/errorx"
@@ -28,6 +30,7 @@ type PortableSink struct {
 	props      map[string]interface{}
 	dataCh     DataOutChannel
 	clean      func() error
+	instanceID int
 }
 
 func NewPortableSink(symbolName string, reg *PluginMeta) *PortableSink {
@@ -50,13 +53,18 @@ func (ps *PortableSink) Open(ctx api.StreamContext) error {
 		return err
 	}
 	ctx.GetLogger().Infof("Plugin started successfully")
+	if ps.instanceID < 1 {
+		ps.instanceID = rand.Intn(1000)
+	}
+	url := fmt.Sprintf("ipc:///tmp/%s_%s_%d.ipc", ctx.GetRuleId(), ctx.GetOpId(), ps.instanceID)
+	os.Remove(extractFileUrl(url))
 
 	// Control: send message to plugin to ask starting symbol
 	c := &Control{
 		Meta: Meta{
 			RuleId:     ctx.GetRuleId(),
 			OpId:       ctx.GetOpId(),
-			InstanceId: ctx.GetInstanceId(),
+			InstanceId: ps.instanceID,
 		},
 		SymbolName: ps.symbolName,
 		PluginType: TYPE_SINK,
@@ -68,7 +76,7 @@ func (ps *PortableSink) Open(ctx api.StreamContext) error {
 	}
 
 	// must start symbol firstly
-	dataCh, err := CreateSinkChannel(ctx)
+	dataCh, err := CreateSinkChannel(ctx, ps.instanceID)
 	if err != nil {
 		_ = ins.StopSymbol(ctx, c)
 		return err

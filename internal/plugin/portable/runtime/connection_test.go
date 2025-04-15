@@ -38,6 +38,12 @@ func init() {
 
 var okMsg = []byte("ok")
 
+func TestExtract(t *testing.T) {
+	u := `ipc:///tmp/%s_%s_%d.ipc`
+	g := extractFileUrl(u)
+	fmt.Println(g)
+}
+
 func TestControlCh(t *testing.T) {
 	pluginName := "test"
 	// 1. normal process
@@ -199,7 +205,7 @@ func TestDataOut(t *testing.T) {
 		if err != nil {
 			t.Errorf("phase %d create client error %v", i, err)
 		}
-		ch, err := CreateSinkChannel(sctx)
+		ch, err := CreateSinkChannel(sctx, 0)
 		if err != nil {
 			t.Errorf("phase %d create channel error %v", i, err)
 		}
