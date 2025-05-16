@@ -113,3 +113,52 @@ dataInput
   ]
 }
 ```
+
+## window / fold exmaple
+
+```json
+{
+  "id": "rule",
+  "graph": {
+    "nodes": {
+      "mqttdemo": {
+        "type": "source",
+        "nodeType": "mqtt",
+        "props": {
+          "server": "tcp://127.0.0.1:1883",
+          "datasource": "/test"
+        }
+      },
+      "window":  {
+        "type": "operator",
+        "nodeType": "window",
+        "props": {
+          "type": "countwindow",
+          "size": 5
+        }
+      },
+      "fold_into_list":  {
+        "type": "operator",
+        "nodeType": "aggfunc",
+        "props": {
+          "expr": "fold_into_list(a) as signal"
+        }
+      },
+      "logout": {
+        "type": "sink",
+        "nodeType": "log",
+        "props": {
+        }
+      }
+    },
+    "topo": {
+      "sources": ["mqttdemo"],
+      "edges": {
+        "mqttdemo": ["window"],
+        "window": ["fold_into_list"],
+        "fold_into_list": ["logout"]
+      }
+    }
+  }
+}
+```
