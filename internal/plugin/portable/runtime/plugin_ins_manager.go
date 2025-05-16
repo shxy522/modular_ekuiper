@@ -169,7 +169,7 @@ func (p *pluginInsManager) GetPluginInsStatus(name string) (*PluginStatus, error
 	}
 	ps, err := queryPluginProcessStatus(name, ins.Status.Pid)
 	if err != nil {
-		return nil, fmt.Errorf("query plugin %s process %s ps failed, err:%v", name, ins.Status.Pid, err)
+		return nil, fmt.Errorf("query plugin %s process %v ps failed, err:%v", name, ins.Status.Pid, err)
 	}
 	ins.Status.ProcessStatus = ps
 	return ins.Status, nil

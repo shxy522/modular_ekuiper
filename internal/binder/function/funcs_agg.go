@@ -38,6 +38,19 @@ func isInColumns(key string, columns []string) bool {
 }
 
 func registerAggFunc() {
+	builtins["fold_into_list"] = builtinFunc{
+		fType: ast.FuncTypeAgg,
+		exec: func(ctx api.FunctionContext, args []interface{}) (interface{}, bool) {
+			arg0, ok := args[0].([]interface{})
+			if !ok {
+				return fmt.Errorf("fold_into_list should used as agg function"), false
+			}
+			return arg0, true
+		},
+		val: func(ctx api.FunctionContext, args []ast.Expr) error {
+			return ValidateLen(1, len(args))
+		},
+	}
 	builtins["agg_by_key"] = builtinFunc{
 		fType: ast.FuncTypeAgg,
 		exec: func(ctx api.FunctionContext, args []interface{}) (interface{}, bool) {

@@ -15,12 +15,8 @@
 package io
 
 import (
-	"github.com/lf-edge/ekuiper/extensions/sinks/influx"
-	"github.com/lf-edge/ekuiper/extensions/sinks/influx2"
-	kafkasink "github.com/lf-edge/ekuiper/extensions/sinks/kafka"
 	sqlsink "github.com/lf-edge/ekuiper/extensions/sinks/sql"
 	"github.com/lf-edge/ekuiper/extensions/sinks/tdengine"
-	"github.com/lf-edge/ekuiper/extensions/sources/kafka"
 	sqlsource "github.com/lf-edge/ekuiper/extensions/sources/sql"
 	"github.com/lf-edge/ekuiper/internal/io/file"
 	"github.com/lf-edge/ekuiper/internal/io/http"
@@ -48,8 +44,8 @@ var (
 		"memory":   func() api.Source { return memory.GetSource() },
 		"neuron":   func() api.Source { return neuron.GetSource() },
 		"video":    func() api.Source { return &video.VideoPullSource{} },
-		"kafka":    func() api.Source { return kafka.GetSource() },
-		"sql":      func() api.Source { return sqlsource.GetSource() },
+		//"kafka":    func() api.Source { return kafka.GetSource() },
+		"sql": func() api.Source { return sqlsource.GetSource() },
 	}
 	sinks = map[string]NewSinkFunc{
 		"log":         sink.NewLogSink,
@@ -60,11 +56,14 @@ var (
 		"memory":      func() api.Sink { return memory.GetSink() },
 		"neuron":      func() api.Sink { return neuron.GetSink() },
 		"file":        func() api.Sink { return file.File() },
-		"kafka":       func() api.Sink { return kafkasink.GetSink() },
-		"sql":         func() api.Sink { return sqlsink.GetSink() },
-		"influx":      func() api.Sink { return influx.GetSink() },
-		"influx2":     func() api.Sink { return influx2.GetSink() },
-		"tdengine":    func() api.Sink { return tdengine.GetSink() },
+		//"kafka":       func() api.Sink { return kafkasink.GetSink() },
+		//"sql":         func() api.Sink { return sqlsink.GetSink() },
+		//"influx":      func() api.Sink { return influx.GetSink() },
+		//"influx2":     func() api.Sink { return influx2.GetSink() },
+		"tdengine": func() api.Sink { return tdengine.GetSink() },
+		"sql": func() api.Sink {
+			return sqlsink.GetSink()
+		},
 	}
 	lookupSources = map[string]NewLookupSourceFunc{
 		"memory": func() api.LookupSource { return memory.GetLookupSource() },
