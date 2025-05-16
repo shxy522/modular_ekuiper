@@ -169,7 +169,7 @@ func (p *pluginInsManager) GetPluginInsStatus(name string) (*PluginStatus, error
 	}
 	ps, err := queryPluginProcessStatus(name, ins.Status.Pid)
 	if err != nil {
-		return nil, fmt.Errorf("query plugin %s process %s ps failed, err:%v", name, ins.Status.Pid, err)
+		return nil, fmt.Errorf("query plugin %s process %v ps failed, err:%v", name, ins.Status.Pid, err)
 	}
 	ins.Status.ProcessStatus = ps
 	return ins.Status, nil
@@ -276,7 +276,7 @@ func (p *pluginInsManager) getOrStartProcess(pluginMeta *PluginMeta, pconf *Port
 				}
 			}
 			if cmd == nil {
-				cmd = exec.Command(conf.Config.Portable.PythonBin, pluginMeta.Executable, string(jsonArg))
+				cmd = exec.Command(conf.Config.Portable.PythonBin, "-u", pluginMeta.Executable, string(jsonArg))
 			}
 			conf.Log.Infof("starting python plugin: %s", cmd)
 		default:
