@@ -16,6 +16,7 @@ package io
 
 import (
 	sqlsink "github.com/lf-edge/ekuiper/extensions/sinks/sql"
+	"github.com/lf-edge/ekuiper/extensions/sinks/tdengine"
 	sqlsource "github.com/lf-edge/ekuiper/extensions/sources/sql"
 	"github.com/lf-edge/ekuiper/internal/io/file"
 	"github.com/lf-edge/ekuiper/internal/io/http"
@@ -57,6 +58,7 @@ var (
 		"sql": func() api.Sink {
 			return sqlsink.GetSink()
 		},
+		"tdengine": func() api.Sink { return tdengine.GetSink() },
 	}
 	lookupSources = map[string]NewLookupSourceFunc{
 		"memory": func() api.LookupSource { return memory.GetLookupSource() },

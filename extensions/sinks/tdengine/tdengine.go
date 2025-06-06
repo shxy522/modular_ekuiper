@@ -12,100 +12,181 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package tdengine
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
-
+	"net"
 	"reflect"
+	"strconv"
 	"strings"
 
-	_ "github.com/taosdata/driver-go/v2/taosSql"
+	_ "github.com/taosdata/driver-go/v3/taosRestful"
+	_ "github.com/taosdata/driver-go/v3/taosWS"
 
-	"github.com/lf-edge/ekuiper/internal/conf"
-	"github.com/lf-edge/ekuiper/internal/topo/transform"
 	"github.com/lf-edge/ekuiper/pkg/api"
+
 	"github.com/lf-edge/ekuiper/pkg/cast"
-	"github.com/lf-edge/ekuiper/pkg/errorx"
 )
 
-type (
-	taosConfig struct {
-		ProvideTs      bool     `json:"provideTs"`
-		Port           int      `json:"port"`
-		Ip             string   `json:"ip"` // To be deprecated
-		Host           string   `json:"host"`
-		User           string   `json:"user"`
-		Password       string   `json:"password"`
-		Database       string   `json:"database"`
-		Table          string   `json:"table"`
-		TsFieldName    string   `json:"tsFieldName"`
-		Fields         []string `json:"fields"`
-		STable         string   `json:"sTable"`
-		TagFields      []string `json:"tagFields"`
-		DataTemplate   string   `json:"dataTemplate"`
-		TableDataField string   `json:"tableDataField"`
-		DataField      string   `json:"dataField"`
-	}
-	taosSink struct {
-		conf *taosConfig
-		url  string
-		db   *sql.DB
-	}
-)
-
-func (t *taosConfig) delTsField() {
-	var auxFields []string
-	for _, v := range t.Fields {
-		if v != t.TsFieldName {
-			auxFields = append(auxFields, v)
-		}
-	}
-	t.Fields = auxFields
+type TaosConfig struct {
+	ProvideTs    bool     `json:"provideTs"`
+	Port         int      `json:"port"`
+	Host         string   `json:"host"`
+	User         string   `json:"user"`
+	Password     string   `json:"password"`
+	Database     string   `json:"database"`
+	Table        string   `json:"table"`
+	TsFieldName  string   `json:"tsFieldName"`
+	Fields       []string `json:"fields"`
+	STable       string   `json:"sTable"`
+	TagFields    []string `json:"tagFields"`
+	DataTemplate string   `json:"dataTemplate"`
+	DataField    string   `json:"dataField"`
 }
 
-func (t *taosConfig) buildSql(ctx api.StreamContext, mapData map[string]interface{}) (string, error) {
-	if 0 == len(mapData) {
-		return "", fmt.Errorf("data is empty.")
+type tdengineSink3 struct {
+	cfg *TaosConfig
+	cli *sql.DB
+}
+
+func (t *tdengineSink3) Open(ctx api.StreamContext) error {
+	url := fmt.Sprintf(`%s:%s@http(%s)/%s`, t.cfg.User, t.cfg.Password, net.JoinHostPort(t.cfg.Host, strconv.Itoa(t.cfg.Port)), t.cfg.Database)
+	taosCli, err := sql.Open("taosRestful", url)
+	if err != nil {
+		return err
 	}
-	logger := ctx.GetLogger()
+	t.cli = taosCli
+	if err := t.cli.Ping(); err != nil {
+		ctx.GetLogger().Errorf("tdengine3 sink connection failed, err:%v", err.Error())
+		return err
+	}
+	ctx.GetLogger().Infof("tdengine3 sink connection success")
+	return nil
+}
+
+func (t *tdengineSink3) Configure(props map[string]interface{}) error {
+	t.cfg = &TaosConfig{
+		Host:     "localhost",
+		Port:     6041,
+		User:     "root",
+		Password: "taosdata",
+	}
+	err := cast.MapToStruct(props, t.cfg)
+	if err != nil {
+		return err
+	}
+	if t.cfg.Database == "" {
+		return fmt.Errorf("property database is required")
+	}
+	if t.cfg.Table == "" {
+		return fmt.Errorf("property table is required")
+	}
+	if t.cfg.TsFieldName == "" {
+		return fmt.Errorf("property TsFieldName is required")
+	}
+	if t.cfg.STable != "" && len(t.cfg.TagFields) == 0 {
+		return fmt.Errorf("property tagFields is required when sTable is set")
+	}
+	return nil
+}
+
+func (t *tdengineSink3) Collect(ctx api.StreamContext, data interface{}) error {
+	switch v := data.(type) {
+	case map[string]any:
+		return t.collect(ctx, v)
+	case []map[string]any:
+		for _, m := range v {
+			if err := t.collect(ctx, m); err != nil {
+				return err
+			}
+		}
+	case []interface{}:
+		for _, d := range v {
+			m, ok := d.(map[string]any)
+			if !ok {
+				return fmt.Errorf("unsupported type: %T", data)
+			}
+			if err := t.collect(ctx, m); err != nil {
+				return err
+			}
+		}
+	default: // never happen
+		return fmt.Errorf("unsupported type: %T", data)
+	}
+	return nil
+}
+
+func (t *tdengineSink3) Close(ctx api.StreamContext) error {
+	ctx.GetLogger().Infof("tdengine3 sink close")
+	t.cli.Close()
+	return nil
+}
+
+func (t *tdengineSink3) collect(ctx api.StreamContext, item map[string]any) error {
+	sqlStr, sqlE := t.cfg.buildSql(ctx, item)
+	if sqlE != nil {
+		return fmt.Errorf("failed to build sql to tdengine3: %s", sqlE)
+	}
+	ctx.GetLogger().Infof("tdengine3 sink collect sql: %s", sqlStr)
+	_, e := t.cli.Exec(sqlStr)
+	if e != nil {
+		ctx.GetLogger().Errorf("failed to exec sql to tdengine3: %s", e)
+		return fmt.Errorf("failed to exec sql to tdengine3: %s", e)
+	}
+	return nil
+}
+
+func (cfg *TaosConfig) buildSql(ctx api.StreamContext, mapData map[string]any) (string, error) {
 	var (
 		table, sTable    string
 		keys, vals, tags []string
 		err              error
 	)
-	table, err = ctx.ParseTemplate(t.Table, mapData)
+	if 0 == len(mapData) {
+		return "", fmt.Errorf("data is empty")
+	}
+	table, err = ctx.ParseTemplate(cfg.Table, mapData)
 	if err != nil {
-		logger.Errorf("parse template for table %s error: %v", t.Table, err)
+		ctx.GetLogger().Errorf("parse template for table %s error: %v", cfg.Table, err)
 		return "", err
 	}
-	sTable, err = ctx.ParseTemplate(t.STable, mapData)
+	sTable, err = ctx.ParseTemplate(cfg.STable, mapData)
 	if err != nil {
-		logger.Errorf("parse template for sTable %s error: %v", t.STable, err)
+		ctx.GetLogger().Errorf("parse template for sTable %s error: %v", cfg.STable, err)
 		return "", err
 	}
 
-	if t.ProvideTs {
-		if v, ok := mapData[t.TsFieldName]; !ok {
-			return "", fmt.Errorf("timestamp field not found : %s", t.TsFieldName)
+	if cfg.ProvideTs {
+		if v, ok := mapData[cfg.TsFieldName]; !ok {
+			return "", fmt.Errorf("timestamp field not found : %s", cfg.TsFieldName)
 		} else {
-			keys = append(keys, t.TsFieldName)
-			timeStamp, err := cast.ToInt64(v, cast.CONVERT_SAMEKIND)
-			if err != nil {
-				return "", fmt.Errorf("timestamp field can not convert to int64 : %v", v)
-			}
-			vals = append(vals, fmt.Sprintf(`%v`, timeStamp))
+			keys = append(keys, cfg.TsFieldName)
+			vals = append(vals, fmt.Sprintf(`%v`, v))
 		}
 	} else {
 		vals = append(vals, "now")
-		keys = append(keys, t.TsFieldName)
+		keys = append(keys, cfg.TsFieldName)
 	}
 
-	if len(t.Fields) != 0 {
-		for _, k := range t.Fields {
-			if k == t.TsFieldName {
+	if len(cfg.TagFields) > 0 {
+		for _, v := range cfg.TagFields {
+			switch mapData[v].(type) {
+			case string:
+				tags = append(tags, fmt.Sprintf(`"%s"`, mapData[v]))
+			default:
+				tags = append(tags, fmt.Sprintf(`%v`, mapData[v]))
+			}
+		}
+	}
+
+	if len(cfg.Fields) != 0 {
+		for _, k := range cfg.Fields {
+			if k == cfg.TsFieldName {
+				continue
+			}
+			if contains(cfg.TagFields, k) {
 				continue
 			}
 			if v, ok := mapData[k]; ok {
@@ -116,12 +197,15 @@ func (t *taosConfig) buildSql(ctx api.StreamContext, mapData map[string]interfac
 					vals = append(vals, fmt.Sprintf(`%v`, v))
 				}
 			} else {
-				logger.Warnln("not found field:", k)
+				return "", fmt.Errorf("field not found : %s", k)
 			}
 		}
 	} else {
 		for k, v := range mapData {
-			if k == t.TsFieldName {
+			if k == cfg.TsFieldName {
+				continue
+			}
+			if contains(cfg.TagFields, k) {
 				continue
 			}
 			keys = append(keys, k)
@@ -133,166 +217,26 @@ func (t *taosConfig) buildSql(ctx api.StreamContext, mapData map[string]interfac
 		}
 	}
 
-	if len(t.TagFields) > 0 {
-		for _, v := range t.TagFields {
-			switch mapData[v].(type) {
-			case string:
-				tags = append(tags, fmt.Sprintf(`"%s"`, mapData[v]))
-			default:
-				tags = append(tags, fmt.Sprintf(`%v`, mapData[v]))
-			}
-		}
-	}
-
-	sqlStr := fmt.Sprintf("%s (%s)", table, strings.Join(keys, ","))
+	sqlStr := fmt.Sprintf("INSERT INTO %s (%s)", table, strings.Join(keys, ","))
 	if sTable != "" {
-		sqlStr += " using " + sTable
+		sqlStr += " USING " + sTable
 	}
 	if len(tags) != 0 {
-		sqlStr += " tags (" + strings.Join(tags, ",") + ")"
+		sqlStr += " TAGS(" + strings.Join(tags, ",") + ")"
 	}
 	sqlStr += " values (" + strings.Join(vals, ",") + ")"
 	return sqlStr, nil
 }
 
-func (m *taosSink) Configure(props map[string]interface{}) error {
-	cfg := &taosConfig{
-		User:     "root",
-		Password: "taosdata",
-	}
-	err := cast.MapToStruct(props, cfg)
-	if err != nil {
-		return fmt.Errorf("read properties %v fail with error: %v", props, err)
-	}
-	if cfg.Ip != "" {
-		conf.Log.Warnf("Deprecated: Tdengine sink ip property is deprecated, use host instead.")
-		if cfg.Host == "" {
-			cfg.Host = cfg.Ip
-		}
-	}
-	if cfg.Host == "" {
-		cfg.Host = "localhost"
-	}
-	if cfg.User == "" {
-		return fmt.Errorf("propert user is required.")
-	}
-	if cfg.Password == "" {
-		return fmt.Errorf("propert password is required.")
-	}
-	if cfg.Database == "" {
-		return fmt.Errorf("property database is required")
-	}
-	if cfg.Table == "" {
-		return fmt.Errorf("property table is required")
-	}
-	if cfg.TsFieldName == "" {
-		return fmt.Errorf("property TsFieldName is required")
-	}
-	if cfg.STable != "" && len(cfg.TagFields) == 0 {
-		return fmt.Errorf("property tagFields is required when sTable is set")
-	}
-	m.url = fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s`, cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.Database)
-	if cfg.DataField == "" {
-		cfg.DataField = cfg.TableDataField
-	}
-	m.conf = cfg
-	return nil
+func GetSink() api.Sink {
+	return &tdengineSink3{}
 }
 
-func (m *taosSink) Open(ctx api.StreamContext) (err error) {
-	ctx.GetLogger().Debug("Opening tdengine sink")
-	m.db, err = sql.Open("taosSql", m.url)
-	return err
-}
-
-func (m *taosSink) Collect(ctx api.StreamContext, item interface{}) error {
-	ctx.GetLogger().Debugf("tdengine sink receive %s", item)
-	if m.conf.DataTemplate != "" {
-		jsonBytes, _, err := ctx.TransformOutput(item)
-		if err != nil {
-			return err
+func contains(slice []string, target string) bool {
+	for _, element := range slice {
+		if element == target {
+			return true
 		}
-		tm := make(map[string]interface{})
-		err = json.Unmarshal(jsonBytes, &tm)
-		if err != nil {
-			return fmt.Errorf("fail to decode data %s after applying dataTemplate for error %v", string(jsonBytes), err)
-		}
-		item = tm
-	} else {
-		tm, _, err := transform.TransItem(item, m.conf.DataField, m.conf.Fields)
-		if err != nil {
-			return fmt.Errorf("fail to transform data %v for error %v", item, err)
-		}
-		item = tm
 	}
-
-	switch v := item.(type) {
-	case []map[string]interface{}:
-		strSli := make([]string, len(v))
-		for _, mapData := range v {
-			str, err := m.conf.buildSql(ctx, mapData)
-			if err != nil {
-				ctx.GetLogger().Errorf("tdengine sink build sql error %v for data", err, mapData)
-				return err
-			}
-			strSli = append(strSli, str)
-		}
-		if len(strSli) > 0 {
-			strBatch := strings.Join(strSli, " ")
-			return m.writeToDB(ctx, &strBatch)
-		}
-		return nil
-	case map[string]interface{}:
-		strBatch, err := m.conf.buildSql(ctx, v)
-		if err != nil {
-			ctx.GetLogger().Errorf("tdengine sink build sql error %v for data", err, v)
-			return err
-		}
-		return m.writeToDB(ctx, &strBatch)
-	case []interface{}:
-		strSli := make([]string, len(v))
-		for _, data := range v {
-			mapData, ok := data.(map[string]interface{})
-			if !ok {
-				ctx.GetLogger().Errorf("unsupported type: %T", data)
-				return fmt.Errorf("unsupported type: %T", data)
-			}
-
-			str, err := m.conf.buildSql(ctx, mapData)
-			if err != nil {
-				ctx.GetLogger().Errorf("tdengine sink build sql error %v for data", err, mapData)
-				return err
-			}
-			strSli = append(strSli, str)
-		}
-		if len(strSli) > 0 {
-			strBatch := strings.Join(strSli, " ")
-			return m.writeToDB(ctx, &strBatch)
-		}
-		return nil
-	default: // never happen
-		return fmt.Errorf("unsupported type: %T", item)
-	}
-}
-
-func (m *taosSink) writeToDB(ctx api.StreamContext, SqlVal *string) error {
-	finalSql := "INSERT INTO " + *SqlVal + ";"
-	ctx.GetLogger().Debugf(finalSql)
-	rows, err := m.db.Query(finalSql)
-	if err != nil {
-		return fmt.Errorf("%s: %s", errorx.IOErr, err.Error())
-	}
-	rows.Close()
-	return nil
-}
-
-func (m *taosSink) Close(ctx api.StreamContext) error {
-	if m.db != nil {
-		return m.db.Close()
-	}
-	return nil
-}
-
-func Tdengine() api.Sink {
-	return &taosSink{}
+	return false
 }
