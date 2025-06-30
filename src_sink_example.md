@@ -218,6 +218,19 @@ tdengines 配置项： https://ekuiper.org/docs/zh/v1.14/guide/sinks/plugin/tden
 
 ## unnest example
 
+```shell
+mysql> show create table test_signal;
++-------------+--------------------------------------------------------------------------------------------------------+
+| Table       | Create Table                                                                                           |
++-------------+--------------------------------------------------------------------------------------------------------+
+| test_signal | CREATE TABLE `test_signal` (
+  `data_signal` float DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 |
++-------------+--------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+```
+
 ```json
 {
   "id": "sqlrule3",
@@ -241,7 +254,7 @@ tdengines 配置项： https://ekuiper.org/docs/zh/v1.14/guide/sinks/plugin/tden
       },
       "unnestsignal":{
         "type": "operator",
-        "nodeType": "srfunc",
+        "nodeType": "function",
         "props": {
           "expr": "unnest(signal) as signal"
         }
@@ -265,6 +278,18 @@ tdengines 配置项： https://ekuiper.org/docs/zh/v1.14/guide/sinks/plugin/tden
       }
     }
   }
+}
+```
+
+dataInput
+
+```json
+{
+  "data":[
+    {
+      "signal": [1.0,2.0,3.0]
+    }
+  ]
 }
 ```
 

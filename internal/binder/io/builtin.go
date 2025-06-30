@@ -64,6 +64,7 @@ var (
 		"sql": func() api.Sink {
 			return sqlsink.GetSink()
 		},
+		"tdengine": func() api.Sink { return tdengine.GetSink() },
 	}
 	lookupSources = map[string]NewLookupSourceFunc{
 		"memory": func() api.LookupSource { return memory.GetLookupSource() },
