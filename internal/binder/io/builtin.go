@@ -15,6 +15,9 @@
 package io
 
 import (
+	"github.com/lf-edge/ekuiper/extensions/sinks/influx"
+	"github.com/lf-edge/ekuiper/extensions/sinks/influx2"
+	kafkasink "github.com/lf-edge/ekuiper/extensions/sinks/kafka"
 	sqlsink "github.com/lf-edge/ekuiper/extensions/sinks/sql"
 	"github.com/lf-edge/ekuiper/extensions/sinks/tdengine"
 	sqlsource "github.com/lf-edge/ekuiper/extensions/sources/sql"
@@ -56,11 +59,9 @@ var (
 		"memory":      func() api.Sink { return memory.GetSink() },
 		"neuron":      func() api.Sink { return neuron.GetSink() },
 		"file":        func() api.Sink { return file.File() },
-		//"kafka":       func() api.Sink { return kafkasink.GetSink() },
-		//"sql":         func() api.Sink { return sqlsink.GetSink() },
-		//"influx":      func() api.Sink { return influx.GetSink() },
-		//"influx2":     func() api.Sink { return influx2.GetSink() },
-		"tdengine": func() api.Sink { return tdengine.GetSink() },
+		"kafka":       func() api.Sink { return kafkasink.GetSink() },
+		"influx":      func() api.Sink { return influx.GetSink() },
+		"influx2":     func() api.Sink { return influx2.GetSink() },
 		"sql": func() api.Sink {
 			return sqlsink.GetSink()
 		},
