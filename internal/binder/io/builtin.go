@@ -20,6 +20,7 @@ import (
 	kafkasink "github.com/lf-edge/ekuiper/extensions/sinks/kafka"
 	sqlsink "github.com/lf-edge/ekuiper/extensions/sinks/sql"
 	"github.com/lf-edge/ekuiper/extensions/sinks/tdengine"
+	"github.com/lf-edge/ekuiper/extensions/sources/kafka"
 	sqlsource "github.com/lf-edge/ekuiper/extensions/sources/sql"
 	"github.com/lf-edge/ekuiper/internal/io/file"
 	"github.com/lf-edge/ekuiper/internal/io/http"
@@ -47,8 +48,8 @@ var (
 		"memory":   func() api.Source { return memory.GetSource() },
 		"neuron":   func() api.Source { return neuron.GetSource() },
 		"video":    func() api.Source { return &video.VideoPullSource{} },
-		//"kafka":    func() api.Source { return kafka.GetSource() },
-		"sql": func() api.Source { return sqlsource.GetSource() },
+		"kafka":    func() api.Source { return kafka.GetSource() },
+		"sql":      func() api.Source { return sqlsource.GetSource() },
 	}
 	sinks = map[string]NewSinkFunc{
 		"log":         sink.NewLogSink,
