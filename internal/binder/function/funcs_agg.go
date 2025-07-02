@@ -93,7 +93,6 @@ func registerAggFunc() {
 							aggColumnData = append(aggColumnData, v)
 						}
 						aggData[aggColumn] = aggColumnData
-
 					}
 				}
 			}

@@ -154,6 +154,8 @@ func createRestServer(ip string, port int, needToken bool) *http.Server {
 	r.HandleFunc("/packager/python", SourceCodeHandler).Methods(http.MethodPost)
 	r.HandleFunc("/logs", logsHandler).Methods(http.MethodGet)
 	r.HandleFunc("/log/{filename}", logsDownloadHandler).Methods(http.MethodGet)
+	r.HandleFunc("/pip/list", handlePipListQuery).Methods(http.MethodGet)
+
 	r.PathPrefix("/web/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		path := filepath.Clean(r.URL.Path)
 		if !strings.HasPrefix(path, "/web/") {
