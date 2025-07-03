@@ -44,6 +44,7 @@ func (p *FuncOp) Apply(ctx api.StreamContext, data interface{}, fv *xsql.Functio
 		var err error
 		if p.IsAgg {
 			input.SetIsAgg(true)
+			retRow := &xsql.Tuple{}
 			err = input.GroupRange(func(_ int, aggRow xsql.CollectionRow) (bool, error) {
 				afv.SetData(aggRow)
 				ve := &xsql.ValuerEval{Valuer: xsql.MultiAggregateValuer(aggRow, fv, aggRow, fv, afv, &xsql.WildcardValuer{Data: aggRow})}
@@ -52,8 +53,12 @@ func (p *FuncOp) Apply(ctx api.StreamContext, data interface{}, fv *xsql.Functio
 					return false, e
 				}
 				aggRow.Set(p.Name, result)
+				retRow.Set(p.Name, result)
 				return true, nil
 			})
+			if input.IsAgg() {
+				return retRow
+			}
 		} else {
 			if input.IsAgg() {
 				input.GroupRange(func(i int, aggRow xsql.CollectionRow) (bool, error) {
