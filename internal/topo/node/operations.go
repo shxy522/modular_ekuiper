@@ -149,6 +149,8 @@ func (o *UnaryOperator) doOp(ctx api.StreamContext, errCh chan<- error) {
 			case []xsql.TupleRow:
 				stats.ProcessTimeEnd()
 				for _, v := range val {
+					content, _ := json.Marshal(v.Clone().ToMap())
+					stats.SetOutData(string(content))
 					o.Broadcast(v)
 					stats.IncTotalRecordsOut()
 				}
