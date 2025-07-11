@@ -341,3 +341,85 @@ dataInput
   }
 }
 ```
+
+```json
+{
+  "id": "rule1",
+  "graph": {
+    "nodes": {
+      "mqttdemo": {
+        "type": "source",
+        "nodeType": "mqtt",
+        "props": {
+          "server": "tcp://127.0.0.1:1883",
+          "datasource": "/yisa/data"
+        }
+      },
+      "window":  {
+        "type": "operator",
+        "nodeType": "window",
+        "props": {
+          "type": "countwindow",
+          "size": 4
+        }
+      },
+      "agg_by_key_into_map":  {
+        "type": "operator",
+        "nodeType": "aggfunc",
+        "props": {
+          "expr": "agg_by_key_into_map(*, \"a,b\") as signal"
+        }
+      },
+      "logout": {
+        "type": "sink",
+        "nodeType": "log",
+        "props": {
+        }
+      }
+    },
+    "topo": {
+      "sources": ["mqttdemo"],
+      "edges": {
+        "mqttdemo": ["window"],
+        "window": ["agg_by_key_into_map"],
+        "agg_by_key_into_map": ["logout"]
+      }
+    }
+  }
+}
+```
+
+输入 4条数据示例:
+```json
+{
+  "a": "string1"
+}
+{
+  "a": "string2"
+}
+{
+  "b": "string2"
+}
+{
+  "b": "string1"
+}
+```
+输出:
+[{\"signal\":{\"a\":[\"string1\",\"string2\"],\"b\":[\"string2\",\"string1\"]}}]
+
+输入 4条数据示例:
+```json
+{
+  "a": [1,2]
+}
+{
+  "a": [3,4]
+}
+{
+  "b": [3,4]
+}
+{
+  "b": [1,2]
+}
+```
+[{\"signal\":{\"a\":[[1,2],[3,4]],\"b\":[[3,4],[1,2]]}}]

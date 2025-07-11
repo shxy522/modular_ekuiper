@@ -51,6 +51,50 @@ func registerAggFunc() {
 			return ValidateLen(1, len(args))
 		},
 	}
+	builtins["agg_by_key_into_map"] = builtinFunc{
+		fType: ast.FuncTypeAgg,
+		exec: func(ctx api.FunctionContext, args []interface{}) (interface{}, bool) {
+			arg0, ok := args[0].([]interface{})
+			if !ok {
+				return fmt.Errorf("agg_by_key should used as agg function"), false
+			}
+			args1, ok := args[1].([]interface{})
+			if !ok {
+				return fmt.Errorf("agg_by_key should used as agg function"), false
+			}
+			result := make([][]interface{}, 0)
+			if len(args1) < 1 {
+				return result, true
+			}
+			c, ok := args1[0].(string)
+			if !ok {
+				return fmt.Errorf("agg_by_key should defined aggregate columns"), false
+			}
+			columns := strings.Split(c, ",")
+			aggData := make(map[string][]interface{})
+			for _, arg := range arg0 {
+				msg, ok := arg.(model.Message)
+				if !ok {
+					continue
+				}
+				for k, v := range msg {
+					if isInColumns(k, columns) {
+						aggV, ok := aggData[k]
+						if !ok {
+							aggV = make([]interface{}, 0)
+						}
+						aggV = append(aggV, v)
+						aggData[k] = aggV
+					}
+				}
+			}
+			return aggData, true
+		},
+		val: func(ctx api.FunctionContext, args []ast.Expr) error {
+			return ValidateLen(2, len(args))
+		},
+		check: returnNilIfHasAnyNil,
+	}
 	builtins["agg_by_key"] = builtinFunc{
 		fType: ast.FuncTypeAgg,
 		exec: func(ctx api.FunctionContext, args []interface{}) (interface{}, bool) {
