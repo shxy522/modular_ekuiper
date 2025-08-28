@@ -21,6 +21,7 @@ import (
 	sqlsink "github.com/lf-edge/ekuiper/extensions/sinks/sql"
 	"github.com/lf-edge/ekuiper/extensions/sinks/tdengine"
 	"github.com/lf-edge/ekuiper/extensions/sources/kafka"
+	"github.com/lf-edge/ekuiper/extensions/sources/random"
 	sqlsource "github.com/lf-edge/ekuiper/extensions/sources/sql"
 	"github.com/lf-edge/ekuiper/internal/io/file"
 	"github.com/lf-edge/ekuiper/internal/io/http"
@@ -50,6 +51,7 @@ var (
 		"video":    func() api.Source { return &video.VideoPullSource{} },
 		"kafka":    func() api.Source { return kafka.GetSource() },
 		"sql":      func() api.Source { return sqlsource.GetSource() },
+		"random":   func() api.Source { return random.GetSource() },
 	}
 	sinks = map[string]NewSinkFunc{
 		"log":         sink.NewLogSink,

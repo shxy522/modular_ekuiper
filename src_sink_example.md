@@ -423,3 +423,45 @@ dataInput
 }
 ```
 [{\"signal\":{\"a\":[[1,2],[3,4]],\"b\":[[3,4],[1,2]]}}]
+
+## random source
+
+具体配置  https://ekuiper.org/docs/zh/latest/guide/sources/plugin/random.html
+
+```json
+{
+  "id": "rule1",
+  "name": "Test Condition",
+  "graph": {
+    "nodes": {
+      "randomDemo": {
+        "type": "source",
+        "nodeType": "random",
+        "props": {
+          "interval": 1000,
+          "seed": 10,
+          "pattern": {
+            "key": 10
+          }
+        }
+      },
+      "logout": {
+        "type": "sink",
+        "nodeType": "log",
+        "props": {
+        }
+      }
+    },
+    "topo": {
+      "sources": [
+        "randomDemo"
+      ],
+      "edges": {
+        "randomDemo": [
+          "logout"
+        ]
+      }
+    }
+  }
+}
+```

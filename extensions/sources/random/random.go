@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package random
 
 import (
 	"bytes"
@@ -149,6 +149,6 @@ func (s *randomSource) Close(_ api.StreamContext) error {
 	return nil
 }
 
-func Random() api.Source {
+func GetSource() api.Source {
 	return &randomSource{}
 }
