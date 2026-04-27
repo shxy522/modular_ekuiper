@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"math"
 	"math/rand"
 	"strings"
 	"time"
@@ -31,9 +32,10 @@ import (
 const dedupStateKey = "input"
 
 type randomSourceConfig struct {
-	Interval int                    `json:"interval"`
-	Seed     int                    `json:"seed"`
-	Pattern  map[string]interface{} `json:"pattern"`
+	Interval  int                    `json:"interval"`
+	Seed      int                    `json:"seed"`
+	Precision int                    `json:"precision"`
+	Pattern   map[string]interface{} `json:"pattern"`
 	// how long will the source trace for deduplication. If 0, deduplicate is disabled; if negative, deduplicate will be the whole life time
 	Deduplicate int    `json:"deduplicate"`
 	Format      string `json:"format"`
@@ -61,6 +63,9 @@ func (s *randomSource) Configure(topic string, props map[string]interface{}) err
 	}
 	if cfg.Seed <= 0 {
 		return fmt.Errorf("source `random` property `seed` must be a positive integer but got %d", cfg.Seed)
+	}
+	if cfg.Precision < 0 {
+		return fmt.Errorf("source `random` property `precision` must be a non-negative integer but got %d", cfg.Precision)
 	}
 	if !strings.EqualFold(cfg.Format, message.FormatJson) {
 		return fmt.Errorf("random source only supports `json` format")
@@ -96,7 +101,7 @@ func (s *randomSource) Open(ctx api.StreamContext, consumer chan<- api.SourceTup
 		select {
 		case <-t.C:
 			rcvTime := conf.GetNow()
-			next := randomize(s.conf.Pattern, s.conf.Seed)
+			next := randomize(s.conf.Pattern, s.conf.Seed, s.conf.Precision)
 			if s.conf.Deduplicate != 0 && s.isDup(ctx, next) {
 				logger.Debugf("find duplicate")
 				continue
@@ -109,15 +114,21 @@ func (s *randomSource) Open(ctx api.StreamContext, consumer chan<- api.SourceTup
 	}
 }
 
-func randomize(p map[string]interface{}, seed int) map[string]interface{} {
+func randomize(p map[string]interface{}, seed int, precision int) map[string]interface{} {
 	r := make(map[string]interface{})
+	scale := math.Pow10(precision)
 	for k, v := range p {
 		// TODO other data types
 		vi, err := cast.ToInt(v, cast.STRICT)
 		if err != nil {
 			break
 		}
-		r[k] = vi + rand.Intn(seed)
+		if precision == 0 {
+			r[k] = vi + rand.Intn(seed)
+		} else {
+			value := float64(vi) + rand.Float64()*float64(seed)
+			r[k] = math.Round(value*scale) / scale
+		}
 	}
 	return r
 }
