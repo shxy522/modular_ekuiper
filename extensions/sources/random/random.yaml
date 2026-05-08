@@ -1,6 +1,7 @@
 default:
   interval: 1000
   seed: 1
+  precision: 0
   pattern:
     count: 50
   deduplicate: 0

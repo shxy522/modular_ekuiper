@@ -50,6 +50,21 @@
         }
       },
       {
+        "name": "precision",
+        "default": 0,
+        "optional": true,
+        "control": "text",
+        "type": "int",
+        "hint": {
+          "en_US": "The number of decimal places for generated values. 0 means generated values are integers.",
+          "zh_CN": "生成数值的小数位数。0 表示生成整数。"
+        },
+        "label": {
+          "en_US": "Precision",
+          "zh_CN": "小数位数"
+        }
+      },
+      {
         "name": "deduplicate",
         "default": 0,
         "optional": true,

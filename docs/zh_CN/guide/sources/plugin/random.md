@@ -23,6 +23,7 @@
 default:
   interval: 1000
   seed: 1
+  precision: 0
   pattern:
     count: 50
   deduplicate: 0
@@ -46,6 +47,10 @@ dedup:
 
 随机函数产生的最大整数。
 
+### precision
+
+生成数值的小数位数。默认值为 0，表示生成整数。例如，1 表示生成一位小数精度的数值。
+
 ### pattern
 
 源生成的样式。 在上面的示例中，样式将为 json，例如{"count":50}
@@ -67,4 +72,3 @@ demo (
 ```
 
 配置键 "ext" 将被使用。
-
