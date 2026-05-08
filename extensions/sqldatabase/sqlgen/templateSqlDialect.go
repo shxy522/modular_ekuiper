@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"fmt"
 	"text/template"
+	"time"
 
 	"github.com/posener/order"
 
@@ -86,8 +87,58 @@ func (t *templateSqlQuery) UpdateMaxIndexValue(row map[string]interface{}) {
 		if !found {
 			return
 		}
-		if val := order.Is(v); val.Greater(t.IndexValue) {
+		if greaterIndexValue(v, t.IndexValue) {
 			t.IndexValue = v
 		}
+	}
+}
+
+func greaterIndexValue(lhs, rhs interface{}) (greater bool) {
+	if l, ok := numericValue(lhs); ok {
+		if r, ok := numericValue(rhs); ok {
+			return l > r
+		}
+	}
+	if l, ok := lhs.(time.Time); ok {
+		if r, ok := rhs.(time.Time); ok {
+			return l.After(r)
+		}
+	}
+	defer func() {
+		if recover() != nil {
+			greater = false
+		}
+	}()
+	return order.Is(lhs).Greater(rhs)
+}
+
+func numericValue(v interface{}) (float64, bool) {
+	switch n := v.(type) {
+	case int:
+		return float64(n), true
+	case int8:
+		return float64(n), true
+	case int16:
+		return float64(n), true
+	case int32:
+		return float64(n), true
+	case int64:
+		return float64(n), true
+	case uint:
+		return float64(n), true
+	case uint8:
+		return float64(n), true
+	case uint16:
+		return float64(n), true
+	case uint32:
+		return float64(n), true
+	case uint64:
+		return float64(n), true
+	case float32:
+		return float64(n), true
+	case float64:
+		return n, true
+	default:
+		return 0, false
 	}
 }
