@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -284,9 +285,19 @@ func (p *PythonCodePackage) clean() {
 	_ = os.RemoveAll(p.packageDir)
 }
 
+// urlBaseName 提取下载地址的落盘文件名：URL 形态取 path 段（剥除 query，
+// 预签名地址的签名参数串会超出文件系统文件名长度限制），非 URL 形态按本地路径处理。
+func urlBaseName(v string) string {
+	u, err := url.Parse(v)
+	if err == nil && (u.Scheme == "http" || u.Scheme == "https" || u.Scheme == "file") && u.Path != "" {
+		return path.Base(u.Path)
+	}
+	return filepath.Base(v)
+}
+
 func (p *PythonCodePackage) copySourcePythonFile() error {
 	for _, v := range p.sourceFilesPath {
-		baseName := filepath.Base(v)
+		baseName := urlBaseName(v)
 		file, err := httpx.ReadFile(v)
 		if err != nil {
 			return err
@@ -324,7 +335,7 @@ func (p *PythonCodePackage) copySourcePythonFile() error {
 
 func (p *PythonCodePackage) copyOtherFile() error {
 	for _, v := range p.otherFilesPath {
-		baseName := filepath.Base(v)
+		baseName := urlBaseName(v)
 		file, err := httpx.ReadFile(v)
 		if err != nil {
 			return err
@@ -498,7 +509,7 @@ func (f *wrapperFunc) generateFunctionWrapper(p *PythonCodePackage, tmpl string)
 
 	// get python modules
 	var PythonModules string
-	baseName := filepath.Base(f.FilesPath)
+	baseName := urlBaseName(f.FilesPath)
 	if strings.HasSuffix(baseName, ".py") {
 		p.sourceFilesPath = append(p.sourceFilesPath, f.FilesPath)
 		PythonModules = strings.TrimSuffix(baseName, ".py")

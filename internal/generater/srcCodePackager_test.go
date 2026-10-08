@@ -344,6 +344,23 @@ import (
 //
 //}
 
+func TestUrlBaseName(t *testing.T) {
+	cases := []struct{ in, want string }{
+		// 直读 URL：行为与改造前一致
+		{"http://minio:9000/huiyan-platform/MEMBER/1/module/maas_shell.py", "maas_shell.py"},
+		// 预签名 URL：query 含 Credential 斜杠与长签名串，须剥除后取 path 段
+		{"http://minio:9000/huiyan-platform/MEMBER/1/module/maas_shell.py?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE/20260928/us-east-1/s3/aws4_request&X-Amz-Signature=5d41402abc4b2a76b9719d911017c592", "maas_shell.py"},
+		{"https://minio:9000/bucket/dataset.zip?X-Amz-Signature=sig", "dataset.zip"},
+		{"file:///opt/plugins/portable/lib.py", "lib.py"},
+		// 非 URL 形态按本地路径兜底
+		{"maas_executor.py", "maas_executor.py"},
+		{"/opt/kuiper/lib.py", "lib.py"},
+	}
+	for _, c := range cases {
+		require.Equal(t, c.want, urlBaseName(c.in), "input: %s", c.in)
+	}
+}
+
 func TestInstallScript(t *testing.T) {
 	p := &PythonCodePackage{}
 	p.EtcDir = "."
@@ -356,7 +373,8 @@ func TestInstallScript(t *testing.T) {
 cur=$(dirname "$0")
 echo "Base path $cur"
 conda install --name active --yes --file $cur/requirements.txt
-echo "Done"`
+echo "Done"
+exit 0`
 	require.Equal(t, result, string(c))
 	os.Remove("./install.sh")
 }
